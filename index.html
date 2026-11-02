@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1724">
+<title>HMH — Águas Profundas</title>
+<meta name="description" content="Uma descida interativa em 3D da sonda de perfuração até o reservatório, mostrando os equipamentos da HMH: top drive, drawworks, bombas de lama, risers QTR™, BOPs Hydril® e o ionic™ Electric BOP.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="HMH — Águas Profundas">
+<meta property="og:description" content="Da sonda ao reservatório em 3D: os equipamentos de perfuração da HMH em cada etapa do poço.">
+<meta property="og:image" content="assets/img/og.jpg">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<script type="importmap">
+{"imports":{"three":"./assets/vendor/three/build/three.module.js","three/addons/":"./assets/vendor/three/examples/jsm/"}}
+</script>
+</head>
+<body>
+<canvas id="gl" role="img" aria-label="Maquete 3D em corte: sonda de perfuração, riser, BOP, poço e reservatório"></canvas>
+
+<header class="nav glass" id="nav">
+  <a class="logo-wrap" href="https://hmhw.com" target="_blank" rel="noopener" aria-label="HMH (abre hmhw.com)"><img class="logo-img" src="assets/img/hmh-logo.png" alt="HMH"></a>
+  <nav class="tabs" id="tabs" aria-label="Seções"><span class="ind" id="ind"></span></nav>
+  <div class="acts">
+    <button class="nb menuBtn" id="menuBtn" aria-expanded="false" aria-controls="sheetMenu" data-i-label="secoes" aria-label="Seções"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="lbl" data-i="secoes">Seções</span></button>
+    <button class="nb" id="catBtn" aria-haspopup="dialog" data-i-label="catalogo" title="Catálogo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="lbl" data-i="catalogo">Catálogo</span></button>
+    <button class="nb tourBtn" id="tourBtn" aria-pressed="false" data-i-label="tour" title="Como funciona"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z" fill="currentColor"/></svg><span class="lbl" data-i="tour">Como funciona</span></button>
+    <button class="nb esg" id="esgBtn" aria-pressed="false" data-i-label="esg" aria-label="ESG Point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg><span class="lbl" data-i="esg">ESG Point</span><span class="cnt" id="esgCnt">8</span></button>
+    <button class="nb" id="ovBtn" aria-pressed="false" data-i-label="visao" title="Visão geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 9h16M4 15h16"/></svg><span class="lbl" data-i="visao">Visão geral</span></button>
+    <button class="nb ic night" id="nightBtn" aria-pressed="false" data-i-label="noite" aria-label="Noite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <button class="nb lang" id="langBtn" aria-label="English">EN</button>
+    <button class="nb ic snd" id="sndBtn" aria-pressed="false" data-i-label="som" aria-label="Som ambiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><path class="x" d="m16 9 6 6m0-6-6 6"/></svg></button>
+    <a class="nb link" href="https://hmhw.com" target="_blank" rel="noopener">HMHW ↗</a>
+  </div>
+</header>
+<nav class="sheetMenu glass" id="sheetMenu" data-i-label="secoes" aria-label="Seções"></nav>
+<p class="sr" id="secLive" aria-live="polite"></p>
+<p id="noglMsg" role="status"></p>
+
+<section class="copy hide" id="copy" aria-labelledby="cTitle">
+  <div class="eb"><span class="idx" id="cIdx"><span>01</span></span><span class="bar"></span><span id="cEb"></span></div>
+  <h2 class="ttl" id="cTitle"></h2>
+  <p class="txt" id="cText"></p>
+  <div class="chl" id="cChl"><span id="cChlT">Nesta seção</span> <em id="cCnt"></em></div>
+  <div class="chips" id="cChips"></div>
+  <div class="ctas"><a class="cta" id="cCta" target="_blank" rel="noopener"><span data-i="saiba">Saiba mais</span> <span aria-hidden="true">↗</span></a><a class="cta sec" id="cCta2" href="https://hmhw.com/media-contact-2/" target="_blank" rel="noopener" hidden><span data-i="contato">Fale com a HMH</span> <span aria-hidden="true">↗</span></a></div>
+</section>
+
+<aside class="meter" id="meter" aria-label="Profundidade"><div class="track"><i class="fill" id="mFill"></i><b class="mark" id="mMark"></b></div><ol id="mTicks"></ol></aside>
+<aside class="read" id="read"><div class="big"><span data-i="prof">Prof.</span><b id="hDepth">0 m</b></div><div><span data-i="pressao">Pressão</span><b id="hPres">1 bar</b></div><div><span data-i="temp">Temp.</span><b id="hTemp">27 °C</b></div><small id="hZone"></small></aside>
+<div class="dock glass" id="dock"><button id="bUp" aria-label="Seção anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg></button><span class="ct" id="ct">01 / 06</span><button id="bDn" aria-label="Próxima seção"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button></div>
+<div class="hint off" id="hint"><span class="mouse" id="hintIco"></span><span id="hintTxt"></span></div>
+
+<div id="tags"></div><div id="hots"></div><div id="ovb"></div>
+
+<aside class="esgSheet glass" id="esgSheet" role="dialog" aria-modal="false" aria-labelledby="esgT">
+  <header><span class="lf"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></span>
+   <div><h3 id="esgT" tabindex="-1" data-i="esgTitulo">ESG Point</h3><p data-i="esgSub"></p></div><button class="xb" id="esgClose" data-i-label="fechar" aria-label="Fechar">×</button></header>
+  <div class="esgList" id="esgList"></div>
+  <div class="esgFoot" data-i="esgRodape"></div>
+</aside>
+
+<div class="cat glass" id="cat" role="dialog" aria-modal="true" aria-labelledby="catT">
+  <header><h3 id="catT" data-i="catTitulo">Catálogo HMH</h3><p data-i="catSub"></p><input class="search" id="catQ" type="search" data-i-ph="buscar" data-i-label="buscar" aria-label="Buscar equipamento" autocomplete="off"><button class="xb" id="catClose" data-i-label="fechar" aria-label="Fechar">×</button></header>
+  <div class="filt" id="catF"></div>
+  <div class="grid" id="catG"></div>
+</div>
+
+<section class="tour" id="tour" role="region" aria-labelledby="tourH" aria-live="polite">
+  <button class="x" id="tourX" data-i-label="encerrar" aria-label="Encerrar">×</button>
+  <div class="tt"><span data-i="tourTitulo"></span><span class="lg"><span><i style="background:#59d0ff"></i>↓</span><span><i style="background:#ffb347"></i>↑</span></span></div>
+  <h4 id="tourH"></h4><p id="tourP"></p>
+  <div class="ctl"><div class="dots" id="tourDots"></div><button id="tourPrev" data-i="anterior"></button><button id="tourPlay"></button><button class="pri" id="tourNext" data-i="proximo"></button></div>
+</section>
+
+<div id="scrim"></div>
+<div id="fp" role="dialog" aria-modal="true"></div>
+
+<div id="intro">
+  <button class="lng" id="introLang">EN</button>
+  <img class="logo-img" src="assets/img/hmh-logo.png" alt="HMH">
+  <p class="ih" id="introT" aria-label="Águas profundas">ÁGUAS PROFUNDAS</p>
+  <p data-i="intro">Da sonda ao reservatório · em 3D</p>
+  <div class="prog"><i id="progBar"></i></div>
+  <span class="progt" id="progT"></span>
+  <button class="go" id="goBtn" disabled data-i="preparando">Preparando a cena…</button>
+  <button class="mute" id="muteBtn" data-i="semSom">Entrar sem som</button>
+</div>
+
+<main id="snaps">
+<h1 class="sr">HMH — Águas Profundas</h1>
+<!--CONTEUDO-->
+<section class="snap" id="s0" aria-labelledby="h0"><div class="estatico">
+<p class="eb">01 · Superfície · 0 m · 0 m</p>
+<h2 id="h0">Operação de superfície (topsides)</h2>
+<p>Sonda de perfuração offshore operando na superfície. Em destaque, os equipamentos de topside da HMH: derrick, top drive, roughneck, drawworks, bombas de lama e guindastes de manuseio.</p>
+<ul class="prods"><li><img loading="lazy" alt="MH Top Drive" src="assets/fotos/DSC3555-Edit-sort-hvit-scaled-ca14dab2.webp" width="160" height="120"><div><h3>MH Top Drive</h3><small>Içamento e rotação</small><p>Gira a coluna de perfuração a partir do topo do mastro e sustenta o peso da coluna durante as manobras. <a href="https://hmhw.com/service/top-drives-offshore/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Bulldog™ Iron Roughneck" src="assets/fotos/Roughneck-9bd8c643.webp" width="160" height="120"><div><h3>Bulldog™ Iron Roughneck</h3><small>Manuseio de tubos</small><p>Roughneck automatizado que aperta e desaperta as conexões dos tubos no piso da sonda, com rapidez e repetibilidade. <a href="https://hmhw.com/service/roughnecks-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Wirth™ Drawworks" src="assets/fotos/multi-gear-drawworks-eb7f056c.webp" width="160" height="120"><div><h3>Wirth™ Drawworks</h3><small>Içamento e rotação</small><p>Guincho principal que iça e abaixa a coluna de perfuração. <a href="https://hmhw.com/service/drawworks-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Wirth™ Rotary Table" src="assets/fotos/Rotary-Table-Offshore-fd1d74d3.webp" width="160" height="120"><div><h3>Wirth™ Rotary Table</h3><small>Içamento e rotação</small><p>Mesa rotativa no centro do piso: transmite torque e apoia a coluna durante as conexões. <a href="https://hmhw.com/service/rotary-tables-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Wirth™ TPK Mud Pumps" src="assets/fotos/HMH-Wirth-TPK2200-2-scaled-16eb4e4f.webp" width="160" height="120"><div><h3>Wirth™ TPK Mud Pumps</h3><small>Fluido de perfuração</small><p>Bombas de alta pressão que circulam o fluido de perfuração até a broca e de volta à superfície. <a href="https://hmhw.com/service/wirth-offshore-mud-pumps/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="HMH Mud Systems" src="assets/fotos/nytt_DSC1591_Rebranded_72px-bcf59a96.webp" width="160" height="120"><div><h3>HMH Mud Systems</h3><small>Fluido de perfuração</small><p>Peneiras, tanques e tratamento do fluido de perfuração que retorna do poço. <a href="https://hmhw.com/service/mh-mud-systems/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Guindastes e manuseio" src="assets/fotos/Crane-5e8a8fb2.webp" width="160" height="120"><div><h3>Guindastes e manuseio</h3><small>Manuseio de tubos</small><p>Movimentação de tubos, risers e cargas no convés. <a href="https://hmhw.com/service/handling-equipment-and-cranes/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Derrick e subestrutura" src="assets/fotos/RamRig-79693c94.webp" width="160" height="120"><div><h3>Derrick e subestrutura</h3><small>Estruturas</small><p>A torre e a subestrutura que sustentam todo o sistema de içamento. <a href="https://hmhw.com/service/ramrig/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Compensação de movimento" src="assets/fotos/Crown-Mounted-Compansator-a0438471.webp" width="160" height="120"><div><h3>Compensação de movimento</h3><small>Compensação</small><p>Compensa o balanço da embarcação para manter constante o peso sobre a broca. <a href="https://hmhw.com/service/motion-compensation-systems/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Diverter" src="assets/fotos/Diverter-MSP-29-SLIM-82bd2929.webp" width="160" height="120"><div><h3>Diverter</h3><small>Controle de pressão</small><p>Desvia o fluxo do poço para longe do piso da sonda em situações de gás raso. <a href="https://hmhw.com/service/diverters/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="DEAL™ &amp; CADS" src="assets/fotos/MicrosoftTeams-image-c362553c.webp" width="160" height="120"><div><h3>DEAL™ &amp; CADS</h3><small>Automação</small><p>Plataforma de automação das sequências de perfuração, que recebe módulos de software inteligentes (Smart Modules). <a href="https://hmhw.com/archives/business_area/cads-automation-system-for-rig-sequences/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="beAware™" src="assets/fotos/beAware-0fb628cc.webp" width="160" height="120"><div><h3>beAware™</h3><small>Digitalização</small><p>Dados e monitoramento dos equipamentos da sonda para decisões mais rápidas. <a href="https://hmhw.com/archives/business_area/drilling-digitalization-beaware/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Hydril® GK™ 13-5" src="assets/fotos/GK-13-5-Radial-Latch-faafcaea.webp" width="160" height="120"><div><h3>Hydril® GK™ 13-5</h3><small>Controle de pressão</small><p>BOP anular compacto da linha Hydril (Radial Latch), em exposição no convés. <a href="https://hmhw.com/service/bop-annulars-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Hydril® Sentry RAM BOP" src="assets/fotos/sentry-no-shadow-1-7e749e7d.webp" width="160" height="120"><div><h3>Hydril® Sentry RAM BOP</h3><small>Controle de pressão</small><p>BOP de gaveta da linha Hydril, em exposição no convés. <a href="https://hmhw.com/service/bop-rams-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li></ul>
+<h3 class="esgT">ESG Point</h3><ul class="esgs"><li><h3>Drilling Lifecycle Services <b>+ vida útil dos equipamentos</b></h3><p>Serviços para estender a vida útil dos equipamentos e maximizar o tempo de operação. O SmartCert oferece certificação API contínua para equipamentos de controle de pressão. <a href="https://hmhw.com/archives/business_area/hmh-drilling-optimization-services-dls/" target="_blank" rel="noopener">Fonte ↗</a></p></li><li><h3>HSSE: objetivo de zero dano <b>Zero dano a pessoas e ao meio ambiente</b></h3><p>A HMH trata HSSE como parte central da cultura: objetivo de zero dano a pessoas, ao meio ambiente e a ativos, e melhoria do desempenho ambiental pela gestão responsável dos aspectos ambientais. <a href="https://hmhw.com/sustainability/hsse/" target="_blank" rel="noopener">Fonte ↗</a></p></li><li><h3>Inovação e digitalização <b>Digital beAware™ · DEAL™</b></h3><p>Investir em inovação e digitalização é um dos compromissos de sustentabilidade da HMH. Ferramentas como beAware™ e DEAL™ buscam mais eficiência operacional. <a href="https://hmhw.com/sustainability/" target="_blank" rel="noopener">Fonte ↗</a></p></li><li><h3>Cadeia de suprimentos responsável <b>Código de Conduta na cadeia</b></h3><p>Fornecedores e subcontratados devem atuar conforme o Código de Conduta da HMH, com due diligence de direitos humanos no onboarding de parceiros. <a href="https://hmhw.com/sustainability/global-supply-chain/" target="_blank" rel="noopener">Fonte ↗</a></p></li></ul>
+<p><a href="https://hmhw.com/archives/business_area/drilling-equipment-offshore/" target="_blank" rel="noopener">Saiba mais em hmhw.com ↗</a></p></div></section>
+<section class="snap" id="s1" aria-labelledby="h1"><div class="estatico">
+<p class="eb">02 · Abaixo do casco · Logo abaixo da linha d’água</p>
+<h2 id="h1">Sistema de tensionadores de riser</h2>
+<p>Abaixo da plataforma, os tensionadores de riser compensam o movimento das ondas, garantindo a estabilidade da coluna sob a superfície da água.</p>
+<ul class="prods"><li><img loading="lazy" alt="Tensionadores de riser" src="assets/fotos/Tensioners-d8db4abb.webp" width="160" height="120"><div><h3>Tensionadores de riser</h3><small>Compensação</small><p>Cilindros hidráulicos que mantêm o riser tracionado enquanto o navio sobe e desce com as ondas. <a href="https://hmhw.com/service/motion-compensation-systems/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Junta telescópica" src="assets/fotos/Telescopic-Joint-e72ec5fa.webp" width="160" height="120"><div><h3>Junta telescópica</h3><small>Riser</small><p>Permite que o topo do riser deslize conforme o balanço do navio. <a href="https://hmhw.com/service/drilling-risers/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Sistema MPD" src="assets/fotos/mpd-riser_angled_400-04377ffa.webp" width="160" height="120"><div><h3>Sistema MPD</h3><small>Controle de pressão</small><p>Perfuração com pressão gerenciada: controla com precisão a pressão no fundo do poço. <a href="https://hmhw.com/service/mpd-system/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li></ul>
+<h3 class="esgT">ESG Point</h3><ul class="esgs"><li><h3>MPD: mais controle, menos tempo de sonda <b>65% menos tempo de rig-up</b></h3><p>O Integrated MPD Riser reduz o tempo de rig-up em até 65% e as paradas relacionadas ao MPD, com mais segurança operacional (dados da HMH). <a href="https://hmhw.com/service/mpd-system/" target="_blank" rel="noopener">Fonte ↗</a></p></li></ul>
+<p><a href="https://hmhw.com/service/motion-compensation-systems/" target="_blank" rel="noopener">Saiba mais em hmhw.com ↗</a></p></div></section>
+<section class="snap" id="s2" aria-labelledby="h2"><div class="estatico">
+<p class="eb">03 · Coluna d’água · Coluna d’água</p>
+<h2 id="h2">Coluna de riser QTR™</h2>
+<p>A coluna de riser de perfuração estende-se pela coluna d’água, conectando a sonda ao poço de forma rápida e segura.</p>
+<ul class="prods"><li><img loading="lazy" alt="HMH QTR™ Marine Risers" src="assets/fotos/qtr-fa4e157e.webp" width="160" height="120"><div><h3>HMH QTR™ Marine Risers</h3><small>Riser</small><p>Risers QTR™ 4000LS e QTR™ 3500, com linhas auxiliares de choke, kill e hidráulica, ligando a sonda ao BOP. A linha inclui o HMF™ Riser e o Quick-Turn Riser Connector. <a href="https://hmhw.com/service/drilling-risers/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><div><h3>ROV</h3><small>Contexto</small><p>Veículo operado remotamente que inspeciona o riser e opera equipamentos no fundo.</p></div></li></ul>
+<p><a href="https://hmhw.com/service/drilling-risers/" target="_blank" rel="noopener">Saiba mais em hmhw.com ↗</a></p></div></section>
+<section class="snap" id="s3" aria-labelledby="h3"><div class="estatico">
+<p class="eb">04 · Leito marinho · ~1.500 m · ~1.500 m</p>
+<h2 id="h3">Leito marinho e BOP</h2>
+<p>No leito marinho, a coluna de riser se conecta ao BOP (Blowout Preventer) e ao sistema de cabeça de poço, garantindo o controle total da pressão.</p>
+<ul class="prods"><li><img loading="lazy" alt="Hydril® GXP Annular BOP" src="assets/fotos/BOP-Annular-9aaa4ed7.webp" width="160" height="120"><div><h3>Hydril® GXP Annular BOP</h3><small>Controle de pressão</small><p>BOP anular que veda em volta de qualquer tubular, com alta resistência a temperatura e a químicos. <a href="https://hmhw.com/service/bop-annulars-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Hydril® Compact™ RAM BOP" src="assets/fotos/18-15-CompactBOP-scaled-17785956.webp" width="160" height="120"><div><h3>Hydril® Compact™ RAM BOP</h3><small>Controle de pressão</small><p>Gavetas que fecham e vedam o poço. No site da HMH: 18¾&quot; para 15.000 psi. <a href="https://hmhw.com/service/bop-rams-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Gavetas cisalhantes WBSR-X" src="assets/fotos/WBSR-X-LX-f452a567.webp" width="160" height="120"><div><h3>Gavetas cisalhantes WBSR-X</h3><small>Controle de pressão</small><p>Gavetas capazes de cortar a coluna e selar o poço nas condições mais severas. <a href="https://hmhw.com/service/ram-blocks-2/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Vetco H-4 Connector" src="assets/fotos/SHD_27-fa51a93d.webp" width="160" height="120"><div><h3>Vetco H-4 Connector</h3><small>Conexão</small><p>Conecta o conjunto de BOP à cabeça de poço. <a href="https://hmhw.com/service/h4-connector/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="BOP Controls &amp; Analytics" src="assets/fotos/SeaOnxy-V8--scaled-98c670ad.webp" width="160" height="120"><div><h3>BOP Controls &amp; Analytics</h3><small>Controle</small><p>Pods de controle e análise de dados de cada função do BOP. <a href="https://hmhw.com/service/bop-control-and-analytics/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="Válvulas e manifolds" src="assets/fotos/XTRM-valve-3b621524.webp" width="160" height="120"><div><h3>Válvulas e manifolds</h3><small>Controle de pressão</small><p>Válvulas gaveta XTRM/TM e manifolds das linhas de choke e kill. <a href="https://hmhw.com/service/xtrm-tm-gate-valves/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="HMH ionic™ Electric BOP" src="assets/fotos/IONIC-stack-pipe-shear-pipe-pipe-0135a0be.webp" width="160" height="120"><div><h3>HMH ionic™ Electric BOP</h3><small>Controle de pressão</small><p>BOP totalmente elétrico, para novos equipamentos ou conversão de BOPs existentes. <a href="https://hmhw.com/service/all-electric-bop/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><img loading="lazy" alt="20k Subsea Drilling System" src="assets/fotos/20K-RBOP-5b771fdb.webp" width="160" height="120"><div><h3>20k Subsea Drilling System</h3><small>Controle de pressão</small><p>Sistema de perfuração submarina para 20.000 psi. <a href="https://hmhw.com/service/20k-subsea-drilling-system/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li><li><div><h3>ROV</h3><small>Contexto</small><p>Veículo operado remotamente com câmeras e braços manipuladores.</p></div></li></ul>
+<h3 class="esgT">ESG Point</h3><ul class="esgs"><li><h3>ionic™ Electric BOP: zero emissões no subsea <b>Zero emissões no subsea</b></h3><p>Sem mistura de glicol/fluidos e sem ventilação de fluido de controle no fundo do mar. Pelo menos 75 t a menos de equipamento na superfície e um design mais leve, com menos custos e emissões de transporte, segundo a HMH. <a href="https://hmhw.com/service/all-electric-bop/" target="_blank" rel="noopener">Fonte ↗</a></p></li><li><h3>Controle de pressão como proteção ambiental <b>Barreira de controle do poço</b></h3><p>O conjunto de BOP mantém o poço sob controle. A HMH declara o compromisso de reduzir o risco de impacto ambiental adverso causado por seus produtos e operações. <a href="https://hmhw.com/sustainability/" target="_blank" rel="noopener">Fonte ↗</a></p></li></ul>
+<p><a href="https://hmhw.com/archives/business_area/drilling-equipment-offshore-pressure-control/" target="_blank" rel="noopener">Saiba mais em hmhw.com ↗</a></p></div></section>
+<section class="snap" id="s4" aria-labelledby="h4"><div class="estatico">
+<p class="eb">05 · Subsolo · ~1.500 a 3.500 m</p>
+<h2 id="h4">Perfuração do poço (drilling)</h2>
+<p>Abaixo do leito marinho, a broca avança pelas camadas de rocha, guiada pela tecnologia de perfuração, abrindo o caminho com segurança.</p>
+<ul class="prods"><li><div><h3>Revestimentos e cimentação</h3><small>Contexto</small><p>Colunas de aço cimentadas na rocha isolam o poço das formações.</p></div></li><li><div><h3>Broca tricônica</h3><small>Contexto</small><p>Corta a rocha na ponta da coluna; o fluido bombeado pelas mud pumps traz os cascalhos para cima.</p></div></li></ul>
+<p><a href="https://hmhw.com/archives/business_area/drilling-equipment/" target="_blank" rel="noopener">Saiba mais em hmhw.com ↗</a></p></div></section>
+<section class="snap" id="s5" aria-labelledby="h5"><div class="estatico">
+<p class="eb">06 · Reservatório · ~4.500 m · ~4.500 m</p>
+<h2 id="h5">Reservatório e produção</h2>
+<p>Alcançando o objetivo: o reservatório de óleo e gás. A perfuração segura é o primeiro passo da jornada de engenharia da HMH.</p>
+<ul class="prods"><li><div><h3>Reservatório</h3><small>Contexto</small><p>Rocha porosa que armazena óleo e, no topo da estrutura, gás natural.</p></div></li><li><img loading="lazy" alt="Drilling Lifecycle Services" src="assets/fotos/HMH-helmet_4-scaled-05e6bfca.webp" width="160" height="120"><div><h3>Drilling Lifecycle Services</h3><small>Serviços</small><p>Serviços da HMH ao longo de todo o ciclo de vida dos equipamentos de perfuração. <a href="https://hmhw.com/archives/business_area/hmh-drilling-optimization-services-dls/" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li></ul>
+<p><a href="https://hmhw.com/archives/business_area/drilling-equipment/" target="_blank" rel="noopener">Saiba mais em hmhw.com ↗</a></p><h3 class="esgT">ESG Point · HMH</h3><ul class="esgs"><li><h3>Objetivos de Desenvolvimento Sustentável <b>5 · 8 · 12 · 13 ODS em foco</b></h3><p>A HMH declara foco particular nos ODS 5 (igualdade de gênero), 8 (trabalho decente e crescimento econômico), 12 (consumo e produção responsáveis) e 13 (ação contra a mudança global do clima). <a href="https://hmhw.com/sustainability/" target="_blank" rel="noopener">Fonte ↗</a></p></li></ul></div></section>
+<!--/CONTEUDO-->
+</main>
+
+<script>
+// se o módulo 3D não iniciar (sem WebGL, navegador antigo ou aberto como arquivo), mostra o conteúdo estático
+window.__fail=m=>{document.body.classList.add('nogl');var n=document.getElementById('noglMsg');if(n)n.textContent=m||'Não foi possível exibir a cena 3D. Abaixo está todo o conteúdo do site.';var i=document.getElementById('intro');if(i)i.remove()};
+if(location.protocol==='file:')addEventListener('DOMContentLoaded',function(){window.__fail('Abra o site por um servidor (veja servir.bat) para ver a cena 3D. Abaixo está todo o conteúdo.')});
+if(/[?&]nogl/.test(location.search))addEventListener('DOMContentLoaded',function(){window.__fail()});
+setTimeout(function(){if(!window.__ready)window.__fail()},30000);
+</script>
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#04101F">
+<title>HMH — Águas Profundas</title>
+<style>
+:root{
+  --abismo:#04101F; --navy:#0e2a4a; --ink:#EAF6FF; --soft:rgba(226,240,250,.86);
+  --azul:#1496C8; --verm:#D9303C; --ambar:#FFB347; --ease:cubic-bezier(.2,.8,.2,1);
+  --rail:26px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{background:var(--abismo);color:var(--ink);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ambar);outline-offset:2px}
+
+/* ---------- barra superior ---------- */
+.top{position:fixed;inset:0 0 auto 0;height:48px;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 14px 0 calc(var(--rail) + 12px);
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.78));backdrop-filter:blur(6px);color:#0e2a4a;box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.top .menu{width:34px;height:34px;display:grid;place-content:center;gap:5px}
+.top .menu i{display:block;width:18px;height:2px;background:#0e2a4a;border-radius:2px}
+.top .logo{height:24px;width:60px}
+.top .pill{justify-self:end;background:var(--navy);color:#fff;font-weight:600;font-size:12px;letter-spacing:.04em;padding:8px 16px;border-radius:5px;text-decoration:none;transition:background .3s}
+.top .pill:hover{background:var(--verm)}
+.drawer{position:fixed;top:48px;left:var(--rail);width:min(300px,calc(100vw - var(--rail)));z-index:49;background:rgba(4,16,31,.94);backdrop-filter:blur(8px);border-radius:0 0 8px 0;padding:10px 0;transform:translateX(-110%);transition:transform .45s var(--ease)}
+.drawer.on{transform:none}
+.drawer button{display:flex;gap:12px;width:100%;text-align:left;padding:11px 18px;font-size:13px;font-weight:500;border-left:3px solid transparent}
+.drawer button b{color:var(--ambar);font-variant-numeric:tabular-nums}
+.drawer button:hover,.drawer button.cur{background:rgba(255,255,255,.07);border-left-color:var(--verm)}
+
+/* ---------- trilho de seções ---------- */
+.rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);z-index:48;display:flex;flex-direction:column}
+.rail .seg{flex:1;position:relative;transition:filter .4s}
+.rail .seg:not(.on){filter:brightness(.7) saturate(.8)}
+.rail .seg button{position:absolute;left:50%;top:14px;width:16px;height:16px;margin-left:-8px;border-radius:50%;border:2px solid #fff;background:#0e2a4a;transition:background .3s,transform .3s var(--ease)}
+.rail .seg.on button{background:#fff;transform:scale(1.25)}
+.rail .seg.done::after,.rail .seg.on::after{content:"";position:absolute;left:50%;top:32px;bottom:-2px;width:2px;margin-left:-1px;background:rgba(255,255,255,.7)}
+.rail .seg.on::after{background:linear-gradient(#fff,rgba(255,255,255,.1))}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;right:12px;top:60px;z-index:45;width:150px;padding:10px 12px;border-radius:8px;background:rgba(4,16,31,.62);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.14);font-size:11px;color:var(--soft)}
+.hud div{display:flex;justify-content:space-between;padding:2px 0}
+.hud b{font-family:Oswald,"Arial Narrow",sans-serif;font-weight:500;font-size:15px;color:#fff;font-variant-numeric:tabular-nums}
+.hud .big b{font-size:22px;color:var(--ambar)}
+.hud small{display:block;margin-top:6px;opacity:.7;font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.nav2{position:fixed;right:14px;bottom:96px;z-index:45;display:grid;gap:10px}
+.nav2 button{width:30px;height:30px;border-radius:50%;display:grid;place-content:center;font-size:14px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .3s var(--ease)}
+.nav2 button:hover{transform:scale(1.12)}
+.nav2 .up{background:var(--verm)} .nav2 .dn{background:#7a7e83}
+.bottom{position:fixed;inset:auto 0 0 0;height:36px;z-index:47;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 calc(var(--rail) + 12px);background:linear-gradient(90deg,#0b2542,#12355c);font-size:12px;font-weight:600;letter-spacing:.06em}
+.bottom .logo{height:20px;width:50px;position:absolute;left:50%;transform:translateX(-50%)}
+.bottom .arr{display:flex;gap:6px}
+.bottom .arr button{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.2);font-size:12px}
+
+/* ---------- mundo ---------- */
+#world{position:relative;width:max(100vw,820px);margin-left:calc(50vw - max(100vw,820px)/2);line-height:0}
+#art{display:block;width:100%;height:auto}
+.panels{position:absolute;left:0;top:0;width:100%;pointer-events:none;z-index:20}
+.panel{position:absolute;left:calc(var(--rail) + 30px);width:min(340px,calc(100vw - var(--rail) - 44px));padding:16px 18px 18px;background:rgba(4,18,36,.5);backdrop-filter:blur(5px);border-radius:4px;border-left:3px solid var(--verm);line-height:1.5;will-change:opacity,transform;pointer-events:auto}
+.panel h2{font-family:Oswald,"Arial Narrow",Impact,sans-serif;font-weight:600;font-size:clamp(18px,1.7vw,24px);letter-spacing:.02em;text-transform:uppercase;line-height:1.15;margin-bottom:8px}
+.panel h2 em{font-style:normal;color:var(--ambar);margin-right:6px}
+.panel p{font-size:13px;color:var(--soft)}
+.panel a.btn{display:inline-block;margin-top:12px;background:var(--verm);color:#fff;font-weight:600;font-size:12px;padding:7px 16px;border-radius:3px;text-decoration:none;transition:background .3s,transform .3s var(--ease)}
+.panel a.btn:hover{background:var(--ambar);color:#1a0b05;transform:translateY(-2px)}
+
+#hots{position:absolute;left:0;top:0;width:100%;pointer-events:none}
+.hot{pointer-events:auto;position:absolute;z-index:25;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:2px solid #fff;background:rgba(20,150,200,.35);box-shadow:0 0 0 0 rgba(20,150,200,.7);animation:ping 2.4s infinite;transition:opacity .4s}
+.hot.ctx{border-color:rgba(255,255,255,.7);background:rgba(150,160,170,.3);animation-name:pingg;box-shadow:0 0 0 0 rgba(180,190,200,.5)}
+.hot::after{content:"";position:absolute;inset:8px;border-radius:50%;background:#fff}
+.hot[data-off="1"]{opacity:0;pointer-events:none}
+@keyframes ping{70%{box-shadow:0 0 0 14px rgba(20,150,200,0)}100%{box-shadow:0 0 0 0 rgba(20,150,200,0)}}
+@keyframes pingg{70%{box-shadow:0 0 0 12px rgba(180,190,200,0)}100%{box-shadow:0 0 0 0 rgba(180,190,200,0)}}
+.card{position:fixed;z-index:70;width:260px;padding:14px 16px;border-radius:8px;background:rgba(4,16,31,.94);border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 30px rgba(0,0,0,.5);line-height:1.5;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .3s,transform .4s var(--ease)}
+.card.on{opacity:1;pointer-events:auto;transform:none}
+.card h3{font-size:14px;margin-bottom:4px}
+.card .tag{display:inline-block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:8px;background:var(--azul)}
+.card .tag.ctx{background:#6c7076}
+.card p{font-size:12.5px;color:var(--soft)}
+.card a{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:var(--ambar);text-decoration:none}
+.card .x{position:absolute;right:8px;top:6px;font-size:16px;opacity:.7}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:15}
+
+/* ---------- animações do SVG ---------- */
+.wv{animation:wv var(--d,9s) linear infinite}
+@keyframes wv{to{transform:translateX(var(--shift))}}
+#ship{transform-origin:600px 540px;animation:bob 7s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(-4px) rotate(-.45deg)}to{transform:translateY(7px) rotate(.5deg)}}
+#riser{transform-origin:600px 3560px;animation:sway 9s ease-in-out infinite alternate}
+@keyframes sway{from{transform:skewX(-.45deg)}to{transform:skewX(.45deg)}}
+.drift{animation:drift 11s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(-40px,-10px)}to{transform:translate(50px,12px)}}
+.flick{animation:flick 3.4s steps(1,end) infinite}
+@keyframes flick{0%{opacity:.9}20%{opacity:.6}35%{opacity:1}55%{opacity:.75}75%{opacity:.95}100%{opacity:.85}}
+.cloud{animation:cloud 90s linear infinite}
+@keyframes cloud{from{transform:translateX(-300px)}to{transform:translateX(1500px)}}
+.gull{animation:cloud 38s linear infinite}
+.ray{animation:ray 8s ease-in-out infinite alternate}
+@keyframes ray{from{opacity:.05}to{opacity:.17}}
+.swim{animation:swim var(--d,40s) linear infinite}
+@keyframes swim{from{transform:translateX(-120px)}to{transform:translateX(1350px)}}
+.bub{animation:bub var(--d,5s) ease-in infinite;opacity:0}
+@keyframes bub{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-130px);opacity:0}}
+.jelly{animation:jelly 3.6s ease-in-out infinite;transform-origin:center}
+@keyframes jelly{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-26px) scale(1.08,.9)}}
+.rn{animation:rn 5s ease-in-out infinite alternate;transform-origin:0 0}
+@keyframes rn{from{transform:rotate(-14deg)}to{transform:rotate(12deg)}}
+.crane{animation:crane 9s ease-in-out infinite alternate}
+@keyframes crane{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+.swing{animation:swing 4s ease-in-out infinite alternate;transform-origin:0 0}
+@keyframes swing{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.tens{animation:tens 7s ease-in-out infinite alternate}
+@keyframes tens{from{transform:translateY(-3px)}to{transform:translateY(6px)}}
+.march{stroke-dasharray:6 10;animation:march 1.2s linear infinite}
+@keyframes march{to{stroke-dashoffset:-16}}
+.marchup{stroke-dasharray:3 14;animation:marchup 1.6s linear infinite}
+@keyframes marchup{to{stroke-dashoffset:17}}
+.spin{stroke-dasharray:7 7;animation:march .5s linear infinite}
+.shake{animation:shake .25s linear infinite alternate}
+@keyframes shake{from{transform:translate(-.8px,.5px)}to{transform:translate(.8px,-.5px)}}
+.chip{animation:chip 2.2s ease-out infinite;opacity:0}
+@keyframes chip{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,20px),-70px) rotate(220deg);opacity:0}}
+.led{animation:led 1.6s steps(1,end) infinite}
+@keyframes led{0%{opacity:1}50%{opacity:.15}}
+.oilbob{animation:oilbob 6s ease-in-out infinite alternate}
+@keyframes oilbob{from{transform:translateY(0)}to{transform:translateY(5px)}}
+.gasb{animation:gasb 5s ease-in infinite;opacity:0}
+@keyframes gasb{0%{transform:translateY(0);opacity:0}20%{opacity:.9}100%{transform:translateY(-60px);opacity:0}}
+.rv{transition:opacity .2s linear}
+
+@media (max-width:767px){
+  .top .menu+div{display:none}
+  .hud{top:56px;right:8px;width:128px;font-size:10px}
+  .nav2{bottom:90px;right:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  #snow{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- definições compartilhadas -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 100 40">
+      <g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 7V33M6 20H24M24 7V33" stroke="#1496C8"/>
+        <path d="M32 33C38 -4 49 -2 54 18S66 40 72 6" stroke="#E1333F"/>
+        <path d="M80 7V33M80 20H96M96 7V33" stroke="#1496C8"/>
+      </g>
+    </symbol>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f8fc6"/><stop offset=".6" stop-color="#9cc3dd"/><stop offset="1" stop-color="#f3cfa6"/></linearGradient>
+    <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2aa3c6"/><stop offset=".1" stop-color="#1380a9"/><stop offset=".34" stop-color="#0b5a85"/><stop offset=".66" stop-color="#06385b"/><stop offset="1" stop-color="#021a30"/></linearGradient>
+    <linearGradient id="gSed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#76604a"/><stop offset="1" stop-color="#4c3b2b"/></linearGradient>
+    <linearGradient id="gPipe" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#707b83"/><stop offset=".35" stop-color="#dde4e8"/><stop offset="1" stop-color="#6a757d"/></linearGradient>
+    <linearGradient id="gBuoy" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b57d08"/><stop offset=".4" stop-color="#ffd24d"/><stop offset="1" stop-color="#b57d08"/></linearGradient>
+    <linearGradient id="gRed" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8e1820"/><stop offset=".4" stop-color="#ef4a55"/><stop offset="1" stop-color="#8e1820"/></linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0f4f86"/><stop offset=".4" stop-color="#3f9be0"/><stop offset="1" stop-color="#0f4f86"/></linearGradient>
+    <linearGradient id="gCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4f6ff" stop-opacity=".7"/><stop offset="1" stop-color="#8fdcff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gRay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9fbff" stop-opacity=".9"/><stop offset="1" stop-color="#9be3ff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gWaveF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ec3df" stop-opacity=".95"/><stop offset="1" stop-color="#1b8fb4" stop-opacity="0"/></linearGradient>
+    <radialGradient id="gOil" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#3b2410"/><stop offset="1" stop-color="#0f0a05"/></radialGradient>
+    <pattern id="grain" width="46" height="46" patternUnits="userSpaceOnUse">
+      <g fill="#fff" opacity=".5"><circle cx="5" cy="7" r="1.2"/><circle cx="22" cy="14" r="1"/><circle cx="38" cy="5" r="1.4"/><circle cx="12" cy="30" r="1.1"/><circle cx="31" cy="36" r="1.3"/><circle cx="43" cy="24" r=".9"/></g>
+      <g fill="#000" opacity=".5"><circle cx="16" cy="20" r="1.5"/><circle cx="27" cy="26" r="1"/><circle cx="6" cy="40" r="1.4"/><circle cx="40" cy="42" r="1"/></g>
+    </pattern>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter>
+    <clipPath id="lensClip"><circle cx="0" cy="0" r="116"/></clipPath>
+  </defs>
+</svg>
+
+<header class="top">
+  <button class="menu" id="menuBtn" aria-label="Abrir menu de seções" aria-expanded="false"><i></i><i></i><i></i></button>
+  <svg class="logo" viewBox="0 0 100 40" role="img" aria-label="HMH"><use href="#logo"/></svg>
+  <a class="pill" href="https://hmhw.com" target="_blank" rel="noopener">HMHW</a>
+</header>
+<nav class="drawer" id="drawer" aria-label="Seções"></nav>
+<div class="rail" id="rail" aria-label="Progresso da descida"></div>
+
+<aside class="hud" aria-label="Condições na profundidade atual">
+  <div class="big"><span>Prof.</span><b id="hDepth">0 m</b></div>
+  <div><span>Pressão</span><b id="hPres">1 bar</b></div>
+  <div><span>Temp.</span><b id="hTemp">28 °C</b></div>
+  <div><span>Luz</span><b id="hLux">100%</b></div>
+  <small id="hZone">Superfície</small>
+</aside>
+<div class="nav2"><button class="up" id="bUp" aria-label="Seção anterior">↑</button><button class="dn" id="bDn" aria-label="Próxima seção">↓</button></div>
+<footer class="bottom"><span>HMHW</span><svg class="logo" viewBox="0 0 100 40"><use href="#logo"/></svg><span class="arr"><button id="bPrev" aria-label="Anterior">‹</button><button id="bNext" aria-label="Próxima">›</button></span></footer>
+
+<canvas id="snow" aria-hidden="true"></canvas>
+<div class="card" id="card" role="dialog" aria-live="polite"></div>
+
+<main id="world">
+  <svg id="art" viewBox="0 0 1200 6000" role="img" aria-label="Ilustração da descida de uma sonda de perfuração offshore até o reservatório">
+    <!-- céu e água -->
+    <rect width="1200" height="540" fill="url(#gSky)"/>
+    <g id="clouds" fill="#fff" opacity=".85">
+      <g class="cloud" style="animation-delay:-20s"><ellipse cx="200" cy="120" rx="90" ry="20"/><ellipse cx="260" cy="105" rx="60" ry="22"/></g>
+      <g class="cloud" style="animation-delay:-55s"><ellipse cx="500" cy="200" rx="110" ry="18" opacity=".7"/><ellipse cx="560" cy="188" rx="64" ry="20" opacity=".7"/></g>
+      <g class="cloud" style="animation-delay:-75s"><ellipse cx="700" cy="70" rx="100" ry="16" opacity=".6"/></g>
+    </g>
+    <g class="gull" stroke="#fff" stroke-width="2" fill="none" style="animation-delay:-10s" transform="translate(0 250)"><path d="M0 0q8 -9 16 0q8 -9 16 0"/></g>
+    <g class="gull" stroke="#fff" stroke-width="2" fill="none" style="animation-delay:-26s;animation-duration:46s" transform="translate(0 190)"><path d="M0 0q6 -7 12 0q6 -7 12 0"/></g>
+    <rect y="540" width="1200" height="3300" fill="url(#gWater)"/>
+    <g id="rays"></g>
+
+    <!-- subsolo -->
+    <path d="M0 3850C150 3820 300 3865 450 3835S750 3815 900 3845S1120 3830 1200 3840V6000H0Z" fill="url(#gSed)"/>
+    <path d="M0 4120C200 4090 400 4150 600 4120S1000 4090 1200 4130V6000H0Z" fill="#54402f"/>
+    <path d="M0 4380C250 4350 450 4410 650 4375S1000 4340 1200 4380V6000H0Z" fill="#7c6a55"/>
+    <path d="M0 4650C200 4630 500 4690 700 4655S1050 4620 1200 4660V6000H0Z" fill="#38332f"/>
+    <path d="M0 4950C300 4920 500 4980 700 4945S1000 4915 1200 4955V6000H0Z" fill="#5a5248"/>
+    <path d="M0 5230C200 5180 400 5130 600 5120S1000 5200 1200 5260V6000H0Z" fill="#26221f"/>
+    <path d="M0 5340C200 5300 400 5260 600 5250S1000 5310 1200 5350V6000H0Z" fill="#8a6c3b"/>
+    <path d="M0 5960H1200V6000H0Z" fill="#2b2420"/>
+    <rect y="3840" width="1200" height="2160" fill="url(#grain)" opacity=".28"/>
+    <g id="strataLabels" font-size="14" fill="rgba(255,255,255,.6)" text-anchor="end" font-family="Inter,Segoe UI,sans-serif">
+      <text x="1170" y="4030">Sedimentos</text><text x="1170" y="4300">Argila</text><text x="1170" y="4560">Arenito</text>
+      <text x="1170" y="4850">Folhelho</text><text x="1170" y="5130">Calcário</text><text x="1170" y="5240">Rocha selante</text>
+    </g>
+
+    <!-- reservatório -->
+    <g id="reserv" class="rv">
+      <g class="oilbob">
+        <path d="M180 5800C230 5640 420 5610 560 5640C700 5660 760 5700 840 5760C900 5830 780 5900 600 5905C420 5910 150 5890 180 5800Z" fill="url(#gOil)" stroke="#000" stroke-opacity=".4"/>
+        <path d="M260 5722C380 5682 520 5692 640 5722" stroke="rgba(255,196,96,.4)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M330 5770C430 5742 540 5750 620 5774" stroke="rgba(255,196,96,.25)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </g>
+      <text x="300" y="5870" fill="#fff" font-size="22" font-weight="600" font-family="Inter,Segoe UI,sans-serif">óleo</text>
+      <path d="M700 5272C760 5240 920 5240 980 5292C1000 5330 960 5362 900 5362H760C700 5350 680 5300 700 5272Z" fill="rgba(255,240,180,.28)" stroke="rgba(255,240,180,.6)" stroke-width="2"/>
+      <g id="gas" fill="none" stroke="rgba(255,250,215,.9)" stroke-width="1.5"></g>
+      <text x="880" y="5232" fill="#fff" font-size="20" font-weight="600" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif">gás natural</text>
+      <line x1="880" y1="5240" x2="860" y2="5290" stroke="#fff" stroke-opacity=".7"/>
+    </g>
+
+    <!-- poço: cimento, revestimentos, coluna -->
+    <g id="well">
+      <rect x="570" y="3830" width="60" height="320" fill="#b9ab90" opacity=".75"/>
+      <rect x="576" y="3830" width="48" height="570" fill="#b9ab90" opacity=".7"/>
+      <rect x="582" y="3830" width="36" height="780" fill="#b9ab90" opacity=".65"/>
+      <rect x="578" y="3830" width="44" height="320" fill="#8d949a" stroke="#4b5258"/><rect x="583" y="3830" width="34" height="320" fill="#10161b"/>
+      <rect x="584" y="3830" width="32" height="570" fill="#9aa2a8" stroke="#4b5258"/><rect x="588" y="3830" width="24" height="570" fill="#10161b"/>
+      <rect x="590" y="3830" width="20" height="780" fill="#a5adb3" stroke="#4b5258"/><rect x="593" y="3830" width="14" height="780" fill="#10161b"/>
+      <rect x="593" y="4610" width="14" height="190" fill="#0b0f13"/>
+      <path id="planned" d="M600 4800V5640" stroke="#8aa0b0" stroke-width="5" fill="none" stroke-dasharray="4 10" opacity=".7"/>
+      <g id="oilflow" opacity="0"><path d="M600 5640V3840" stroke="#ffb347" stroke-width="4" fill="none" class="marchup"/></g>
+      <line x1="600" y1="3830" x2="600" y2="4790" stroke="#cfd6dc" stroke-width="5"/>
+      <line x1="600" y1="3830" x2="600" y2="4790" stroke="#6b7680" stroke-width="5" class="march"/>
+    </g>
+    <g id="bit" transform="translate(600 4800)"><g class="shake"><path d="M-9 -12H9L12 6H-12Z" fill="#8d979f" stroke="#2c343b"/><circle cx="-6" cy="8" r="4" fill="#d5dbe0"/><circle cx="6" cy="8" r="4" fill="#d5dbe0"/></g></g>
+
+    <!-- lupa da broca -->
+    <g id="lens" class="rv">
+      <line x1="614" y1="4792" x2="818" y2="4690" stroke="#fff" stroke-opacity=".75" stroke-width="2"/>
+      <circle cx="600" cy="4800" r="22" fill="none" stroke="#fff" stroke-width="2.5"/>
+      <g transform="translate(930 4660)">
+        <circle r="120" fill="#2a2420" stroke="#e8eef2" stroke-width="5"/>
+        <g clip-path="url(#lensClip)">
+          <rect x="-120" y="-120" width="240" height="240" fill="#2d2621"/>
+          <rect x="-120" y="-120" width="240" height="240" fill="url(#grain)" opacity=".6"/>
+          <path d="M-120 60Q-60 40 0 58T120 52V120H-120Z" fill="#3a322b"/>
+          <g class="shake">
+            <rect x="-15" y="-130" width="30" height="100" fill="#cfd6dc"/>
+            <rect x="-15" y="-130" width="30" height="100" fill="none" stroke="#6b7680" stroke-width="30" stroke-dasharray="6 9" class="march" opacity=".4"/>
+            <path d="M-46 -34H46L58 22H-58Z" fill="#59636b" stroke="#2c343b" stroke-width="3"/>
+            <ellipse cx="-34" cy="38" rx="28" ry="34" fill="#9aa5ad" stroke="#2c343b" stroke-width="3"/>
+            <ellipse cx="34" cy="38" rx="28" ry="34" fill="#9aa5ad" stroke="#2c343b" stroke-width="3"/>
+            <ellipse cx="-34" cy="38" rx="28" ry="34" fill="none" stroke="#fff" stroke-width="7" class="spin"/>
+            <ellipse cx="34" cy="38" rx="28" ry="34" fill="none" stroke="#fff" stroke-width="7" class="spin" style="animation-direction:reverse"/>
+            <ellipse cx="0" cy="48" rx="20" ry="26" fill="#b8c2c9" stroke="#2c343b" stroke-width="3"/>
+            <ellipse cx="0" cy="48" rx="20" ry="26" fill="none" stroke="#fff" stroke-width="6" class="spin"/>
+          </g>
+          <g id="chips" fill="#8a7860"></g>
+        </g>
+        <circle r="120" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5" transform="scale(1.04)"/>
+        <text y="148" text-anchor="middle" fill="#fff" font-size="15" font-weight="600" font-family="Inter,Segoe UI,sans-serif">Broca em ação</text>
+      </g>
+    </g>
+
+    <!-- peixes e água-viva -->
+    <g id="fishes" opacity=".55"></g>
+    <g class="jelly" transform="translate(200 2650)"><g opacity=".6"><path d="M-22 0C-22 -26 22 -26 22 0Z" fill="#9fe3ff"/><path d="M-14 0q-4 18 0 34M-5 0q-4 20 0 40M5 0q4 20 0 40M14 0q4 18 0 34" stroke="#9fe3ff" stroke-width="2" fill="none"/></g></g>
+
+    <!-- riser -->
+    <g id="riser">
+      <rect x="574" y="700" width="2" height="2860" fill="#4d5a63"/><rect x="624" y="700" width="2" height="2860" fill="#4d5a63"/>
+      <rect x="584" y="640" width="32" height="2930" fill="url(#gPipe)"/>
+      <g id="joints"></g>
+      <g id="buoys"></g>
+    </g>
+
+    <!-- BOP -->
+    <g id="bop">
+      <rect x="440" y="3796" width="320" height="26" fill="#f3b81a" stroke="#9a6d00" stroke-width="2"/>
+      <rect x="585" y="3790" width="30" height="50" fill="url(#gRed)"/>
+      <rect x="575" y="3774" width="50" height="22" fill="#9aa5ad" stroke="#4b5258"/>
+      <g id="bopRams">
+        <rect x="490" y="3730" width="220" height="38" rx="4" fill="url(#gRed)" stroke="#4d0d12" stroke-width="2"/>
+        <rect x="466" y="3735" width="28" height="28" rx="4" fill="#d8404a" stroke="#4d0d12" stroke-width="2"/><rect x="706" y="3735" width="28" height="28" rx="4" fill="#d8404a" stroke="#4d0d12" stroke-width="2"/>
+        <rect x="490" y="3682" width="220" height="38" rx="4" fill="url(#gRed)" stroke="#4d0d12" stroke-width="2"/>
+        <rect x="466" y="3687" width="28" height="28" rx="4" fill="#d8404a" stroke="#4d0d12" stroke-width="2"/><rect x="706" y="3687" width="28" height="28" rx="4" fill="#d8404a" stroke="#4d0d12" stroke-width="2"/>
+      </g>
+      <rect x="545" y="3636" width="110" height="46" rx="14" fill="url(#gBlue)" stroke="#0a2e50" stroke-width="2"/>
+      <rect x="565" y="3600" width="70" height="40" rx="6" fill="#5b6870" stroke="#2f3a41" stroke-width="2"/>
+      <rect x="586" y="3570" width="28" height="34" fill="url(#gPipe)"/>
+      <g fill="none" stroke="#f3b81a" stroke-width="10"><rect x="478" y="3600" width="244" height="196"/></g>
+      <g stroke="#f3b81a" stroke-width="5"><line x1="478" y1="3600" x2="722" y2="3796"/><line x1="722" y1="3600" x2="478" y2="3796"/></g>
+      <rect x="432" y="3640" width="46" height="70" rx="6" fill="url(#gRed)" stroke="#4d0d12" stroke-width="2"/><rect x="722" y="3640" width="46" height="70" rx="6" fill="url(#gRed)" stroke="#4d0d12" stroke-width="2"/>
+      <circle class="led" cx="455" cy="3652" r="4" fill="#4cff7a"/><circle class="led" cx="745" cy="3652" r="4" fill="#ff5252" style="animation-delay:-.8s"/>
+      <path d="M432 3690Q380 3700 360 3760T330 3790" stroke="#2a2a2a" stroke-width="7" fill="none"/><path d="M432 3690Q380 3700 360 3760T330 3790" stroke="#f3b81a" stroke-width="3" fill="none" stroke-dasharray="14 8"/>
+      <path d="M768 3690Q820 3700 840 3760T870 3790" stroke="#2a2a2a" stroke-width="7" fill="none"/><path d="M768 3690Q820 3700 840 3760T870 3790" stroke="#f3b81a" stroke-width="3" fill="none" stroke-dasharray="14 8"/>
+      <ellipse id="bopGlow" class="rv" cx="600" cy="3700" rx="200" ry="130" fill="#6fd8ff" opacity=".07" filter="url(#glow)"/>
+    </g>
+    <g id="rovs"></g>
+    <g id="bubbles"></g>
+
+    <!-- tensionadores -->
+    <g id="tens" class="rv">
+      <g class="tens">
+        <rect x="556" y="752" width="88" height="16" rx="3" fill="#2d343a" stroke="#161b1f"/>
+        <g id="tL" style="transform-origin:560px 760px"><line x1="560" y1="760" x2="420" y2="606" stroke="#b9c3ca" stroke-width="8" stroke-linecap="round"/><line x1="520" y1="716" x2="420" y2="606" stroke="#c8242b" stroke-width="18" stroke-linecap="round"/></g>
+        <g id="tR" style="transform-origin:640px 760px"><line x1="640" y1="760" x2="780" y2="606" stroke="#b9c3ca" stroke-width="8" stroke-linecap="round"/><line x1="680" y1="716" x2="780" y2="606" stroke="#c8242b" stroke-width="18" stroke-linecap="round"/></g>
+      </g>
+    </g>
+
+    <!-- navio (balança com as ondas) -->
+    <g id="waveBack"></g>
+    <g id="ship">
+      <g id="shipArt"></g>
+    </g>
+    <g id="waveFront"></g>
+
+    <!-- sonda mergulhadora (acompanha a rolagem) -->
+    <g id="probe" transform="translate(600 600)">
+      <circle r="26" fill="#8fe6ff" opacity=".35" filter="url(#glow)"/>
+      <circle r="6" fill="#fff"/><circle r="11" fill="none" stroke="#8fe6ff" stroke-width="2" opacity=".8"/>
+    </g>
+  </svg>
+
+  <div class="panels" id="panels"></div>
+  <div id="hots"></div>
+</main>
+
+<script>
+(()=>{
+'use strict';
+const NS='http://www.w3.org/2000/svg', BASE='https://hmhw.com';
+const $=(s,r=document)=>r.querySelector(s);
+const el=(n,a={},p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const smooth=t=>{t=clamp(t);return t*t*(3-2*t)};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+
+/* ---------- conteúdo ---------- */
+const SECS=[
+ {t:'Operação de superfície (topsides)',foco:260,py:90,cor:'#1b2f4d',u:'/archives/business_area/drilling-equipment-offshore/',
+  p:'Sonda de perfuração offshore operando na superfície. Em destaque, os equipamentos de topside: derrick, top drive, mesa rotativa, roughnecks, guinchos, bombas de lama e guindastes.'},
+ {t:'Sistema de tensionadores de riser',foco:800,py:660,cor:'#8b8f94',u:'/service/motion-compensation-systems/',
+  p:'Abaixo da plataforma, os tensionadores compensam o movimento das ondas e mantêm a coluna de riser estável sob a superfície da água.'},
+ {t:'Coluna de riser contínua',foco:2100,py:1720,cor:'#6c7076',u:'/service/drilling-risers/',
+  p:'O riser de perfuração atravessa a coluna d’água e conecta a sonda ao poço de forma rápida e segura. Módulos de flutuação aliviam o peso suspenso.'},
+ {t:'Sistema de leito marinho e BOP',foco:3680,py:3440,cor:'#2a7fa8',u:'/archives/business_area/drilling-equipment-offshore-pressure-control/',
+  p:'No leito marinho, o riser se conecta ao conjunto de BOP e à cabeça de poço, garantindo o controle total da pressão.'},
+ {t:'Perfuração do poço (drilling)',foco:4600,py:4180,cor:'#c8303b',u:'/archives/business_area/drilling-equipment/',
+  p:'Abaixo do leito marinho, a broca avança pelas camadas de rocha, guiada pela tecnologia de perfuração para abrir o caminho com segurança.'},
+ {t:'Produção de óleo e gás',foco:5480,py:5330,cor:'#7a7e83',u:'/archives/business_area/drilling-equipment/',
+  p:'Alcançando o objetivo: o reservatório de óleo e gás. A perfuração segura é o primeiro passo da jornada de engenharia da HMH.'}
+];
+const HOTS=[
+ {x:610,y:150,n:'MH Top Drive',d:'Gira a coluna de perfuração a partir do topo do mastro.',u:'/service/top-drives-offshore/'},
+ {x:560,y:310,n:'Estruturas: derrick e subestrutura',d:'Torre e subestrutura que sustentam o sistema de içamento.',u:'/service/ramrig/'},
+ {x:600,y:384,n:'Mesa rotativa e roughneck',d:'Transmitem torque à coluna e manuseiam os tubulares no piso da sonda.',u:'/service/rotary-tables-2/'},
+ {x:420,y:300,n:'Guindastes e equipamentos de manuseio',d:'Movimentação de cargas e tubulares no convés.',u:'/service/handling-equipment-and-cranes/'},
+ {x:300,y:404,n:'Guincho, bombas e sistemas de lama',d:'Drawworks, bombas de lama e tratamento do fluido de perfuração.',u:'/service/mh-mud-systems/'},
+ {x:600,y:700,n:'Compensação de movimento',d:'Mantém a coluna estável apesar do balanço da embarcação.',u:'/service/motion-compensation-systems/'},
+ {x:600,y:2250,n:'Drilling Risers',d:'Juntas de riser com módulos de flutuação ligando a sonda ao BOP.',u:'/service/drilling-risers/'},
+ {x:600,y:3618,n:'BOP anular Hydril',d:'Veda ao redor de qualquer tubular ou do poço aberto.',u:'/service/bop-annulars-2/'},
+ {x:600,y:3705,n:'BOP de gaveta Hydril',d:'Gavetas que fecham e vedam o poço em situações de controle de pressão.',u:'/service/bop-rams-2/'},
+ {x:600,y:3783,n:'Conector Vetco H-4 e gaxetas',d:'Conecta o conjunto de BOP à cabeça de poço.',u:'/service/h4-connector/'},
+ {x:455,y:3676,n:'Controles e análises de BOP',d:'Pods de controle e análise de dados das funções do BOP.',u:'/service/bop-control-and-analytics/'},
+ {x:830,y:2860,n:'ROV (contexto)',d:'Veículo remoto que inspeciona e opera equipamentos no fundo.',ctx:1},
+ {x:600,y:4800,n:'Broca (contexto)',d:'Corta a rocha na ponta da coluna de perfuração.',ctx:1},
+ {x:640,y:5700,n:'Reservatório (contexto)',d:'Rocha porosa que armazena óleo e gás natural.',ctx:1}
+];
+
+/* ---------- construção do SVG ---------- */
+function waves(parent,y,amp,per,fill,shift,dur,stroke){
+  let d=`M0 ${y}`;let up=1;
+  for(let x=0;x<3000;x+=per/2){d+=`Q${x+per/4} ${y-amp*up} ${x+per/2} ${y}`;up=-up}
+  d+=`V${y+70}H0Z`;
+  const g=el('g',{class:'wv',style:`--shift:-${shift}px;--d:${dur}s`},parent);
+  el('path',{d,fill},g);
+  if(stroke)el('path',{d:d.split('V')[0],fill:'none',stroke:'rgba(255,255,255,.55)','stroke-width':'1.6'},g);
+}
+waves($('#waveBack'),541,7,300,'rgba(34,140,180,.7)',600,14,false);
+waves($('#waveFront'),548,8,240,'url(#gWaveF)',480,10,true);
+waves($('#waveFront'),556,5,180,'rgba(25,120,165,.45)',360,7,false);
+
+// raios de luz
+{const g=$('#rays');[90,300,520,740,960].forEach((x,i)=>{el('polygon',{points:`${x},540 ${x+70},540 ${x+300},1800 ${x+110},1800`,fill:'url(#gRay)',class:'ray',style:`animation-delay:${-i*1.7}s`},g)})}
+
+// navio
+const S=$('#shipArt');
+el('path',{d:'M120 420H1130L1092 540Q1078 574 1040 578H220Q186 574 170 540Z',fill:'#1d3558'},S);
+el('path',{d:'M172 524H1090L1081 546Q1072 578 1040 580H222Q190 576 175 548Z',fill:'#a8282f'},S);
+el('rect',{x:120,y:416,width:1010,height:8,fill:'#0f1f38'},S);
+for(let x=190;x<1060;x+=34)el('rect',{x,y:452,width:16,height:7,rx:2,fill:'#38598a',opacity:.8},S);
+// convés: racks, contêineres
+[[170,372,70,34,'#2f6db3'],[246,380,56,26,'#e9eef2'],[306,376,70,30,'#f3b81a'],[380,386,70,20,'#f3b81a'],[452,386,60,20,'#c8242b']].forEach(([x,y,w,h,c])=>el('rect',{x,y,width:w,height:h,fill:c,stroke:'rgba(0,0,0,.35)'},S));
+el('rect',{x:672,y:386,width:150,height:34,fill:'#2f3a46'},S);
+el('rect',{x:690,y:370,width:40,height:20,fill:'#e9eef2'},S);
+// superestrutura
+el('rect',{x:850,y:330,width:210,height:90,fill:'#f2f4f6',stroke:'#aeb7bf'},S);
+el('rect',{x:900,y:296,width:110,height:36,fill:'#e4e8ec',stroke:'#aeb7bf'},S);
+el('rect',{x:930,y:270,width:50,height:28,fill:'#d6dbe0',stroke:'#aeb7bf'},S);
+el('rect',{x:1000,y:262,width:30,height:60,fill:'#c8242b'},S);
+for(let r=0;r<3;r++)for(let x=862;x<1050;x+=16)el('rect',{x,y:342+r*24,width:10,height:11,fill:'#1b3a5c'},S);
+for(let x=910;x<1000;x+=16)el('rect',{x,y:306,width:10,height:10,fill:'#1b3a5c'},S);
+el('line',{x1:955,y1:270,x2:955,y2:226,stroke:'#555','stroke-width':2},S);
+// heliponto
+el('rect',{x:1058,y:384,width:140,height:8,fill:'#6b7680'},S);
+el('path',{d:'M1090 392L1070 424M1150 392L1170 424',stroke:'#6b7680','stroke-width':4},S);
+el('circle',{cx:1128,cy:384,r:22,fill:'none',stroke:'#fff','stroke-width':3,transform:'scale(1,.18)',style:'transform-origin:1128px 384px'},S);
+// baleeiras
+[760,800].forEach(x=>el('path',{d:`M${x} 396q18 -22 38 0Z`,fill:'#ff8a1f',stroke:'#7a3a00'},S));
+// guindastes
+function crane(x,yb,tx,ty,delay){
+  el('rect',{x:x-8,y:yb-70,width:16,height:70,fill:'#f3b81a',stroke:'#9a6d00'},S);
+  const g=el('g',{class:'crane',style:`transform-origin:${x}px ${yb-66}px;animation-delay:${delay}s`},S);
+  el('line',{x1:x,y1:yb-66,x2:tx,y2:ty,stroke:'#f3b81a','stroke-width':9,'stroke-linecap':'round'},g);
+  el('line',{x1:x,y1:yb-66,x2:tx,y2:ty,stroke:'#9a6d00','stroke-width':2,'stroke-dasharray':'6 6'},g);
+  const h=el('g',{class:'swing',transform:`translate(${tx} ${ty})`},g);
+  el('line',{x1:0,y1:0,x2:0,y2:60,stroke:'#222','stroke-width':1.5},h);
+  el('rect',{x:-9,y:58,width:18,height:12,fill:'#c8242b'},h);
+}
+crane(372,402,452,190,0);crane(836,402,934,160,-3);
+// derrick
+{
+  const g=el('g',{},S);const yb=400,yt=72,xb=[545,655],xt=[578,622],N=15;
+  const X=(i,s)=>lerp(xb[s],xt[s],i/N), Y=i=>lerp(yb,yt,i/N);
+  el('rect',{x:520,y:398,width:160,height:12,fill:'#2b333b'},g);
+  for(let i=0;i<N;i++){
+    el('line',{x1:X(i,0),y1:Y(i),x2:X(i,1),y2:Y(i),stroke:'#2e3944','stroke-width':1.6},g);
+    el('line',{x1:X(i,i%2?1:0),y1:Y(i),x2:X(i+1,i%2?0:1),y2:Y(i+1),stroke:'#2e3944','stroke-width':1.6},g);
+  }
+  el('line',{x1:xb[0],y1:yb,x2:xt[0],y2:yt,stroke:'#222c36','stroke-width':4.5},g);
+  el('line',{x1:xb[1],y1:yb,x2:xt[1],y2:yt,stroke:'#222c36','stroke-width':4.5},g);
+  el('rect',{x:570,y:56,width:60,height:20,rx:3,fill:'#6a757d',stroke:'#2e3944'},g);
+  el('rect',{x:562,y:236,width:76,height:36,rx:3,fill:'#fff',stroke:'#aeb7bf'},g);
+  el('svg',{x:566,y:240,width:68,height:28,viewBox:'0 0 100 40'},g).innerHTML='<use href="#logo"/>';
+  // top drive e cabos (JS)
+  window._cab=[el('line',{stroke:'#1a1a1a','stroke-width':1.5},g),el('line',{stroke:'#1a1a1a','stroke-width':1.5},g)];
+  window._td=el('g',{},g);
+  el('rect',{x:586,y:0,width:44,height:40,rx:4,fill:'url(#gRed)',stroke:'#4d0d12','stroke-width':2},_td);
+  el('rect',{x:596,y:-10,width:24,height:12,fill:'#2e3944'},_td);
+  el('circle',{cx:608,cy:44,r:7,fill:'#2e3944'},_td);
+  window._pipe=el('line',{x1:608,x2:608,stroke:'#c0c8ce','stroke-width':6},g);
+  el('line',{x1:608,x2:608,stroke:'#6b7680','stroke-width':6,class:'march',id:'pipeM'},g);
+  // roughneck
+  el('rect',{x:580,y:372,width:34,height:26,rx:3,fill:'url(#gRed)',stroke:'#4d0d12'},g);
+  const rn=el('g',{transform:'translate(614 384)'},g);const a=el('g',{class:'rn'},rn);
+  el('rect',{x:0,y:-5,width:34,height:10,rx:4,fill:'#d8404a',stroke:'#4d0d12'},a);
+  el('rect',{x:588,y:392,width:40,height:6,fill:'#ff8a1f'},g);
+}
+// condutor da sonda ao riser (junta telescópica)
+el('rect',{x:578,y:560,width:44,height:86,rx:3,fill:'#4b565e',stroke:'#1f262b','stroke-width':2},S);
+el('rect',{x:572,y:552,width:56,height:14,rx:3,fill:'#c8242b'},S);
+
+// juntas e módulos de flutuação
+{const j=$('#joints');for(let y=760;y<3560;y+=88)el('rect',{x:578,y,width:44,height:9,rx:2,fill:'#46525a'},j);
+ const b=$('#buoys');for(let y=1500;y<3440;y+=132){
+   el('rect',{x:556,y,width:88,height:116,rx:18,fill:'url(#gBuoy)',stroke:'#7a5500','stroke-width':2},b);
+   el('rect',{x:556,y:y+52,width:88,height:8,fill:'#3a2a00',opacity:.35},b);}}
+
+// ROVs
+function rov(x,y,sc,delay){
+  const g=el('g',{transform:`translate(${x} ${y}) scale(${sc})`},$('#rovs'));
+  const d=el('g',{class:'drift',style:`animation-delay:${delay}s`},g);
+  el('polygon',{points:'-20,8 -170,150 -30,150',fill:'url(#gCone)',class:'flick'},d);
+  el('polygon',{points:'20,8 170,150 30,150',fill:'url(#gCone)',class:'flick',style:'animation-delay:-1.4s'},d);
+  el('rect',{x:-34,y:-14,width:68,height:28,rx:6,fill:'#f3b81a',stroke:'#9a6d00','stroke-width':2},d);
+  el('rect',{x:-30,y:-26,width:60,height:12,rx:6,fill:'#e7e3d3',stroke:'#9a9480'},d);
+  [-40,40].forEach(c=>el('circle',{cx:c,cy:-4,r:8,fill:'#2b2f33',stroke:'#111'},d));
+  [-22,22].forEach(c=>el('circle',{cx:c,cy:10,r:4.5,fill:'#fff'},d));
+  el('path',{d:'M30 12L52 26L62 20',stroke:'#2b2f33','stroke-width':3,fill:'none','stroke-linecap':'round'},d);
+  return g;
+}
+rov(840,2850,.9,0);rov(330,3000,.8,-5);rov(300,3730,1,-3);rov(900,3730,1,-8);
+
+// peixes
+{const f=$('#fishes');for(let i=0;i<9;i++){
+  const y=1900+i*55+rnd()*40,dir=i%2?1:-1;
+  const g=el('g',{transform:`translate(0 ${y})`},f);
+  const sw=el('g',{class:'swim',style:`--d:${30+rnd()*30}s;animation-delay:${-rnd()*40}s${dir<0?';animation-direction:normal':''}`},g);
+  el('path',{d:'M0 0Q10 -7 22 0Q10 7 0 0M22 0L31 -6L31 6Z',fill:'#a9dcea'},sw);
+}}
+
+// bolhas
+{const b=$('#bubbles');const spots=[[600,3800,60],[840,2870,30],[330,3020,30],[300,3750,30],[900,3750,30]];
+ spots.forEach(([x,y,w])=>{for(let i=0;i<6;i++)el('circle',{cx:x+(rnd()-.5)*w*2,cy:y,r:1.5+rnd()*3,fill:'none',stroke:'#cdefff','stroke-width':1.2,class:'bub',style:`--d:${3.5+rnd()*3}s;animation-delay:${-rnd()*6}s`},b)})}
+// gás
+{const g=$('#gas');[[740,5330],[790,5310],[850,5340],[900,5320],[950,5330],[820,5290],[880,5300]].forEach(([x,y],i)=>{const c=el('circle',{cx:x,cy:y,r:5+rnd()*6},g);el('circle',{cx:x,cy:y-10,r:2.5,fill:'#fff',class:'gasb',style:`animation-delay:${-i*.7}s`},g)})}
+// estilhaços da broca
+{const c=$('#chips');for(let i=0;i<9;i++)el('polygon',{points:'0,0 5,2 3,6 -2,4',class:'chip',transform:`translate(${-40+i*10} ${60+(i%3)*8})`,style:`--dx:${(i%2?1:-1)*(10+i*3)}px;animation-delay:${-i*.25}s`},c)}
+
+/* ---------- painéis, trilho, menu ---------- */
+const world=$('#world'),panels=$('#panels'),rail=$('#rail'),drawer=$('#drawer');
+SECS.forEach((s,i)=>{
+  const n=String(i+1).padStart(2,'0');
+  const p=document.createElement('section');p.className='panel';p.dataset.i=i;
+  p.innerHTML=`<h2><em>${n}.</em>${s.t}</h2><p>${s.p}</p><a class="btn" href="${BASE+s.u}" target="_blank" rel="noopener">Saiba mais</a>`;
+  panels.appendChild(p);s.el=p;
+  const seg=document.createElement('div');seg.className='seg';seg.style.background=s.cor;
+  seg.innerHTML=`<button aria-label="Ir para ${s.t}"></button>`;seg.firstChild.onclick=()=>go(i);rail.appendChild(seg);s.seg=seg;
+  const b=document.createElement('button');b.innerHTML=`<b>${n}</b><span>${s.t}</span>`;b.onclick=()=>{go(i);toggleMenu(false)};drawer.appendChild(b);s.db=b;
+});
+function toggleMenu(v){drawer.classList.toggle('on',v);$('#menuBtn').setAttribute('aria-expanded',v)}
+$('#menuBtn').onclick=()=>toggleMenu(!drawer.classList.contains('on'));
+
+// hotspots
+const hots=$('#hots'),card=$('#card');let openHot=null;
+HOTS.forEach((h,i)=>{
+  const b=document.createElement('button');b.className='hot'+(h.ctx?' ctx':'');
+  b.style.left=h.x/12+'%';b.style.top=h.y/60+'%';b.setAttribute('aria-label',h.n);
+  b.onclick=e=>{e.stopPropagation();showCard(i)};
+  hots.appendChild(b);h.el=b;
+});
+function showCard(i){
+  const h=HOTS[i];openHot=i;
+  card.innerHTML=`<button class="x" aria-label="Fechar">×</button><span class="tag ${h.ctx?'ctx':''}">${h.ctx?'Contexto':'Produto HMH'}</span><h3>${h.n}</h3><p>${h.d}</p>${h.u?`<a href="${BASE+h.u}" target="_blank" rel="noopener">Ver no site da HMH ↗</a>`:''}`;
+  card.querySelector('.x').onclick=closeCard;card.classList.add('on');placeCard();
+}
+function closeCard(){openHot=null;card.classList.remove('on')}
+function placeCard(){
+  if(openHot==null)return;const r=HOTS[openHot].el.getBoundingClientRect();
+  let x=r.right+14,y=r.top-10;if(x+270>innerWidth)x=r.left-274;if(x<8)x=8;y=clamp(y,60,innerHeight-200);
+  card.style.left=x+'px';card.style.top=y+'px';
+}
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeCard();toggleMenu(false)}});
+document.addEventListener('click',e=>{if(!card.contains(e.target))closeCard()});
+
+/* ---------- layout e rolagem ---------- */
+let s=1,vh=innerHeight,cur=0;
+function layout(){
+  vh=innerHeight;const W=world.offsetWidth;s=W/1200;panels.style.height=hots.style.height=W*5+'px';
+  SECS.forEach(x=>x.el.style.top=x.py*s+'px');
+  size();update();
+}
+function go(i){i=clamp(i,0,SECS.length-1);scrollTo({top:SECS[i].foco*s-vh/2,behavior:RM?'auto':'smooth'})}
+$('#bUp').onclick=$('#bPrev').onclick=()=>go(cur-1);
+$('#bDn').onclick=$('#bNext').onclick=()=>go(cur+1);
+
+const PT=[[540,28],[1400,10],[3840,3],[5650,95]];
+function interp(pts,y){if(y<=pts[0][0])return pts[0][1];for(let i=1;i<pts.length;i++)if(y<=pts[i][0]){const t=(y-pts[i-1][0])/(pts[i][0]-pts[i-1][0]);return lerp(pts[i-1][1],pts[i][1],t)}return pts[pts.length-1][1]}
+const depthOf=y=>y<=540?0:y<=3840?(y-540)/3300*2200:Math.min(5000,2200+(y-3840)/1810*2800);
+const fmt=n=>Math.round(n).toLocaleString('pt-BR');
+const rvs=[['#tens',720,380],['#lens',4720,420],['#reserv',5620,520],['#bopGlow',3700,500]].map(([q,y,r])=>({e:$(q),y,r}));
+let lastDepthTxt='';
+
+function update(){
+  const sy=scrollY,cy=(sy+vh/2)/s,vhw=vh/s;
+  // seção ativa
+  let a=0;SECS.forEach((x,i)=>{if(cy>=x.foco-(i?(x.foco-SECS[i-1].foco)*.45:9999))a=i});
+  cur=a;SECS.forEach((x,i)=>{x.seg.classList.toggle('on',i===a);x.seg.classList.toggle('done',i<a);x.db.classList.toggle('cur',i===a)});
+  // painéis: fade in/out
+  SECS.forEach(x=>{
+    const pc=(x.py*s+x.el.offsetHeight/2)-(sy+vh/2),d=pc/vh;
+    const o=1-smooth((Math.abs(d)-.3)/.28);
+    x.el.style.opacity=o.toFixed(3);x.el.style.transform=`translateY(${(clamp(d,-1,1)*34).toFixed(1)}px)`;
+    x.el.style.pointerEvents=o>.2?'auto':'none';
+  });
+  // elementos que acendem ao se aproximar
+  rvs.forEach(r=>{const o=lerp(.2,1,1-smooth((Math.abs(cy-r.y)-r.r*.4)/(r.r*.9)));r.e.style.opacity=o.toFixed(3)});
+  HOTS.forEach(h=>{const off=Math.abs(cy-h.y)>vhw*.62;h.el.dataset.off=off?1:0});
+  // sonda
+  const py=clamp(cy,560,5650);$('#probe').setAttribute('transform',`translate(600 ${py})`);
+  // poço vivo ao chegar no reservatório
+  const live=cy>5150;$('#planned').setAttribute('opacity',live?0:.7);$('#oilflow').setAttribute('opacity',live?1:0);
+  // HUD
+  const dep=depthOf(py),t=interp(PT,py);
+  const lux=py<=540?100:clamp(100-(py-540)/1100*100,0,100);
+  $('#hDepth').textContent=fmt(dep)+' m';$('#hPres').textContent=fmt(1+dep/10)+' bar';
+  $('#hTemp').textContent=Math.round(t)+' °C';$('#hLux').textContent=Math.round(lux)+'%';
+  const z=py<540?'Superfície':py<1500?'Zona fótica':py<3800?'Água profunda':py<4130?'Leito marinho':py<5230?'Subsolo':'Reservatório';
+  if(z!==lastDepthTxt){$('#hZone').textContent=z;lastDepthTxt=z}
+  snowK=py>600&&py<3900?smooth((py-600)/500)*smooth((3900-py)/200):0;
+  placeCard();
+}
+let ticking=false;
+addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(()=>{update();ticking=false})}},{passive:true});
+addEventListener('resize',layout);
+
+/* ---------- movimento por tempo (top drive, cabos) ---------- */
+function tick(t){
+  t/=1000;
+  const y=lerp(120,310,.5-.5*Math.cos(t*.6));
+  _td.setAttribute('transform',`translate(0 ${y.toFixed(1)})`);
+  _cab[0].setAttribute('x1',592);_cab[1].setAttribute('x1',624);
+  _cab.forEach((c,i)=>{c.setAttribute('x2',i?624:592);c.setAttribute('y1',76);c.setAttribute('y2',y.toFixed(1))});
+  _pipe.setAttribute('y1',y+50);_pipe.setAttribute('y2',398);$('#pipeM').setAttribute('y1',y+50);$('#pipeM').setAttribute('y2',398);
+  // tensionadores acompanham o balanço
+  const k=Math.sin(t*.9);$('#tL').style.transform=`rotate(${(-1.6*k).toFixed(2)}deg)`;$('#tR').style.transform=`rotate(${(1.6*k).toFixed(2)}deg)`;
+  if(!RM)requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ---------- neve marinha (canvas fixo) ---------- */
+const cv=$('#snow'),cx=cv.getContext('2d');let snowK=0,dpr=1,P=[];
+function size(){dpr=Math.min(devicePixelRatio||1,1.5);cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+  P=Array.from({length:Math.round(innerWidth*innerHeight/9000)},()=>({x:rnd()*innerWidth,y:rnd()*innerHeight,r:.6+rnd()*1.8,v:6+rnd()*14,z:.2+rnd()*.8,ph:rnd()*6.28}))}
+let lastSY=scrollY,lt=0;
+function snow(t){
+  const dt=Math.min(.05,(t-lt)/1000||.016);lt=t;const dS=scrollY-lastSY;lastSY=scrollY;
+  cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,innerWidth,innerHeight);
+  if(snowK>.01){cx.fillStyle='#d4ecf7';
+    for(const p of P){p.y+=p.v*dt*p.z-dS*p.z*.5;p.x+=Math.sin(t/1700+p.ph)*.12;
+      if(p.y>innerHeight+4){p.y=-4;p.x=rnd()*innerWidth}if(p.y<-6){p.y=innerHeight+4;p.x=rnd()*innerWidth}
+      cx.globalAlpha=snowK*(.18+.5*p.z);cx.beginPath();cx.arc(p.x,p.y,p.r*p.z+.4,0,6.283);cx.fill()}
+    cx.globalAlpha=1}
+  requestAnimationFrame(snow);
+}
+if(!RM)requestAnimationFrame(snow);
+
+layout();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1724">
+<title>HMH — Águas Profundas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0e2a4a;--ink:#EAF6FF;--soft:rgba(226,240,250,.84);--azul:#1496C8;--verm:#D9303C;--ambar:#FFB347;--ease:cubic-bezier(.2,.8,.2,1);--rail:56px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b1724;color:var(--ink);font-family:Inter,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ambar);outline-offset:2px}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+#spacer{height:720vh}
+
+/* barra superior (como no layout de referência) */
+.top{position:fixed;inset:0 0 auto 0;height:64px;z-index:50;display:flex;align-items:center;gap:10px;padding:0 18px 0 calc(var(--rail) + 18px);background:rgba(255,255,255,.96);backdrop-filter:blur(8px);color:var(--navy);box-shadow:0 1px 0 rgba(0,0,0,.1)}
+.top .logo{height:34px;width:86px;margin-right:auto}
+.tb{height:38px;display:inline-flex;align-items:center;gap:8px;padding:0 14px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--navy);transition:background .35s var(--ease),color .35s}
+.tb:hover{background:rgba(14,42,74,.08)}
+.tb[aria-pressed="true"]{background:var(--navy);color:#fff}
+.tb svg{width:18px;height:18px}
+.snd[aria-pressed="false"] .w{display:none}.snd[aria-pressed="true"] .x{display:none}
+.pill{background:var(--navy);color:#fff;font-weight:600;font-size:12.5px;letter-spacing:.04em;padding:11px 20px;border-radius:7px;text-decoration:none;transition:background .3s}
+.pill:hover{background:var(--verm)}
+.menu{position:fixed;left:0;top:0;width:var(--rail);height:64px;z-index:52;display:grid;place-content:center;background:var(--navy)}
+.menu i{display:block;width:20px;height:2px;background:#fff;margin:2.5px 0;border-radius:2px}
+.drawer{position:fixed;top:64px;left:var(--rail);width:min(330px,calc(100vw - var(--rail)));z-index:49;background:rgba(8,22,38,.95);backdrop-filter:blur(10px);border-radius:0 0 12px 0;padding:10px 0;transform:translateX(-110%);transition:transform .6s var(--ease)}
+.drawer.on{transform:none}
+.drawer button{display:flex;gap:12px;width:100%;text-align:left;padding:12px 18px;font-size:13px;font-weight:500;border-left:3px solid transparent;transition:background .3s}
+.drawer button b{color:var(--ambar);font-variant-numeric:tabular-nums}
+.drawer button:hover,.drawer button.cur{background:rgba(255,255,255,.07);border-left-color:var(--verm)}
+
+/* trilho lateral com segmentos coloridos */
+.rail{position:fixed;left:0;top:64px;bottom:0;width:var(--rail);z-index:48;display:flex;flex-direction:column}
+.rail .seg{flex:1;position:relative;transition:filter .8s var(--ease)}
+.rail .seg:not(.on){filter:brightness(.7) saturate(.85)}
+.rail .seg button{position:absolute;left:50%;top:18px;width:18px;height:18px;margin-left:-9px;border-radius:50%;border:2px solid #fff;background:transparent;transition:background .5s,transform .6s var(--ease)}
+.rail .seg.on button{background:#fff;transform:scale(1.2)}
+.rail .seg .ln{position:absolute;left:50%;top:38px;bottom:0;width:2px;margin-left:-1px;background:rgba(255,255,255,.35)}
+.rail .seg .ln i{display:block;width:100%;height:0;background:#fff}
+
+/* HUD de profundidade */
+.hud{position:fixed;right:16px;top:80px;z-index:45;width:164px;padding:11px 13px;border-radius:12px;background:rgba(8,20,34,.55);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);font-size:11px;color:var(--soft);transition:opacity .6s}
+.hud div{display:flex;justify-content:space-between;align-items:baseline;padding:2px 0}
+.hud b{font-family:Oswald,"Arial Narrow",sans-serif;font-weight:500;font-size:15px;color:#fff;font-variant-numeric:tabular-nums}
+.hud .big b{font-size:22px;color:var(--ambar)}
+.hud small{display:block;margin-top:6px;opacity:.75;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.nav2{position:fixed;right:22px;top:50%;z-index:45;display:grid;justify-items:center;gap:8px;transform:translateY(-50%)}
+.nav2 button{width:34px;height:34px;border-radius:50%;display:grid;place-content:center;color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35);transition:transform .5s var(--ease)}
+.nav2 button:hover{transform:scale(1.12)}
+.nav2 .up{background:var(--verm)}.nav2 .dn{background:#7a7e83}
+.nav2 span{width:2px;height:26px;background:rgba(255,255,255,.5)}
+.bottom{position:fixed;inset:auto 0 0 0;height:52px;z-index:47;display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 calc(var(--rail) + 18px);background:#0e2a4a;font-size:14px;font-weight:600;letter-spacing:.06em}
+.bottom .logo{height:26px;width:66px;position:absolute;left:50%;transform:translateX(-50%)}
+.bottom .arr{display:flex;gap:8px}
+.bottom .arr button{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.18);font-size:15px;transition:background .3s}
+.bottom .arr button:hover{background:rgba(255,255,255,.32)}
+
+/* textos das seções: troca suave, sem desfoque */
+.panel{position:fixed;z-index:20;left:calc(var(--rail) + 36px);top:50%;width:min(390px,calc(100vw - var(--rail) - 60px));line-height:1.5;opacity:0;pointer-events:none;will-change:opacity,transform;text-shadow:0 1px 14px rgba(0,0,0,.55)}
+.panel h2{font-family:Oswald,"Arial Narrow",sans-serif;font-weight:600;font-size:clamp(22px,2.1vw,32px);letter-spacing:.01em;text-transform:uppercase;line-height:1.12;margin-bottom:12px}
+.panel p{font-size:14px;color:var(--soft)}
+.panel .row{display:flex;gap:12px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.panel a.btn{display:inline-block;background:var(--verm);color:#fff;font-weight:600;font-size:12.5px;padding:9px 18px;border-radius:4px;text-decoration:none;text-shadow:none;transition:background .35s,transform .5s var(--ease)}
+.panel a.btn:hover{background:var(--ambar);color:#1a0b05;transform:translateY(-2px)}
+.panel .hint{font-size:12px;color:var(--soft);opacity:.85}
+.panel.light{color:#0e2a4a;text-shadow:0 1px 10px rgba(255,255,255,.6)}
+.panel.light p,.panel.light .hint{color:#1f3550}
+
+/* gatilhos (hotspots) */
+#hots,#tags,#ovb{position:fixed;inset:0;pointer-events:none}
+#hots{z-index:30}#tags{z-index:12}#ovb{z-index:31}
+.hp{position:absolute;left:0;top:0;display:flex;align-items:center;height:30px;padding:0 9px;border-radius:15px;background:rgba(8,22,40,.55);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.32);color:#fff;font-size:12px;font-weight:600;pointer-events:auto;white-space:nowrap;transition:opacity .6s var(--ease),background .3s;box-shadow:0 4px 16px rgba(0,0,0,.28)}
+.hp i{width:11px;height:11px;border-radius:50%;background:var(--azul);flex:none;box-shadow:0 0 0 0 rgba(20,150,200,.8);animation:ping 2.4s infinite}
+.hp.ctx i{background:#c3c9ce;animation-name:pingg}
+.hp span{max-width:0;overflow:hidden;opacity:0;transition:max-width .55s var(--ease),opacity .35s,margin .55s var(--ease)}
+.hp:hover span,.hp:focus-visible span{max-width:260px;opacity:1;margin-left:8px}
+.hp:hover{background:rgba(20,150,200,.6)}
+.hp.off{opacity:0;pointer-events:none}
+.hp.gone{visibility:hidden}
+@keyframes ping{70%{box-shadow:0 0 0 12px rgba(20,150,200,0)}100%{box-shadow:0 0 0 0 rgba(20,150,200,0)}}
+@keyframes pingg{70%{box-shadow:0 0 0 10px rgba(200,205,210,0)}100%{box-shadow:0 0 0 0 rgba(200,205,210,0)}}
+.tag3d{position:absolute;left:0;top:0;font-size:12px;font-weight:600;letter-spacing:.05em;color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.9);transition:opacity .7s;opacity:0;white-space:nowrap}
+.tag3d.big{font-size:17px;letter-spacing:.02em}
+/* visão geral */
+.ov{position:absolute;left:0;top:0;display:flex;align-items:center;gap:10px;pointer-events:auto;padding:6px 14px 6px 6px;border-radius:24px;background:rgba(8,22,40,.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);font-size:13px;font-weight:600;color:#fff;opacity:0;transition:opacity .6s var(--ease),background .3s;white-space:nowrap}
+.ov b{width:30px;height:30px;border-radius:50%;display:grid;place-content:center;background:var(--verm);font-family:Oswald,sans-serif;font-size:14px}
+.ov:hover{background:rgba(20,150,200,.6)}
+.ov.off{opacity:0!important;pointer-events:none}
+
+/* painel flutuante (gatilho vira painel) */
+#scrim{position:fixed;inset:0;z-index:70;background:rgba(2,10,20,.38);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+#scrim.on{opacity:1;pointer-events:auto}
+#fp{position:fixed;z-index:80;overflow:hidden;display:none;background:rgba(12,26,44,.9);backdrop-filter:blur(22px) saturate(1.3);border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 90px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1)}
+.fp-in{padding:14px 16px 16px}
+.fp-in header{display:flex;align-items:center;gap:9px;height:30px;margin-bottom:12px}
+.fp-in header i{width:11px;height:11px;border-radius:50%;background:var(--azul);flex:none}
+.fp-in header i.ctx{background:#c3c9ce}
+.fp-in header b{font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fp-in .tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--azul)}
+.fp-in .tag.ctx{background:#6c7076}
+.fp-in .x{width:30px;height:30px;border-radius:50%;font-size:18px;display:grid;place-content:center;background:rgba(255,255,255,.08);transition:background .3s}
+.fp-in .x:hover{background:rgba(255,255,255,.2)}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{font-size:12px;font-weight:600;padding:7px 12px;border-radius:7px;background:rgba(255,255,255,.07);transition:background .3s}
+.tabs button[aria-selected="true"]{background:#fff;color:var(--navy)}
+.stage{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#3a4048,#16191d 75%)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.stage .cap{position:absolute;left:12px;bottom:10px;font-size:11px;color:rgba(255,255,255,.7);pointer-events:none}
+.stage .badge{position:absolute;right:12px;bottom:10px;width:52px;height:20px;pointer-events:none}
+.stage a.play{position:absolute;inset:0;display:grid;place-content:center;background:#000 center/cover no-repeat}
+.stage a.play span{width:70px;height:48px;border-radius:12px;background:#e62117;display:grid;place-content:center;font-size:20px}
+.stage .note{position:absolute;left:8px;right:8px;bottom:8px;font-size:11px;background:rgba(0,0,0,.65);padding:6px 8px;border-radius:6px}
+.fp-in p{font-size:13.5px;line-height:1.55;color:var(--soft);margin-top:12px}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.acts a{font-size:12.5px;font-weight:600;text-decoration:none;padding:9px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.3);transition:background .3s,transform .5s var(--ease)}
+.acts a.pri{background:var(--verm);border-color:var(--verm)}
+.acts a:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+.acts a.pri:hover{background:var(--ambar);color:#1a0b05;border-color:var(--ambar)}
+
+/* intro */
+#intro{position:fixed;inset:0;z-index:100;display:grid;place-content:center;text-align:center;gap:18px;background:radial-gradient(ellipse at 50% 30%,#163f66,#0b1724 70%);transition:opacity 1.2s var(--ease),visibility 1.2s}
+#intro.out{opacity:0;visibility:hidden}
+#intro svg{width:160px;height:64px;margin:0 auto}
+#intro h1{font-family:Oswald,"Arial Narrow",sans-serif;font-weight:500;letter-spacing:.32em;font-size:clamp(28px,5vw,64px);padding-left:.32em}
+#intro p{color:var(--soft);font-size:14px;letter-spacing:.2em;text-transform:uppercase}
+#intro .go{margin-top:10px;background:var(--verm);color:#fff;font-weight:600;padding:14px 26px;border-radius:8px;font-size:14px;letter-spacing:.06em;transition:background .3s,transform .5s var(--ease),opacity .4s}
+#intro .go:hover{background:var(--ambar);color:#1a0b05;transform:translateY(-2px)}
+#intro .go:disabled{opacity:.55;cursor:wait}
+#intro .mute{font-size:12px;color:var(--soft);text-decoration:underline;opacity:.8}
+#intro .err{color:#ffb4b4;font-size:13px;max-width:420px}
+@media (max-width:767px){:root{--rail:40px}.top{height:56px}.menu{height:56px}.rail{top:56px}.tb .lbl{display:none}.pill{display:none}.hud{top:66px;right:8px;width:132px;font-size:10px}.nav2{right:8px}.panel{top:auto;bottom:66px;left:calc(var(--rail) + 12px);width:calc(100vw - var(--rail) - 24px);padding:14px;border-radius:10px;background:rgba(8,22,38,.62);backdrop-filter:blur(8px)}.bottom{height:44px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="logo" viewBox="0 0 100 40"><g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 7V33M6 20H24M24 7V33" stroke="#1496C8"/><path d="M32 33C38 -4 49 -2 54 18S66 40 72 6" stroke="#E1333F"/><path d="M80 7V33M80 20H96M96 7V33" stroke="#1496C8"/></g></symbol>
+</defs></svg>
+
+<canvas id="gl" aria-label="Diorama 3D: sonda de perfuração offshore, riser, BOP, poço e reservatório"></canvas>
+
+<button class="menu" id="menuBtn" aria-label="Abrir menu de seções" aria-expanded="false"><i></i><i></i><i></i></button>
+<header class="top">
+  <svg class="logo" viewBox="0 0 100 40" role="img" aria-label="HMH"><use href="#logo"/></svg>
+  <button class="tb" id="ovBtn" aria-pressed="false" title="Visão geral (V)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16"/></svg><span class="lbl">Visão geral</span></button>
+  <button class="tb snd" id="sndBtn" aria-pressed="false" title="Som ambiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><path class="x" d="m16 9 6 6m0-6-6 6"/></svg><span class="lbl">Som</span></button>
+  <a class="pill" href="https://hmhw.com" target="_blank" rel="noopener">HMHW</a>
+</header>
+<nav class="drawer" id="drawer" aria-label="Seções"></nav>
+<div class="rail" id="rail"></div>
+<aside class="hud" id="hud" aria-label="Condições na profundidade atual">
+  <div class="big"><span>Prof.</span><b id="hDepth">0 m</b></div>
+  <div><span>Pressão</span><b id="hPres">1 bar</b></div>
+  <div><span>Temp.</span><b id="hTemp">27 °C</b></div>
+  <small id="hZone">Superfície</small>
+</aside>
+<div class="nav2"><button class="up" id="bUp" aria-label="Seção anterior"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="m6 15 6-6 6 6"/></svg></button><span></span><button class="dn" id="bDn" aria-label="Próxima seção"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg></button></div>
+<footer class="bottom"><span>HMHW</span><svg class="logo" viewBox="0 0 100 40"><use href="#logo"/></svg><span class="arr"><button id="bPrev" aria-label="Anterior">‹</button><button id="bNext" aria-label="Próxima">›</button></span></footer>
+
+<div id="panels"></div>
+<div id="tags"></div>
+<div id="hots"></div>
+<div id="ovb"></div>
+<div id="scrim"></div>
+<div id="fp" role="dialog" aria-modal="true"></div>
+
+<div id="intro">
+  <svg viewBox="0 0 100 40"><use href="#logo"/></svg>
+  <h1>ÁGUAS PROFUNDAS</h1>
+  <p>Da sonda ao reservatório</p>
+  <button class="go" id="goBtn" disabled>Montando modelos 3D…</button>
+  <button class="mute" id="muteBtn">Entrar sem som</button>
+</div>
+<div id="spacer"></div>
+
+<script>
+window.__fail=m=>{const b=document.getElementById('goBtn');if(b){b.textContent='Não foi possível carregar';b.insertAdjacentHTML('afterend','<p class="err">'+m+'</p>')}};
+setTimeout(()=>{if(!window.__ready)window.__fail('A cena 3D precisa de internet (three.js via CDN) e de um navegador com WebGL.')},20000);
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+
+const $=s=>document.querySelector(s);
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)),lerp=(a,b,t)=>a+(b-a)*t,smooth=t=>{t=clamp(t);return t*t*(3-2*t)};
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BASE='https://hmhw.com',SEABED=-330,GBOT=-520,FRONT=60,HALFW=200,BACK=-120,NOTCH=5,NOTCHZ=-4.5;
+const UP=new THREE.Vector3(0,1,0),ONE=new THREE.Vector3(1,1,1),V=(x,y,z)=>new THREE.Vector3(x,y,z);
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+
+/* =====================================================================
+   Conteúdo
+   ===================================================================== */
+const SECS=[
+ {t:'01. Operação de superfície (topsides)',cor:'#1b2f4d',u:'/archives/business_area/drilling-equipment-offshore/',light:true,
+  p:'Sonda de perfuração offshore operando na superfície. Em destaque, os equipamentos de topside da HMH: derrick, top drive, roughneck, drawworks, bombas de lama e guindastes de manuseio.'},
+ {t:'02. Sistema de tensionadores de riser',cor:'#8b8f94',u:'/service/motion-compensation-systems/',
+  p:'Abaixo da plataforma, os tensionadores de riser compensam o movimento das ondas, garantindo a estabilidade da coluna sob a superfície da água.'},
+ {t:'03. Coluna de riser',cor:'#6c7076',u:'/service/drilling-risers/',
+  p:'A coluna de riser de perfuração estende-se pela coluna d’água, conectando a sonda ao poço de forma rápida e segura.'},
+ {t:'04. Leito marinho e BOP',cor:'#2a7fa8',u:'/archives/business_area/drilling-equipment-offshore-pressure-control/',
+  p:'No leito marinho, a coluna de riser se conecta ao BOP (Blowout Preventer) e ao sistema de cabeça de poço, garantindo o controle total da pressão.'},
+ {t:'05. Perfuração do poço (drilling)',cor:'#c8303b',u:'/archives/business_area/drilling-equipment/',
+  p:'Abaixo do leito marinho, a broca avança pelas camadas de rocha, guiada pela tecnologia de perfuração, abrindo o caminho com segurança.'},
+ {t:'06. Reservatório e produção',cor:'#7a7e83',u:'/archives/business_area/drilling-equipment/',
+  p:'Alcançando o objetivo: o reservatório de óleo e gás. A perfuração segura é o primeiro passo da jornada de engenharia da HMH.'}
+];
+// m = modelo exibido em 3D no painel
+const P=[
+ {id:'topdrive',s:0,m:'topdrive',n:'MH Top Drive',d:'Gira a coluna de perfuração a partir do topo do mastro e sustenta o peso da coluna durante as manobras.',u:'/service/top-drives-offshore/'},
+ {id:'roughneck',s:0,m:'roughneck',n:'Bulldog™ Iron Roughneck',d:'Roughneck automatizado que aperta e desaperta as conexões dos tubos no piso da sonda, com rapidez e repetibilidade.',u:'/service/roughnecks-2/',yt:'bNNf88Jm3e8'},
+ {id:'drawworks',s:0,m:'drawworks',n:'Wirth™ Drawworks',d:'Guincho principal que iça e abaixa a coluna de perfuração.',u:'/service/drawworks-2/',yt:'pDR-Pp-MrxQ'},
+ {id:'rotary',s:0,m:'rotary',n:'Wirth™ Rotary Table',d:'Mesa rotativa no centro do piso: transmite torque e apoia a coluna durante as conexões.',u:'/service/rotary-tables-2/'},
+ {id:'mudpumps',s:0,m:'mudpump',n:'Wirth™ TPK Mud Pumps',d:'Bombas de alta pressão que circulam o fluido de perfuração até a broca e de volta à superfície.',u:'/service/wirth-offshore-mud-pumps/',yt:'EUrHhekngWU'},
+ {id:'mudsys',s:0,m:'mudpump',n:'HMH Mud Systems',d:'Peneiras, tanques e tratamento do fluido de perfuração que retorna do poço.',u:'/service/mh-mud-systems/'},
+ {id:'cranes',s:0,m:'crane',n:'Guindastes e manuseio de tubos',d:'Movimentação de tubos, risers e cargas no convés.',u:'/service/handling-equipment-and-cranes/'},
+ {id:'structures',s:0,m:'derrick',n:'Estruturas: derrick e subestrutura',d:'A torre e a subestrutura que sustentam todo o sistema de içamento.',u:'/service/ramrig/'},
+ {id:'motion',s:0,m:'tensioner',n:'Compensação de movimento',d:'Compensa o balanço da embarcação para manter constante o peso sobre a broca.',u:'/service/motion-compensation-systems/'},
+ {id:'diverter',s:0,m:'annular',n:'Diverter',d:'Desvia o fluxo do poço para longe do piso da sonda em situações de gás raso.',u:'/service/diverters/'},
+ {id:'deal',s:0,m:'ship',n:'DEAL™ & CADS: automação',d:'Plataforma de automação das sequências de perfuração, que recebe módulos de software inteligentes (Smart Modules).',u:'/archives/business_area/cads-automation-system-for-rig-sequences/',yt:'1Q5nu2Zouf4'},
+ {id:'beaware',s:0,m:'ship',n:'beAware™: digitalização',d:'Dados e monitoramento dos equipamentos da sonda para decisões mais rápidas.',u:'/archives/business_area/drilling-digitalization-beaware/'},
+ {id:'gk',s:0,m:'annular',n:'Hydril® GK™ 13-5 Radial Latch',d:'BOP anular compacto da linha Hydril, em exposição no convés.',u:'/service/bop-annulars-2/',yt:'DZ8fkK0ZY1A'},
+ {id:'sentry',s:0,m:'ram',n:'Hydril® Sentry RAM BOP',d:'BOP de gaveta da linha Hydril, em exposição no convés.',u:'/service/bop-rams-2/',yt:'cvjERw0n1D4'},
+ {id:'tens',s:1,m:'tensioner',n:'Tensionadores de riser',d:'Cilindros hidráulicos que mantêm o riser tracionado enquanto o navio sobe e desce com as ondas.',u:'/service/motion-compensation-systems/'},
+ {id:'telescopic',s:1,m:'riser',n:'Junta telescópica',d:'Permite que o topo do riser deslize conforme o balanço do navio.',u:'/service/drilling-risers/',yt:'DU6cz-VVQA4'},
+ {id:'mpd',s:1,m:'mpd',n:'Sistema MPD',d:'Perfuração com pressão gerenciada: controla com precisão a pressão no fundo do poço.',u:'/service/mpd-system/'},
+ {id:'riser',s:2,m:'riser',n:'HMH Marine Risers',d:'Juntas de riser com linhas auxiliares de choke, kill e hidráulica, ligando a sonda ao BOP.',u:'/service/drilling-risers/',yt:'DU6cz-VVQA4'},
+ {id:'rovB',s:2,m:'rov',n:'ROV',d:'Veículo operado remotamente que inspeciona o riser e opera equipamentos no fundo.',ctx:1},
+ {id:'gxp',s:3,m:'annular',n:'Hydril® GXP Annular BOP',d:'BOP anular que veda em volta de qualquer tubular, com alta resistência a temperatura e a químicos.',u:'/service/bop-annulars-2/',yt:'_fddKTH_0G4'},
+ {id:'rams',s:3,m:'ram',n:'Hydril® Compact™ RAM BOP',d:'Gavetas que fecham e vedam o poço. No site da HMH: 18¾" para 15.000 psi.',u:'/service/bop-rams-2/',yt:'kdZE4N9fCrs'},
+ {id:'wbsr',s:3,m:'ram',n:'Gavetas cisalhantes WBSR-X',d:'Gavetas capazes de cortar a coluna e selar o poço nas condições mais severas.',u:'/service/ram-blocks-2/',yt:'TTbdtZv8JHU'},
+ {id:'h4',s:3,m:'h4',n:'Vetco H-4 Connector',d:'Conecta o conjunto de BOP à cabeça de poço.',u:'/service/h4-connector/'},
+ {id:'pods',s:3,m:'pod',n:'BOP Controls & Analytics',d:'Pods de controle e análise de dados de cada função do BOP.',u:'/service/bop-control-and-analytics/'},
+ {id:'valves',s:3,m:'valve',n:'Válvulas e manifolds',d:'Válvulas gaveta XTRM/TM e manifolds das linhas de choke e kill.',u:'/service/xtrm-tm-gate-valves/'},
+ {id:'k20',s:3,m:'bop',n:'20k Subsea Drilling System',d:'Sistema de perfuração submarina para 20.000 psi.',u:'/service/20k-subsea-drilling-system/',yt:'gD0S_CNolEs'},
+ {id:'ebop',s:3,m:'ebop',n:'Electric BOP',d:'BOP totalmente elétrico, para novos equipamentos ou conversão de BOPs existentes.',u:'/service/all-electric-bop/'},
+ {id:'rovA',s:3,m:'rov',n:'ROV',d:'Veículo operado remotamente com câmeras e braços manipuladores.',ctx:1},
+ {id:'casing',s:4,m:'block',n:'Revestimentos e cimentação',d:'Colunas de aço cimentadas na rocha isolam o poço das formações.',ctx:1},
+ {id:'bit',s:4,m:'bit',n:'Broca tricônica',d:'Corta a rocha na ponta da coluna; o fluido bombeado pelas mud pumps traz os cascalhos para cima.',ctx:1},
+ {id:'reservoir',s:5,m:'block',n:'Reservatório',d:'Rocha porosa que armazena óleo e, no topo da estrutura, gás natural.',ctx:1},
+ {id:'dls',s:5,m:'ship',n:'Drilling Lifecycle Services',d:'Serviços da HMH ao longo de todo o ciclo de vida dos equipamentos de perfuração.',u:'/archives/business_area/hmh-drilling-optimization-services-dls/'}
+];
+
+/* =====================================================================
+   Renderizador e iluminação de estúdio (padrão único para todos os modelos)
+   ===================================================================== */
+const canvas=$('#gl');let renderer;
+try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'})}catch(e){window.__fail('Este navegador não conseguiu iniciar o WebGL.');throw e}
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setSize(innerWidth,innerHeight);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;renderer.localClippingEnabled=true;
+const scene=new THREE.Scene();
+const pmrem=new THREE.PMREMGenerator(renderer);
+const studioEnv=pmrem.fromScene(new RoomEnvironment(),.04).texture;
+scene.environment=studioEnv;scene.environmentIntensity=.55;
+const camera=new THREE.PerspectiveCamera(24,innerWidth/innerHeight,1,8000);scene.add(camera);
+const key=new THREE.DirectionalLight(0xfff1e0,2.4);key.position.set(260,420,520);scene.add(key);
+const rim=new THREE.DirectionalLight(0xbfe3ff,.9);rim.position.set(-400,200,-300);scene.add(rim);
+scene.add(new THREE.HemisphereLight(0xdfeeff,0x2b3138,.55));
+
+/* ---------- texturas procedurais ---------- */
+function ctex(w,h,draw,{repeat=[1,1],color=true,wrap=true}={}){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);if(color)t.colorSpace=THREE.SRGBColorSpace;if(wrap){t.wrapS=t.wrapT=THREE.RepeatWrapping}t.repeat.set(...repeat);t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t}
+const grime=ctex(512,512,(g,w,h)=>{g.fillStyle='#d0d0d0';g.fillRect(0,0,w,h);for(let i=0;i<9000;i++){const v=150+rnd()*105|0;g.fillStyle=`rgba(${v},${v},${v},.35)`;g.fillRect(rnd()*w,rnd()*h,1+rnd()*5,1+rnd()*5)}for(let i=0;i<60;i++){g.strokeStyle=`rgba(120,120,120,${rnd()*.25})`;g.lineWidth=1+rnd()*3;g.beginPath();g.moveTo(rnd()*w,rnd()*h);g.lineTo(rnd()*w,rnd()*h);g.stroke()}},{color:false,repeat:[2,2]});
+const logoPaths=[['M6 7V33M6 20H24M24 7V33','#1496C8'],['M32 33C38 -4 49 -2 54 18S66 40 72 6','#E1333F'],['M80 7V33M80 20H96M96 7V33','#1496C8']];
+function drawLogo(g,x,y,s){g.save();g.translate(x,y);g.scale(s,s);g.lineWidth=7;g.lineCap='round';g.lineJoin='round';for(const[d,c]of logoPaths){g.strokeStyle=c;g.stroke(new Path2D(d))}g.restore()}
+const signTex=ctex(512,200,(g,w,h)=>{g.fillStyle='#f4f6f7';g.fillRect(0,0,w,h);drawLogo(g,56,20,4)},{wrap:false});
+const deckTex=ctex(512,512,(g,w,h)=>{g.fillStyle='#646966';g.fillRect(0,0,w,h);g.strokeStyle='rgba(0,0,0,.25)';g.lineWidth=2;for(let i=0;i<=w;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i,h);g.stroke()}for(let j=0;j<=h;j+=128){g.beginPath();g.moveTo(0,j);g.lineTo(w,j);g.stroke()}for(let i=0;i<5000;i++){g.fillStyle=`rgba(0,0,0,${rnd()*.12})`;g.fillRect(rnd()*w,rnd()*h,2,2)}g.fillStyle='#d9b21c';g.fillRect(0,250,w,10)},{repeat:[14,3]});
+const heliTex=ctex(512,512,(g,w,h)=>{g.fillStyle='#3e5048';g.fillRect(0,0,w,h);g.strokeStyle='#f2c230';g.lineWidth=18;g.beginPath();g.arc(256,256,160,0,7);g.stroke();g.strokeStyle='#fff';g.lineWidth=10;g.beginPath();g.arc(256,256,238,0,7);g.stroke();g.fillStyle='#fff';g.font='bold 210px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText('H',256,268)},{wrap:false});
+const pipeTex=ctex(64,64,(g,w,h)=>{g.fillStyle='#c4cbd0';g.fillRect(0,0,w,h);g.fillStyle='#6f7980';g.fillRect(0,0,12,h)},{repeat:[3,30]});
+const sandTex=ctex(512,512,(g,w,h)=>{g.fillStyle='#8e7c60';g.fillRect(0,0,w,h);for(let i=0;i<30000;i++){g.fillStyle=rnd()<.5?`rgba(50,38,25,${rnd()*.3})`:`rgba(235,215,180,${rnd()*.25})`;g.fillRect(rnd()*w,rnd()*h,1+rnd()*2,1+rnd()*2)}},{repeat:[20,6]});
+const dotTex=ctex(64,64,g=>{const r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(.35,'rgba(255,255,255,.5)');r.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=r;g.fillRect(0,0,64,64)},{wrap:false});
+const rayTex=ctex(64,256,(g,w,h)=>{const r=g.createLinearGradient(0,0,0,h);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=r;g.fillRect(0,0,w,h);const s=g.createLinearGradient(0,0,w,0);s.addColorStop(0,'rgba(0,0,0,1)');s.addColorStop(.5,'rgba(0,0,0,0)');s.addColorStop(1,'rgba(0,0,0,1)');g.globalCompositeOperation='destination-out';g.fillStyle=s;g.fillRect(0,0,w,h)},{wrap:false});
+const shadowTex=ctex(256,256,g=>{const r=g.createRadialGradient(128,128,0,128,128,128);r.addColorStop(0,'rgba(0,0,0,.55)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(0,0,256,256)},{wrap:false});
+
+/* ---------- materiais (paleta HMH) ---------- */
+const pbr=(color,metal,rough,o={})=>new THREE.MeshPhysicalMaterial({color,metalness:metal,roughness:rough,roughnessMap:grime,...o});
+const M={
+ red:pbr(0xb51f2a,.2,.5,{clearcoat:.35,clearcoatRoughness:.35}),
+ yellow:pbr(0xe7aa12,.2,.5,{clearcoat:.3,clearcoatRoughness:.4}),
+ blue:pbr(0x1d4f8c,.25,.5,{clearcoat:.3,clearcoatRoughness:.35}),
+ white:pbr(0xe9ecee,.1,.55,{clearcoat:.2}),
+ grey:pbr(0x9aa2a8,.55,.5),
+ lattice:pbr(0xc9cdd0,.55,.5),
+ steel:pbr(0xc9cfd4,.78,.3),
+ chrome:new THREE.MeshPhysicalMaterial({color:0xf2f5f7,metalness:1,roughness:.07}),
+ dark:pbr(0x353b41,.6,.55),
+ black:pbr(0x15171a,.2,.7),
+ rubber:pbr(0x2a2c2f,0,.85),
+ hoseGrey:pbr(0x9aa0a5,0,.75),
+ glass:new THREE.MeshPhysicalMaterial({color:0x1a2a38,metalness:.4,roughness:.06,clearcoat:1}),
+ orange:pbr(0xff6a13,.1,.5,{clearcoat:.4}),
+ deck:new THREE.MeshStandardMaterial({map:deckTex,roughness:.9,metalness:.2}),
+ hull:new THREE.MeshPhysicalMaterial({vertexColors:true,metalness:.25,roughness:.5,roughnessMap:grime,clearcoat:.35,clearcoatRoughness:.3}),
+ heli:new THREE.MeshStandardMaterial({map:heliTex,roughness:.85}),
+ sign:new THREE.MeshStandardMaterial({map:signTex,roughness:.5}),
+ lampW:new THREE.MeshBasicMaterial({color:0xffffff}),lampC:new THREE.MeshBasicMaterial({color:0xaef4ff}),
+ ledR:new THREE.MeshBasicMaterial({color:0xff3030}),ledG:new THREE.MeshBasicMaterial({color:0x40ff70}),
+ pipe:new THREE.MeshStandardMaterial({map:pipeTex,metalness:.9,roughness:.3})
+};
+
+/* ---------- utilitários de geometria ---------- */
+const G={box:(w,h,d)=>new THREE.BoxGeometry(w,h,d),rbox:(w,h,d,r=.15)=>new RoundedBoxGeometry(w,h,d,3,Math.min(r,Math.min(w,h,d)/2-.01)),cyl:(a,b,h,s=32)=>new THREE.CylinderGeometry(a,b,h,s),tor:(R,r,s=48)=>new THREE.TorusGeometry(R,r,12,s),sph:(r,s=32)=>new THREE.SphereGeometry(r,s,Math.max(12,s/2))};
+function add(p,geo,mat,pos=[0,0,0],rot=[0,0,0],scl){const m=new THREE.Mesh(geo,mat);m.position.set(...pos);m.rotation.set(...rot);if(scl)m.scale.set(...scl);p.add(m);return m}
+function beamG(a,b,r,s=8){const v=new THREE.Vector3().subVectors(b,a);const L=v.length();const g=new THREE.CylinderGeometry(r,r,L,s,1);g.applyMatrix4(new THREE.Matrix4().compose(a.clone().lerp(b,.5),new THREE.Quaternion().setFromUnitVectors(UP,v.normalize()),ONE));return g}
+function tubeG(pts,r,rs=12){const c=new THREE.CatmullRomCurve3(pts.map(p=>V(...p)),false,'centripetal');return new THREE.TubeGeometry(c,Math.max(24,pts.length*16),r,rs,false)}
+function clean(g){g=g.index?g.toNonIndexed():g;for(const k of Object.keys(g.attributes))if(!['position','normal','uv'].includes(k))g.deleteAttribute(k);if(!g.attributes.uv)g.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count*2),2));return g}
+function mergeMesh(geos,mat){return new THREE.Mesh(mergeGeometries(geos.map(clean)),mat)}
+// anel de parafusos; axis 'y' (flange horizontal) ou 'x'
+function bolts(p,R,n,c,mat=M.steel,axis='y',r=.12,h=.4){const g=G.cyl(r,r,h,8);if(axis==='x')g.rotateZ(Math.PI/2);const im=new THREE.InstancedMesh(g,mat,n);const d=new THREE.Object3D();
+ for(let i=0;i<n;i++){const a=i/n*Math.PI*2;if(axis==='y')d.position.set(c[0]+Math.cos(a)*R,c[1],c[2]+Math.sin(a)*R);else d.position.set(c[0],c[1]+Math.cos(a)*R,c[2]+Math.sin(a)*R);d.updateMatrix();im.setMatrixAt(i,d.matrix)}p.add(im);return im}
+const yAxisRot=[0,0,Math.PI/2];
+
+/* =====================================================================
+   FÁBRICA DE MODELOS — todos no mesmo padrão (materiais, escala, detalhe)
+   ===================================================================== */
+function makeGateValve(col=M.red,s=1){const g=new THREE.Group();
+ add(g,G.rbox(1.6,1.8,1.4,.22),col);
+ for(const k of[-1,1]){add(g,G.cyl(.55,.55,1.1,24),col,[k*1.25,0,0],yAxisRot);add(g,G.cyl(.9,.9,.32,28),col,[k*1.85,0,0],yAxisRot);bolts(g,.72,8,[k*2.03,0,0],M.steel,'x',.07,.2)}
+ add(g,G.cyl(.62,.72,1.3,24),col,[0,1.5,0]);add(g,G.cyl(.08,.08,1.4,8),M.chrome,[0,2.6,0]);
+ add(g,G.tor(.78,.08,36),col,[0,3.25,0],[Math.PI/2,0,0]);for(let i=0;i<3;i++)add(g,G.cyl(.05,.05,1.5,6),col,[0,3.25,0],[0,i*Math.PI/3,Math.PI/2]);
+ g.scale.setScalar(s);return g}
+function makeRam(o={}){const g=new THREE.Group();const body=o.body||M.yellow,bon=o.bonnet||M.red;
+ add(g,G.rbox(11,4.2,6.4,.55),body);add(g,G.cyl(3.15,3.15,4.6,48),bon);
+ for(const k of[-1,1]){
+  add(g,G.cyl(2.25,2.25,.8,48),bon,[k*5.9,0,0],yAxisRot);bolts(g,1.95,16,[k*6.35,0,0],M.steel,'x',.13,.3);
+  add(g,G.cyl(1.9,1.9,2.6,48),bon,[k*7.5,0,0],yAxisRot);add(g,G.cyl(2.05,2.05,.45,48),body,[k*8.9,0,0],yAxisRot);
+  add(g,G.cyl(1.1,1.1,2,32),o.electric?M.dark:bon,[k*10.1,0,0],yAxisRot);add(g,G.cyl(1.2,1.2,.35,32),M.dark,[k*11.2,0,0],yAxisRot);
+  if(o.electric){add(g,G.rbox(2.4,2.4,2.4,.25),M.dark,[k*12.6,0,0]);add(g,G.box(.06,2.42,2.42),M.lampC,[k*11.38,0,0])}
+  add(g,G.rbox(1.2,.8,1,.15),M.dark,[k*4.6,2.3,1.6])}
+ return g}
+function makeAnnular(col=M.yellow){const g=new THREE.Group();
+ add(g,G.cyl(3.4,3.4,.8,48),M.red,[0,.4,0]);bolts(g,3,18,[0,.85,0]);
+ add(g,G.cyl(4.42,4.6,4,64),col,[0,2.8,0]);add(g,new THREE.SphereGeometry(4.6,64,24,0,Math.PI*2,0,Math.PI*.42),col,[0,3.65,0]);
+ for(let i=0;i<10;i++){const a=i/10*Math.PI*2;add(g,G.rbox(.7,1.3,.5,.12),M.dark,[Math.cos(a)*4.6,3.6,Math.sin(a)*4.6],[0,-a,0])}
+ add(g,G.cyl(2.2,2.6,1.4,48),col,[0,8.4,0]);add(g,G.cyl(3,3,.7,48),M.red,[0,9.3,0]);bolts(g,2.6,16,[0,9.7,0]);
+ g.userData.h=9.65;return g}
+function makeH4(){const g=new THREE.Group();
+ add(g,G.cyl(3.8,3.8,3.2,64),M.dark,[0,1.6,0]);add(g,G.cyl(4,4,.5,64),M.grey,[0,.25,0]);add(g,G.cyl(3.3,3.3,.6,48),M.grey,[0,3.5,0]);
+ for(let i=0;i<14;i++){const a=i/14*Math.PI*2;add(g,G.rbox(.8,2.2,.6,.12),M.grey,[Math.cos(a)*3.95,1.7,Math.sin(a)*3.95],[0,-a+Math.PI/2,0])}
+ g.userData.h=3.8;return g}
+function makePod(){const g=new THREE.Group();
+ add(g,G.rbox(2.6,5.2,2.6,.3),M.yellow,[0,2.6,0]);add(g,G.rbox(2.7,.7,2.7,.2),M.dark,[0,5.4,0]);add(g,G.box(1.8,2.6,.1),M.dark,[0,2.8,1.32]);
+ for(let i=0;i<6;i++)add(g,G.cyl(.15,.15,.4,10),M.steel,[-.55+(i%3)*.55,2+(i>2?1.2:0),1.5],[Math.PI/2,0,0]);
+ add(g,G.sph(.12,10),M.ledG,[.9,4.6,1.33]);return g}
+function makeBOP(o={}){const g=new THREE.Group();
+ add(g,G.cyl(11,11.4,1.2,64),M.grey,[0,.6,0]);add(g,G.tor(11.2,.25,64),M.dark,[0,1.2,0],[Math.PI/2,0,0]);
+ for(let i=0;i<8;i++){const a=i/8*Math.PI*2+.2;add(g,G.cyl(.5,.5,.3,16),M.dark,[Math.cos(a)*9,1.3,Math.sin(a)*9])}
+ add(g,G.cyl(2.6,2.6,6,48),M.red,[0,4.4,0]);add(g,G.cyl(3.4,3.4,.9,48),M.red,[0,2,0]);add(g,G.cyl(3.4,3.4,.9,48),M.red,[0,7.2,0]);bolts(g,3,16,[0,7.7,0]);
+ const valves=[];
+ for(const k of[-1,1]){add(g,G.cyl(.7,.7,3.4,24),M.red,[k*4.2,4.4,0],yAxisRot);const v=makeGateValve(M.red);v.position.set(k*7.6,4.4,0);g.add(v);valves.push(v);
+  add(g,tubeG([[k*9.6,4.4,0],[k*12,3.8,1.2],[k*15,1.8,3],[k*20,1.4,6],[k*24,1.4,8]],.38),M.hoseGrey)}
+ const h4=makeH4();h4.position.y=7.8;g.add(h4);
+ let y=11.6;const ramYs=[];
+ for(let i=0;i<(o.rams||3);i++){const r=makeRam(o);r.position.y=y+2.1;g.add(r);ramYs.push(y+2.1);y+=4.2;add(g,G.cyl(3.3,3.3,.7,48),o.bonnet||M.red,[0,y+.35,0]);y+=.7}
+ const annYs=[];for(let i=0;i<(o.anns||1);i++){const a=makeAnnular(o.annCol);a.position.y=y;g.add(a);annYs.push(y+5);y+=a.userData.h}
+ const l=makeH4();l.position.y=y;g.add(l);y+=3.8;
+ add(g,G.sph(2.2),M.steel,[0,y+1.5,0]);y+=2.8;add(g,G.cyl(1.32,1.32,4,32),M.white,[0,y+2,0]);add(g,G.cyl(2.3,2.3,.8,48),M.grey,[0,y+4.2,0]);bolts(g,1.95,16,[0,y+4.65,0]);const top=y+4.6;
+ // estrutura tubular amarela com curvas
+ const fy0=1.4,fy1=ramYs[ramYs.length-1]+3.6,posts=[[8.6,5.6],[-8.6,5.6],[8.6,-5.6],[-8.6,-5.6]],fr=[];
+ for(const[x,z]of posts)fr.push(tubeG([[x,fy0,z],[x,fy1,z],[x*.93,fy1+2.5,z*.95],[x*.55,top-5,z*.62],[x*.3,top-2,z*.42],[x*.24,top-.8,z*.36]],.48,14));
+ for(const yy of[fy0+.6,(fy0+fy1)/2,fy1]){fr.push(beamG(V(-8.6,yy,5.6),V(8.6,yy,5.6),.42,14),beamG(V(-8.6,yy,-5.6),V(8.6,yy,-5.6),.42,14),beamG(V(8.6,yy,-5.6),V(8.6,yy,5.6),.42,14),beamG(V(-8.6,yy,-5.6),V(-8.6,yy,5.6),.42,14))}
+ g.add(mergeMesh(fr,M.yellow));
+ // pods, acumuladores, linhas de choke/kill, escada
+ const pods=[];for(const k of[-1,1]){const p=makePod();p.position.set(k*10.6,ramYs[1]-1,-6.2);g.add(p);pods.push(p);add(g,tubeG([[k*10.6,ramYs[1]+4.6,-6.2],[k*9.6,top-7,-4.5],[k*3,top-3.5,-1.6],[k*1.4,top-1.4,0]],.22),M.rubber)}
+ for(let i=0;i<7;i++)add(g,G.cyl(.55,.55,4.4,24),M.white,[-5.4+i*1.8,ramYs[0]+.8,-7]);
+ for(const k of[-1,1]){add(g,G.cyl(.34,.34,top-ramYs[0]-1,16),M.steel,[k*4.4,(top+ramYs[0]-1)/2,-4]);const v=makeGateValve(M.red,.7);v.position.set(k*4.4,ramYs[1]+3,-4.9);v.rotation.y=Math.PI/2;g.add(v)}
+ const lad=[beamG(V(9.7,fy0,5.6),V(9.7,fy1,5.6),.08),beamG(V(11.1,fy0,5.6),V(11.1,fy1,5.6),.08)];for(let yy=fy0+1;yy<fy1;yy+=1.1)lad.push(beamG(V(9.7,yy,5.6),V(11.1,yy,5.6),.06));g.add(mergeMesh(lad,M.yellow));
+ const leds=[add(g,G.sph(.18,10),M.ledG,[8.6,fy1+.6,5.7]),add(g,G.sph(.18,10),M.ledR,[-8.6,fy1+.6,5.7])];
+ g.userData={top,ramYs,annYs,valves,pods,h4,leds};return g}
+function makeTensioner(L=20){const g=new THREE.Group();
+ add(g,G.rbox(2.8,1.3,2.4,.18),M.blue,[0,.65,0]);for(const k of[-1,1])add(g,G.rbox(.45,2,1.5,.12),M.blue,[k*.95,1.9,0]);add(g,G.cyl(.32,.32,2.9,16),M.steel,[0,2.1,0],yAxisRot);
+ const b0=2.6,bl=L*.55;add(g,G.cyl(.9,.9,bl,48),M.red,[0,b0+bl/2,0]);add(g,G.cyl(1.08,1.08,.7,48),M.red,[0,b0+.35,0]);add(g,G.cyl(1.08,1.08,.7,48),M.red,[0,b0+bl-.35,0]);
+ bolts(g,.98,12,[0,b0+.72,0],M.steel,'y',.08,.15);bolts(g,.98,12,[0,b0+bl-.72,0],M.steel,'y',.08,.15);
+ for(const k of[.33,.66])add(g,G.cyl(.96,.96,.28,48),M.dark,[0,b0+bl*k,0]);
+ add(g,G.rbox(.75,1.5,.6,.1),M.dark,[1.05,b0+bl*.42,0]);add(g,tubeG([[1.1,b0+bl*.42-.75,0],[1.5,b0+1.5,.3],[1.3,1.2,.9],[.4,.6,1.3]],.13),M.rubber);
+ add(g,tubeG([[1.1,b0+bl*.42+.75,0],[1.35,b0+bl-.5,.2],[.9,b0+bl+.2,.6]],.11),M.rubber);
+ const rod=new THREE.Group();rod.position.y=b0+bl;g.add(rod);const rl=L*.45;
+ add(rod,G.cyl(.4,.4,rl,32),M.chrome,[0,rl/2,0]);add(rod,G.cyl(.55,.55,.5,24),M.dark,[0,rl,0]);add(rod,G.rbox(1,1.3,1,.14),M.red,[0,rl+.8,0]);add(rod,G.cyl(.26,.26,1.7,12),M.steel,[0,rl+1,0],[Math.PI/2,0,0]);
+ g.userData={rod,base:b0+bl,closed:b0+bl+rl+1.3};return g}
+function makeRiserJoint(L=24,o={}){const g=new THREE.Group();const h=L/2;
+ add(g,G.cyl(1.25,1.25,L-1.6,48),o.body||M.white);
+ for(const k of[-1,1]){add(g,G.cyl(2.3,2.3,.8,56),M.grey,[0,k*(h-.4),0]);add(g,G.cyl(1.55,2.25,.6,48),M.grey,[0,k*(h-1.1),0]);bolts(g,1.95,14,[0,k*(h-.4)+k*.45,0])}
+ for(const[x,z,r,m]of[[2,0,.32,M.steel],[-2,0,.32,M.steel],[0,2,.2,M.dark],[0,-2,.2,M.dark],[1.42,1.42,.15,M.red],[-1.42,-1.42,.15,M.blue]]){add(g,G.cyl(r,r,L-.3,16),m,[x,0,z]);for(const k of[-1,1])add(g,G.cyl(r*1.55,r*1.55,.8,16),M.grey,[x,k*(h-1.5),z])}
+ for(const yy of[-h*.48,0,h*.48]){add(g,G.cyl(2.32,2.32,.3,56),M.dark,[0,yy,0]);for(let i=0;i<4;i++){const a=i*Math.PI/2+Math.PI/4;add(g,G.rbox(.5,.5,.5,.08),M.dark,[Math.cos(a)*2.3,yy,Math.sin(a)*2.3])}}
+ add(g,G.cyl(1.29,1.29,2.2,40),M.dark,[0,h-2.7,0]);add(g,G.cyl(1.29,1.29,2.2,40),M.dark,[0,-h+2.7,0]);
+ if(o.mpd){add(g,G.cyl(2,2,6,48),M.blue,[0,0,0]);for(const k of[-1,1]){add(g,G.cyl(.45,.45,3,16),M.steel,[k*3.2,1.4,0],yAxisRot);const v=makeGateValve(M.red,.55);v.position.set(k*4.6,1.4,0);g.add(v)}}
+ return g}
+function makeROV(){const g=new THREE.Group();const X=3,Y0=-1.6,Y1=.4,Z=2;const fr=[];
+ const c=[[-X,Y0,-Z],[X,Y0,-Z],[X,Y0,Z],[-X,Y0,Z],[-X,Y1,-Z],[X,Y1,-Z],[X,Y1,Z],[-X,Y1,Z]].map(p=>V(...p));
+ for(const[a,b]of[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7],[0,5],[3,6]])fr.push(beamG(c[a],c[b],.13,4));
+ fr.push(beamG(V(-X-.3,Y0-.3,-Z+.4),V(X+.3,Y0-.3,-Z+.4),.12,6),beamG(V(-X-.3,Y0-.3,Z-.4),V(X+.3,Y0-.3,Z-.4),.12,6));
+ g.add(mergeMesh(fr,M.yellow));
+ add(g,G.rbox(6.4,1.6,4.3,.4),M.yellow,[0,1.25,0]);add(g,G.box(6.42,.18,4.32),M.black,[0,.55,0]);
+ for(const[x,z,a]of[[2.6,1.7,.6],[-2.6,1.7,-.6],[2.6,-1.7,-.6],[-2.6,-1.7,.6]]){const t=new THREE.Group();t.position.set(x,-.6,z);t.rotation.y=a;g.add(t);add(t,G.tor(.48,.1,28),M.black,[0,0,0]);add(t,G.cyl(.18,.18,.9,12),M.dark,[0,0,0],[Math.PI/2,0,0])}
+ for(const x of[-1.2,1.2]){add(g,G.tor(.45,.1,28),M.black,[x,1.3,0],[Math.PI/2,0,0])}
+ add(g,G.sph(.38,20),M.glass,[0,-.3,2.1]);
+ const lamps=[];for(const x of[-2.2,2.2]){add(g,G.cyl(.3,.3,.5,16),M.dark,[x,.1,2.2],[Math.PI/2,0,0]);lamps.push(add(g,G.cyl(.24,.24,.06,16),M.lampW,[x,.1,2.48],[Math.PI/2,0,0]))}
+ const arm=[V(1.4,-1.4,2.1),V(1.8,-1.2,3.2),V(1.2,-1.8,4.2),V(1.1,-2.1,4.7)];for(let i=0;i<3;i++){add(g,beamG(arm[i],arm[i+1],.16,10),i%2?M.chrome:M.dark);add(g,G.sph(.24,12),M.dark,arm[i].toArray())}
+ add(g,tubeG([[0,2,0],[0,3.5,-.6],[.5,6,-1.8]],.12),M.rubber);
+ g.userData.lamps=lamps;return g}
+function makeTopDrive(){const g=new THREE.Group();
+ add(g,G.box(.5,7.4,.5),M.dark,[-1.5,3.6,-1.2]);add(g,G.box(.5,7.4,.5),M.dark,[1.5,3.6,-1.2]);add(g,G.rbox(3.6,1.2,1,.12),M.dark,[0,6.4,-1.2]);
+ add(g,G.rbox(2.6,1.7,2.4,.25),M.red,[0,3.3,0]);add(g,G.rbox(2.4,2.4,2.2,.3),M.red,[0,5.4,0]);add(g,G.cyl(1,1,.4,32),M.dark,[0,6.8,0]);
+ add(g,tubeG([[0,7,0],[0,8,.4],[0,8.3,1.4],[0,7.6,2]],.24),M.red);add(g,G.cyl(.3,.3,2.2,16),M.steel,[0,1.6,0]);add(g,G.tor(1,.18,32),M.red,[0,2.2,0],[Math.PI/2,0,0]);
+ for(const k of[-1,1])add(g,G.cyl(.09,.09,4,8),M.chrome,[k*.75,.2,0]);add(g,G.rbox(2.1,.6,1.2,.15),M.yellow,[0,-1.8,0]);
+ add(g,tubeG([[1.3,5.4,.6],[1.8,4.4,1],[1.4,3,.6]],.1),M.rubber);return g}
+function makeRoughneck(){const g=new THREE.Group();
+ add(g,G.rbox(2,.8,2,.15),M.dark,[0,.4,0]);add(g,G.cyl(.45,.55,2.6,24),M.red,[0,2,0]);
+ const arm=new THREE.Group();arm.position.y=3.2;g.add(arm);add(arm,G.rbox(3.4,.8,.9,.15),M.red,[1.6,0,0]);add(arm,G.cyl(.18,.18,2.8,12),M.chrome,[1.6,-.6,.35],yAxisRot);
+ const head=new THREE.Group();head.position.set(3.6,-.2,0);arm.add(head);add(head,G.rbox(1.8,2.4,1.6,.2),M.red);
+ for(const yy of[-.6,.6])add(head,G.tor(.55,.18,24),M.dark,[.9,yy,0],[Math.PI/2,0,0]);g.userData.arm=arm;return g}
+function makeDrawworks(){const g=new THREE.Group();
+ add(g,G.rbox(6,.6,3.6,.12),M.dark,[0,.3,0]);add(g,G.rbox(1.6,2.8,3.2,.2),M.blue,[-2.2,2,0]);add(g,G.rbox(1.6,2.8,3.2,.2),M.blue,[2.2,2,0]);
+ const drum=new THREE.Group();drum.position.set(0,2.2,0);g.add(drum);add(drum,G.cyl(1.05,1.05,2.6,40),M.dark,[0,0,0],yAxisRot);
+ for(let i=0;i<9;i++)add(drum,G.tor(1.08,.09,32),M.black,[-1.1+i*.27,0,0],[0,Math.PI/2,0]);for(const k of[-1,1])add(drum,G.cyl(1.5,1.5,.25,40),M.red,[k*1.35,0,0],yAxisRot);
+ for(const k of[-1,1])add(g,G.cyl(.9,.9,1.6,32),M.blue,[k*3.5,2,0],yAxisRot);g.userData.drum=drum;return g}
+function makeRotary(){const g=new THREE.Group();add(g,G.rbox(4,.9,4,.2),M.dark,[0,.45,0]);add(g,G.cyl(1.6,1.6,.4,48),M.orange,[0,1.1,0]);add(g,G.cyl(.6,.6,.45,24),M.black,[0,1.15,0]);return g}
+function makeMudPump(){const g=new THREE.Group();
+ add(g,G.rbox(7,.5,3.6,.1),M.dark,[0,.25,0]);add(g,G.rbox(3.8,2.6,3,.35),M.red,[-.8,1.8,0]);
+ for(let i=0;i<3;i++){add(g,G.rbox(1.6,1.6,.9,.15),M.steel,[2.1,1.6,-1+i]);add(g,G.cyl(.32,.32,.4,16),M.chrome,[2.95,1.6,-1+i],yAxisRot)}
+ add(g,G.sph(.75,24),M.dark,[2.1,3,0]);add(g,G.cyl(.25,.25,2.4,12),M.steel,[2.1,2.5,0],[Math.PI/2,0,0]);add(g,G.cyl(1,1,2.6,32),M.blue,[-3.1,1.6,0],[Math.PI/2,0,0]);return g}
+function makeCrane(){const g=new THREE.Group();
+ add(g,G.cyl(1,1.3,6,32),M.yellow,[0,3,0]);add(g,G.cyl(1.4,1.4,.5,32),M.dark,[0,6.2,0]);
+ const tur=new THREE.Group();tur.position.y=6.4;g.add(tur);add(tur,G.rbox(2.6,1.6,2.4,.3),M.yellow,[0,.8,0]);add(tur,G.rbox(1.3,1.5,1.2,.15),M.glass,[.9,1.8,.9]);
+ const b1=new THREE.Group();b1.position.set(-.4,1.6,0);b1.rotation.z=1.05;tur.add(b1);add(b1,G.rbox(9,1,1,.15),M.yellow,[4.5,0,0]);add(b1,G.cyl(.25,.25,6,12),M.chrome,[3,-.8,0],[0,0,Math.PI/2]);
+ const b2=new THREE.Group();b2.position.set(9,0,0);b2.rotation.z=-1.9;b1.add(b2);add(b2,G.rbox(8,.8,.8,.12),M.yellow,[4,0,0]);add(b2,G.cyl(.4,.4,1.2,16),M.dark,[0,0,0],[Math.PI/2,0,0]);
+ const gr=new THREE.Group();gr.position.set(8,0,0);b2.add(gr);add(gr,G.rbox(.8,1.6,1.2,.12),M.red,[0,-.8,0]);
+ g.userData.tur=tur;return g}
+function makeDerrick(H=47){const g=new THREE.Group();const lv=12,h0=7.4,h1=2.4,cs=[[1,1],[1,-1],[-1,-1],[-1,1]];
+ const Pt=(i,k)=>{const t=i/lv,hw=lerp(h0,h1,t);return V(cs[k][0]*hw,H*t,cs[k][1]*hw)};const A=[],Rd=[];
+ for(let i=0;i<lv;i++){const tgt=i>=lv-2?Rd:A;for(let k=0;k<4;k++){const k2=(k+1)%4;tgt.push(beamG(Pt(i,k),Pt(i+1,k),.34,6),beamG(Pt(i,k),Pt(i,k2),.17,5),beamG(Pt(i,k),Pt(i+1,k2),.11,4),beamG(Pt(i,k2),Pt(i+1,k),.11,4))}}
+ g.add(mergeMesh(A,M.lattice));g.add(mergeMesh(Rd,M.red));
+ add(g,G.rbox(7,.5,7,.1),M.dark,[0,H*.55,0]);
+ add(g,G.rbox(6,2.6,6,.3),M.yellow,[0,H+1.3,0]);for(const x of[-1.7,1.7])add(g,G.cyl(.55,.55,4.5,20),M.chrome,[x,H+4.6,0]);add(g,G.rbox(4.8,.7,1.4,.1),M.dark,[0,H+7,0]);
+ add(g,G.sph(.4,12),M.ledR,[0,H+7.7,0]);
+ const sY=H*.4,sHW=lerp(h0,h1,.4);add(g,G.box(sHW*1.6,sHW*.62,.3),M.sign,[0,sY,sHW+.2]);
+ return g}
+// navio-sonda completo
+function hullGeometry(){
+ const NX=96,NY=20,YK=-7,YD=9.6;const xr=y=>{const yn=(y-YK)/(YD-YK);return[lerp(-77,-82,yn),lerp(54,69,Math.pow(yn,.75))]};
+ const hb=(x,y)=>{const yn=(y-YK)/(YD-YK),[xs,xb]=xr(y);let w=13;if(x>26){const t=clamp((x-26)/(xb-26));w*=Math.pow(Math.max(0,1-Math.pow(t,lerp(1.5,2.8,yn))),.55)}
+  if(x<xs+7){const t=clamp((xs+7-x)/7);w*=1-.1*t}w*=.8+.2*Math.sqrt(clamp((y-YK)/2.4));return w};
+ const cRed=new THREE.Color(0x8a2023),cBlk=new THREE.Color(0x16191c),cBlue=new THREE.Color(0x1b2e4f),cWht=new THREE.Color(0xe7eaec);
+ const colY=y=>y<-.4?cRed:y<.6?cBlk:y<9?cBlue:cWht;
+ const parts=[];
+ for(const side of[1,-1]){const pos=[],col=[],idx=[];
+  for(let j=0;j<=NY;j++){const y=lerp(YK,YD,j/NY),[xs,xb]=xr(y);for(let i=0;i<=NX;i++){const x=lerp(xs,xb,i/NX);pos.push(x,y,side*hb(x,y));const c=colY(y);col.push(c.r,c.g,c.b)}}
+  for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){const a=i+(NX+1)*j,b=a+1,c=a+NX+2,d=a+NX+1;if(side>0)idx.push(a,b,c,a,c,d);else idx.push(a,c,b,a,d,c)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();parts.push(g)}
+ {const pos=[],col=[],idx=[];const[xs,xb]=xr(YK);for(let i=0;i<=NX;i++){const x=lerp(xs,xb,i/NX),w=hb(x,YK);pos.push(x,YK,w,x,YK,-w);col.push(cRed.r,cRed.g,cRed.b,cRed.r,cRed.g,cRed.b)}
+  for(let i=0;i<NX;i++){const a=i*2;idx.push(a,a+1,a+3,a,a+3,a+2)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();parts.push(g)}
+ {const pos=[],col=[],idx=[];for(let j=0;j<=NY;j++){const y=lerp(YK,YD,j/NY),[xs]=xr(y),w=hb(xs,y),c=colY(y);pos.push(xs,y,w,xs,y,-w);col.push(c.r,c.g,c.b,c.r,c.g,c.b)}
+  for(let j=0;j<NY;j++){const a=j*2;idx.push(a,a+2,a+3,a,a+3,a+1)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();parts.push(g)}
+ const hull=mergeGeometries(parts);
+ const dpos=[],duv=[],didx=[];const yd=8,[xs,xb]=xr(yd);for(let i=0;i<=NX;i++){const x=lerp(xs,xb,i/NX),w=hb(x,yd)*.97;dpos.push(x,yd,-w,x,yd,w);duv.push((x+80)/150,0,(x+80)/150,1)}
+ for(let i=0;i<NX;i++){const a=i*2;didx.push(a,a+1,a+3,a,a+3,a+2)}const deck=new THREE.BufferGeometry();deck.setAttribute('position',new THREE.Float32BufferAttribute(dpos,3));deck.setAttribute('uv',new THREE.Float32BufferAttribute(duv,2));deck.setIndex(didx);deck.computeVertexNormals();
+ return{hull,deck,hb}}
+function makeShip(){const s=new THREE.Group();const H=hullGeometry();s.add(new THREE.Mesh(H.hull,M.hull));s.add(new THREE.Mesh(H.deck,M.deck));
+ const lv=[[33,58,11,8],[34,57,11,11],[36,55,10.4,14],[39,53,9.4,17]];
+ for(const[x0,x1,hw,y]of lv){const w=x1-x0,cx=(x0+x1)/2;add(s,G.rbox(w,3,hw*2,.2),M.white,[cx,y+1.5,0]);add(s,G.box(w-.8,.85,hw*2+.06),M.glass,[cx,y+1.85,0]);add(s,G.box(.06,.85,hw*2-.8),M.glass,[x1+.01,y+1.85,0]);add(s,G.box(w+.5,.22,hw*2+.5),M.white,[cx,y+3.05,0])}
+ add(s,G.rbox(3.6,2.6,30,.15),M.white,[51.5,21.5,0]);add(s,G.box(.06,1,29),M.glass,[53.35,21.7,0]);
+ add(s,G.cyl(.22,.3,9,12),M.white,[46,26,0]);add(s,G.box(.4,.15,5),M.dark,[46,28.2,0]);add(s,G.box(.3,.12,3.5),M.dark,[46,29.4,0]);add(s,G.cyl(.55,.55,.4,16),M.white,[46,30.6,0]);
+ add(s,G.rbox(4,1.8,3,.15),M.white,[44,21.6,-6]);add(s,G.rbox(4,1.8,3,.15),M.white,[44,21.6,6]);
+ const hd=new THREE.Group();hd.position.set(68,23.5,0);s.add(hd);
+ add(hd,new THREE.CylinderGeometry(10.5,10.5,.5,8),[M.dark,M.heli,M.dark],[0,0,0],[0,Math.PI/8,0]);
+ add(hd,new THREE.CylinderGeometry(11.6,10.6,.9,8,1,true),new THREE.MeshStandardMaterial({color:0x2a2f33,roughness:.9,side:THREE.DoubleSide,transparent:true,opacity:.7}),[0,.2,0],[0,Math.PI/8,0]);
+ const hs=[];for(const a of[0,1,2,3,4,5,6,7]){const an=a/8*Math.PI*2+Math.PI/8;const p=V(Math.cos(an)*9.5,-.3,Math.sin(an)*9.5);if(p.x<0)hs.push(beamG(p.clone().add(V(68,23.5,0)),V(56,16,p.z*.8),.28));else hs.push(beamG(p.clone().add(V(68,23.5,0)),V(62,9,p.z*.6),.3))}s.add(mergeMesh(hs,M.dark));
+ for(const z of[-12.4,12.4]){const b=add(s,new THREE.CapsuleGeometry(1.25,4,8,16),M.orange,[30,12.6,z],[0,0,Math.PI/2]);add(s,G.box(4.4,.6,.6),M.dark,[30,11.6,z*.97]);add(s,beamG(V(28,8,z*.92),V(28,13.4,z),.15),M.dark);add(s,beamG(V(32,8,z*.92),V(32,13.4,z),.15),M.dark)}
+ for(const z of[-3,3]){add(s,G.cyl(1.3,1.3,9,24),M.white,[-74,12.5,z]);add(s,G.cyl(1.32,1.32,1.2,24),M.black,[-74,17.4,z])}
+ // pacote de perfuração
+ const sub=[];for(const[x,z]of[[9,9],[9,-9],[-9,-9],[-9,9]])sub.push(beamG(V(x,8,z),V(x,16,z),.5,8));for(const[a,b]of[[[9,9],[9,-9]],[[-9,9],[-9,-9]],[[9,-9],[-9,-9]],[[9,9],[-9,9]]]){sub.push(beamG(V(a[0],8.4,a[1]),V(b[0],15.6,b[1]),.25,6),beamG(V(a[0],15.6,a[1]),V(b[0],8.4,b[1]),.25,6))}s.add(mergeMesh(sub,M.grey));
+ add(s,G.rbox(21,1,21,.15),M.dark,[0,16.5,0]);
+ for(const[x,z,w,d]of[[0,-10.2,20,.3],[-10.2,0,.3,20]])add(s,G.box(w,6,d),M.white,[x,20,z]);
+ const der=makeDerrick();der.position.y=17;s.add(der);
+ const td=makeTopDrive();s.add(td);
+ const wires=[0,1,2,3].map(()=>add(s,G.cyl(.06,.06,1,6),M.black));
+ const dpipe=add(s,G.cyl(.24,.24,1,12),M.steel);
+ const rot=makeRotary();rot.position.set(0,17,0);s.add(rot);
+ const rn=makeRoughneck();rn.position.set(4,17,4.2);rn.rotation.y=Math.PI*.9;s.add(rn);
+ const dw=makeDrawworks();dw.position.set(-5,17,6.5);s.add(dw);
+ add(s,G.rbox(5,3.6,4,.25),M.white,[6.5,18.8,-7]);add(s,G.box(4.6,1.3,.06),M.glass,[6.5,19.4,-4.98]);
+ add(s,G.cyl(1.6,1.6,2.4,40),M.red,[0,14.6,0]);add(s,beamG(V(1.4,14.6,0),V(8,14.2,0),.45),M.red);
+ const kc=[];for(const[x,z,ry]of[[-12,10.5,-.6],[12,-10.5,2.5]]){const c=makeCrane();c.position.set(x,8,z);c.rotation.y=ry;s.add(c);kc.push(c)}
+ const pc=[];for(const[x,z,a]of[[-46,11,.3],[24,-11.5,2.6]]){const g=new THREE.Group();g.position.set(x,8,z);s.add(g);add(g,G.cyl(1.4,1.8,9,32),M.yellow,[0,4.5,0]);const t=new THREE.Group();t.position.y=9;t.rotation.y=a;g.add(t);add(t,G.rbox(3.6,2.6,3,.3),M.yellow,[0,1.3,0]);
+  const L=30,el=.75,tip=V(Math.cos(el)*L,1.6+Math.sin(el)*L,0),bm=[];const cr=(tt,k)=>{const h=lerp(.9,.35,tt);const c=V(0,1.6,0).lerp(tip,tt);return c.add(V(-Math.sin(el)*(k<2?h:-h),Math.cos(el)*(k<2?h:-h),k%2?h:-h))};
+  for(let k=0;k<4;k++)bm.push(beamG(cr(0,k),cr(1,k),.13,5));for(let i=0;i<14;i++){const a0=i/14,a1=(i+1)/14;bm.push(beamG(cr(a0,0),cr(a1,1),.07,4),beamG(cr(a0,2),cr(a1,3),.07,4),beamG(cr(a0,0),cr(a1,2),.07,4),beamG(cr(a0,1),cr(a1,3),.07,4))}
+  t.add(mergeMesh(bm,M.yellow));t.add(mergeMesh([beamG(tip,tip.clone().add(V(0,-12,0)),.05,4)],M.black));add(t,G.rbox(.9,1.2,.9,.1),M.red,[tip.x,tip.y-12.6,0]);pc.push({t,a})}
+ {const n=60,im=new THREE.InstancedMesh(G.cyl(.22,.22,12,10),M.pipe,n),d=new THREE.Object3D();for(let i=0;i<n;i++){d.position.set(-58,8.4+Math.floor(i/15)*.46,3.6+(i%15)*.48+(Math.floor(i/15)%2)*.24);d.rotation.set(0,0,Math.PI/2);d.updateMatrix();im.setMatrixAt(i,d.matrix)}s.add(im);
+  for(const x of[-63,-58,-53])add(s,G.box(.6,.6,8),M.yellow,[x,8.3,7.4])}
+ {const n=8,im=new THREE.InstancedMesh(G.cyl(1.3,1.3,18,32),M.white,n),im2=new THREE.InstancedMesh(G.cyl(2.2,2.2,.7,32),M.grey,n*2),d=new THREE.Object3D();
+  for(let i=0;i<n;i++){const x=-34,y=9.4+Math.floor(i/4)*2.6,z=-11+(i%4)*2.8;d.position.set(x,y,z);d.rotation.set(0,0,Math.PI/2);d.updateMatrix();im.setMatrixAt(i,d.matrix);for(const k of[-1,1]){d.position.set(x+k*9,y,z);d.updateMatrix();im2.setMatrixAt(i*2+(k>0?1:0),d.matrix)}}s.add(im,im2)}
+ const mm=new THREE.Group();mm.position.set(-24,8,9);s.add(mm);const fr=[];for(const[x,z]of[[-5,-3.5],[5,-3.5],[-5,3.5],[5,3.5]])fr.push(beamG(V(x,0,z),V(x,6,z),.2));for(const[a,b]of[[[-5,-3.5],[5,-3.5]],[[-5,3.5],[5,3.5]],[[-5,-3.5],[-5,3.5]],[[5,-3.5],[5,3.5]]])fr.push(beamG(V(a[0],6,a[1]),V(b[0],6,b[1]),.2));mm.add(mergeMesh(fr,M.white));add(mm,G.box(10.6,.3,7.4),M.white,[0,6.2,0]);
+ for(const z of[-1.6,1.9]){const p=makeMudPump();p.scale.setScalar(.62);p.position.set(0,0,z);mm.add(p)}
+ for(let i=0;i<3;i++)add(s,G.rbox(2.6,2,3.2,.2),M.blue,[-16,9,-7+i*3.5]);
+ for(const[x,z,c]of[[-70,8,0x2f6db3],[-70,3,0xc8242b],[-64,-10,0xe9eef2],[-70,-10,0x2f6db3]])add(s,G.rbox(5.8,2.5,2.4,.08),pbr(c,.3,.55),[x,9.25,z]);
+ const disp=new THREE.Group();disp.position.set(-19,8,-11);s.add(disp);add(disp,G.rbox(7,.5,5,.1),M.yellow,[0,.25,0]);const ra=makeRam();ra.scale.setScalar(.26);ra.position.set(0,1.1,0);disp.add(ra);const an=makeAnnular();an.scale.setScalar(.26);an.position.set(0,1.75,0);disp.add(an);
+ for(const[x,y,z]of[[-70,17,-11],[-40,12,-12],[20,12,12],[-80,10,0],[60,13,11],[60,13,-11]])add(s,G.sph(.25,8),M.lampW,[x,y,z]);
+ s.userData={td,wires,dpipe,rn,dw,kc,pc,der,disp,mm,hb:H.hb};return s}
+function makeBit(){const g=new THREE.Group();
+ add(g,G.cyl(1.2,1.45,2.8,40),M.steel,[0,7.6,0]);for(let i=0;i<9;i++)add(g,G.tor(1.28+i*.02,.07,40),M.steel,[0,6.4+i*.28,0],[Math.PI/2,0,0]);
+ add(g,G.cyl(2.25,2.25,.6,48),M.steel,[0,6,0]);add(g,G.cyl(2.35,2.15,1.8,48),M.steel,[0,4.9,0]);
+ const tooth=new THREE.ConeGeometry(.2,.48,10);tooth.translate(0,.24,0);const cones=[];
+ for(let k=0;k<3;k++){const a=k*Math.PI*2/3;const leg=new THREE.Group();leg.rotation.y=a;g.add(leg);
+  add(leg,G.rbox(1.9,3.8,1.3,.3),M.steel,[0,3,1.75],[-.2,0,0]);add(leg,G.cyl(.32,.32,.6,16),M.dark,[0,4.2,2.35],[Math.PI/2,0,0]);
+  const cg=new THREE.Group();cg.position.set(0,1.5,1.5);cg.rotation.x=-2.45;leg.add(cg);const sp=new THREE.Group();cg.add(sp);
+  add(sp,G.cyl(.4,1.55,2.3,40),M.steel,[0,1.15,0]);add(sp,G.cyl(1.55,1.55,.35,40),M.steel,[0,0,0]);
+  const rows=[[.12,1.62,14],[.95,1.05,11],[1.75,.58,7]];const n=rows.reduce((s,r)=>s+r[2],0);const im=new THREE.InstancedMesh(tooth,M.chrome,n);const d=new THREE.Object3D();let c=0;
+  for(const[y,r,m]of rows)for(let i=0;i<m;i++){const t=i/m*Math.PI*2+y;d.position.set(Math.cos(t)*r,y,Math.sin(t)*r);d.quaternion.setFromUnitVectors(UP,V(Math.cos(t),.55,Math.sin(t)).normalize());d.updateMatrix();im.setMatrixAt(c++,d.matrix)}
+  sp.add(im);cones.push(sp)}
+ for(let k=0;k<3;k++){const a=k*Math.PI*2/3+Math.PI/3;add(g,G.cyl(.28,.32,.8,16),M.dark,[Math.cos(a)*1.6,3.6,Math.sin(a)*1.6])}
+ g.userData.cones=cones;return g}
+
+/* =====================================================================
+   Diorama: mar em corte + bloco geológico
+   ===================================================================== */
+const wave=(x,z,t)=>.5*Math.sin(x*.045+t*.8)+.35*Math.sin(z*.06+t*1.05+1.3)+.18*Math.sin((x+z)*.11+t*1.6);
+// fundo (céu acima d'água, estúdio escuro abaixo)
+const backdrop=new THREE.Mesh(new THREE.PlaneGeometry(9000,9000),new THREE.ShaderMaterial({depthWrite:false,
+ vertexShader:'varying vec3 w;void main(){vec4 p=modelMatrix*vec4(position,1.);w=p.xyz;gl_Position=projectionMatrix*viewMatrix*p;}',
+ fragmentShader:`varying vec3 w;void main(){float y=w.y;vec3 c;
+  if(y>0.){float k=clamp(y/420.,0.,1.);c=mix(vec3(.80,.86,.90),vec3(.36,.56,.76),pow(k,.6));float s=exp(-pow(length(w.xy-vec2(320.,90.))/180.,2.));c+=vec3(.25,.2,.12)*s;}
+  else{float k=clamp(-y/520.,0.,1.);c=mix(vec3(.05,.17,.24),vec3(.03,.05,.08),k);}
+  gl_FragColor=vec4(c,1.);
+  #include <colorspace_fragment>
+ }`}));backdrop.position.z=-700;scene.add(backdrop);
+// superfície do oceano
+const oceanGeo=new THREE.PlaneGeometry(3000,760,200,64);oceanGeo.rotateX(-Math.PI/2);oceanGeo.translate(0,0,FRONT-380);
+const skyEnv=(()=>{const s=new THREE.Scene();const g=new THREE.SphereGeometry(10,32,16),c=[],p=g.attributes.position;for(let i=0;i<p.count;i++){const k=clamp(p.getY(i)/10*1.4+.5);const col=new THREE.Color(0x1b2a33).lerp(new THREE.Color(0xbfd6e6),k);c.push(col.r,col.g,col.b)}g.setAttribute('color',new THREE.Float32BufferAttribute(c,3));s.add(new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.BackSide})));return pmrem.fromScene(s).texture})();
+const ocean=new THREE.Mesh(oceanGeo,new THREE.MeshPhysicalMaterial({color:0x0a3a52,roughness:.16,metalness:0,envMap:skyEnv,envMapIntensity:1,clearcoat:.6,clearcoatRoughness:.12,transparent:true,opacity:.94}));scene.add(ocean);
+const opos=oceanGeo.attributes.position,obase=Float32Array.from(opos.array);
+function updOcean(t){for(let i=0;i<opos.count;i++){opos.array[i*3+1]=wave(obase[i*3],obase[i*3+2],t)}opos.needsUpdate=true;oceanGeo.computeVertexNormals()}
+// face frontal da água (corte) com gradiente de profundidade
+const waterFront=new THREE.Mesh(new THREE.PlaneGeometry(HALFW*2,-SEABED),new THREE.ShaderMaterial({transparent:true,depthWrite:false,
+ vertexShader:'varying vec3 w;void main(){vec4 p=modelMatrix*vec4(position,1.);w=p.xyz;gl_Position=projectionMatrix*viewMatrix*p;}',
+ fragmentShader:`varying vec3 w;uniform float t;void main(){float k=clamp(-w.y/330.,0.,1.);vec3 c=mix(vec3(.10,.50,.62),vec3(.01,.06,.12),pow(k,.75));float a=mix(.32,.66,pow(k,.85));
+  float caus=0.;if(k<.25){caus=(sin(w.x*.2+t*1.3)*sin(w.y*.25-t*.9+w.x*.05)*.5+.5)*(1.-k/.25)*.08;}
+  float edge=smoothstep(2.5,0.,-w.y)*.25;gl_FragColor=vec4(c+caus+edge,a);
+  #include <colorspace_fragment>
+ }`,uniforms:{t:{value:0}}}));waterFront.position.set(0,SEABED/2,FRONT);waterFront.renderOrder=2;scene.add(waterFront);
+const ribGeo=new THREE.PlaneGeometry(HALFW*2,1,160,1);const ribbon=new THREE.Mesh(ribGeo,new THREE.MeshBasicMaterial({color:0x6cc6dc,transparent:true,opacity:.55,depthWrite:false}));ribbon.position.z=FRONT+.05;ribbon.renderOrder=3;scene.add(ribbon);
+function updRibbon(t){const p=ribGeo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i);p.setY(i,i<=160?wave(x,FRONT,t):-1.6)}p.needsUpdate=true}
+// raios de luz e neve marinha (sutis)
+const rays=[];for(let i=0;i<9;i++){const m=new THREE.Mesh(new THREE.PlaneGeometry(10+rnd()*12,150),new THREE.MeshBasicMaterial({map:rayTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.07,color:0xbfefff}));m.position.set(-170+i*42+rnd()*10,-75,FRONT-10-rnd()*80);m.rotation.z=-.18+rnd()*.08;m.renderOrder=4;m.userData.ph=rnd()*6;scene.add(m);rays.push(m)}
+const NS=1400,snowG=new THREE.BufferGeometry(),snowA=new Float32Array(NS*3),snowS=[];for(let i=0;i<NS;i++){snowS.push([(rnd()*2-1)*190,SEABED+rnd()*(-SEABED-4),BACK+rnd()*(FRONT-BACK-4),rnd()])}snowG.setAttribute('position',new THREE.BufferAttribute(snowA,3));
+const snow=new THREE.Points(snowG,new THREE.PointsMaterial({size:.55,map:dotTex,transparent:true,opacity:.45,depthWrite:false,color:0xd8eef7}));snow.frustumCulled=false;snow.renderOrder=4;scene.add(snow);
+
+// bloco geológico com recorte para o poço
+const LAY=[[0,'#8d7858','sed','Sedimentos'],[.1,'#6e5b46','clay','Argila'],[.22,'#a88d64','sand','Arenito'],[.38,'#4a4644','shale','Folhelho'],[.52,'#8a8274','lime','Calcário'],[.63,'#2f2b29','cap','Rocha selante'],[.7,'#8f6c3c','res','Reservatório'],[.92,'#2c2522','base','Embasamento']];
+const GH=SEABED-GBOT;
+const domeAt=(xn,i)=>i>=4?Math.exp(-(((xn-.5)/.13)**2))*.06*(i===4?.5:1):0;
+const layerTop=(i,xn)=>{if(i===0)return 0;if(i>=LAY.length)return 1.01;return LAY[i][0]+Math.sin(xn*44+i*1.7)*.006+Math.sin(xn*131+i*2.3)*.003-domeAt(xn,i)};
+const SW=3072,SH=1464;
+const strataCanvas=document.createElement('canvas');strataCanvas.width=SW;strataCanvas.height=SH;
+const glossCanvas=document.createElement('canvas');glossCanvas.width=1024;glossCanvas.height=488;
+(function drawStrata(){const g=strataCanvas.getContext('2d'),W=SW,H=SH;const dots=(n,c1,c2,s=2)=>{for(let i=0;i<n;i++){g.fillStyle=rnd()<.5?c1:c2;g.fillRect(rnd()*W,rnd()*H,1+rnd()*s,1+rnd()*s)}};
+ for(let i=0;i<LAY.length;i++){const p=new Path2D();p.moveTo(0,layerTop(i,0)*H);for(let x=0;x<=W;x+=12)p.lineTo(x,layerTop(i,x/W)*H);for(let x=W;x>=0;x-=12)p.lineTo(x,layerTop(i+1,x/W)*H);p.closePath();
+  g.save();g.clip(p);g.fillStyle=LAY[i][1];g.fillRect(0,0,W,H);const k=LAY[i][2];
+  for(let n=0;n<220;n++){g.fillStyle=`rgba(${rnd()<.5?'0,0,0':'255,240,220'},${rnd()*.06})`;g.beginPath();g.ellipse(rnd()*W,rnd()*H,20+rnd()*140,6+rnd()*30,0,0,7);g.fill()}
+  if(k==='sed')dots(40000,'rgba(30,20,10,.35)','rgba(235,215,185,.3)');
+  if(k==='clay'){dots(20000,'rgba(0,0,0,.18)','rgba(255,255,255,.07)');g.strokeStyle='rgba(0,0,0,.12)';for(let y=0;y<H;y+=9){g.beginPath();for(let x=0;x<=W;x+=24)g.lineTo(x,y+Math.sin(x*.01+y)*3);g.stroke()}}
+  if(k==='sand'){dots(90000,'rgba(60,40,20,.35)','rgba(250,232,195,.35)',3);g.strokeStyle='rgba(80,55,30,.18)';for(let n=0;n<160;n++){const x=rnd()*W,y=H*(.24+rnd()*.13);g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+60,y-10,x+140,y+14);g.stroke()}}
+  if(k==='shale'){g.lineWidth=1.6;for(let y=0;y<H;y+=4){g.strokeStyle=(y/4)%2?'rgba(0,0,0,.22)':'rgba(255,255,255,.05)';g.beginPath();for(let x=0;x<=W;x+=30)g.lineTo(x,y+Math.sin(x*.004+y*.3)*2);g.stroke()}for(let n=0;n<90;n++){g.strokeStyle='rgba(0,0,0,.25)';g.beginPath();let x=rnd()*W,y=H*(.38+rnd()*.14);g.moveTo(x,y);for(let s=0;s<5;s++){x+=(rnd()-.3)*40;y+=(rnd()-.5)*10;g.lineTo(x,y)}g.stroke()}}
+  if(k==='lime'){g.strokeStyle='rgba(0,0,0,.3)';g.lineWidth=2.4;for(let y=0;y<H;y+=30){let x=-rnd()*80;while(x<W){const w=50+rnd()*90;g.strokeRect(x,y,w,30);x+=w}}dots(30000,'rgba(0,0,0,.15)','rgba(255,255,255,.12)')}
+  if(k==='cap'){dots(15000,'rgba(0,0,0,.3)','rgba(255,255,255,.05)');g.strokeStyle='rgba(255,255,255,.08)';for(let n=0;n<160;n++){g.beginPath();let x=rnd()*W,y=rnd()*H;g.moveTo(x,y);for(let s=0;s<6;s++){x+=(rnd()-.5)*50;y+=(rnd()-.5)*24;g.lineTo(x,y)}g.stroke()}}
+  if(k==='res'){dots(80000,'rgba(45,28,12,.5)','rgba(255,228,165,.32)',3);for(let n=0;n<3000;n++){g.fillStyle='rgba(20,12,6,.5)';g.beginPath();g.arc(rnd()*W,rnd()*H,1+rnd()*3,0,7);g.fill()}}
+  if(k==='base')dots(20000,'rgba(0,0,0,.3)','rgba(255,255,255,.06)');
+  g.restore();if(i>0){g.strokeStyle='rgba(0,0,0,.45)';g.lineWidth=3;g.beginPath();for(let x=0;x<=W;x+=12)g.lineTo(x,layerTop(i,x/W)*H);g.stroke()}}
+ // óleo e gás na armadilha (anticlinal)
+ const cx=W/2,rt=layerTop(6,.5)*H;
+ g.save();g.beginPath();for(let x=0;x<=W;x+=12)g.lineTo(x,layerTop(6,x/W)*H);g.lineTo(W,H);g.lineTo(0,H);g.closePath();g.clip();
+ let r=g.createRadialGradient(cx,rt+H*.07,20,cx,rt+H*.07,W*.2);r.addColorStop(0,'rgba(10,6,2,.96)');r.addColorStop(.7,'rgba(16,10,4,.85)');r.addColorStop(1,'rgba(16,10,4,0)');g.save();g.translate(cx,rt+H*.07);g.scale(1,.24);g.translate(-cx,-(rt+H*.07));g.fillStyle=r;g.fillRect(0,0,W,H);g.restore();
+ r=g.createRadialGradient(cx,rt+H*.018,10,cx,rt+H*.018,W*.11);r.addColorStop(0,'rgba(240,226,170,.75)');r.addColorStop(1,'rgba(240,226,170,0)');g.save();g.translate(cx,rt+H*.018);g.scale(1,.16);g.translate(-cx,-(rt+H*.018));g.fillStyle=r;g.fillRect(0,0,W,H);g.restore();g.restore();
+ const sh=g.createLinearGradient(0,0,0,H);sh.addColorStop(0,'rgba(0,0,0,0)');sh.addColorStop(1,'rgba(0,0,0,.35)');g.fillStyle=sh;g.fillRect(0,0,W,H);
+ const q=glossCanvas.getContext('2d');q.fillStyle='#fff';q.fillRect(0,0,1024,488);const qx=512,qy=layerTop(6,.5)*488+488*.07;const qr=q.createRadialGradient(qx,qy,4,qx,qy,1024*.18);qr.addColorStop(0,'#1a1a1a');qr.addColorStop(.75,'#3a3a3a');qr.addColorStop(1,'#ffffff');q.save();q.translate(qx,qy);q.scale(1,.24);q.translate(-qx,-qy);q.fillStyle=qr;q.fillRect(0,0,1024,488);q.restore()})();
+const strataTex=new THREE.CanvasTexture(strataCanvas);strataTex.colorSpace=THREE.SRGBColorSpace;strataTex.anisotropy=renderer.capabilities.getMaxAnisotropy();
+const glossTex=new THREE.CanvasTexture(glossCanvas);
+const strataMat=new THREE.MeshPhysicalMaterial({map:strataTex,roughnessMap:glossTex,roughness:.95,bumpMap:strataTex,bumpScale:1.2,clearcoat:.0});
+const seabedMat=new THREE.MeshStandardMaterial({map:sandTex,color:0xc8b79a,roughness:1});
+function blockBox(x0,x1,z0,z1){const g=new THREE.BoxGeometry(x1-x0,GH,z1-z0);g.translate((x0+x1)/2,(SEABED+GBOT)/2,(z0+z1)/2);const p=g.attributes.position,n=g.attributes.normal,uv=g.attributes.uv;
+ for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const v=(y-GBOT)/GH;let u=(x+HALFW)/(HALFW*2);if(Math.abs(n.getX(i))>.5)u+=(z-FRONT)/(HALFW*2)*.2;if(Math.abs(n.getY(i))>.5)uv.setXY(i,x/30,z/30);else uv.setXY(i,u,v)}
+ return new THREE.Mesh(g,[strataMat,strataMat,seabedMat,strataMat,strataMat,strataMat])}
+scene.add(blockBox(-HALFW,-NOTCH,BACK,FRONT),blockBox(NOTCH,HALFW,BACK,FRONT),blockBox(-NOTCH,NOTCH,BACK,NOTCHZ));
+{const im=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,1),pbr(0x4a4038,0,1),70),d=new THREE.Object3D();for(let i=0;i<70;i++){let x,z;do{x=(rnd()*2-1)*190;z=BACK+rnd()*(FRONT-BACK-4)}while(Math.abs(x)<26&&z>-30);const s=.4+rnd()*1.6;d.position.set(x,SEABED+s*.25,z);d.scale.set(s,s*.55,s*(.7+rnd()*.5));d.rotation.set(rnd(),rnd()*6,rnd());d.updateMatrix();im.setMatrixAt(i,d.matrix)}scene.add(im)}
+
+/* ---------- montagem dos equipamentos no diorama ---------- */
+const A={};const anchor=(id,parent,x,y,z)=>{const o=new THREE.Object3D();o.position.set(x,y,z);parent.add(o);A[id]=o;return o};
+const ship=makeShip();scene.add(ship);const SU=ship.userData;
+anchor('topdrive',SU.td,0,4.5,1.6);anchor('structures',ship,5.5,42,4);anchor('rotary',ship,0,18.4,2.2);anchor('roughneck',SU.rn,0,3.2,0);anchor('drawworks',ship,-5,20.4,6.5);
+anchor('mudpumps',ship,-24,12,12.8);anchor('mudsys',ship,-16,10.4,3.5);anchor('cranes',SU.kc[0],0,6.4,0);anchor('motion',ship,0,68.5,0);anchor('diverter',ship,0,14.6,1.8);
+anchor('deal',ship,6.5,19.6,-5);anchor('beaware',ship,51,22,15);anchor('gk',SU.disp,0,4.4,0);anchor('sentry',SU.disp,2.4,1.2,1.4);
+// junta telescópica, anel e tensionadores
+add(ship,G.cyl(1.9,1.9,15,40),M.grey,[0,-14.5,0]);add(ship,G.cyl(2.1,2.1,.8,40),M.dark,[0,-7.4,0]);add(ship,G.cyl(2.1,2.1,.8,40),M.dark,[0,-21.6,0]);
+anchor('telescopic',ship,0,-15,2.1);
+const inner=add(scene,G.cyl(1.3,1.3,16,40),M.chrome,[0,-20,0]);
+const ring=new THREE.Group();ring.position.y=-26;scene.add(ring);add(ring,G.tor(2.7,.55,48),M.dark,[0,0,0],[Math.PI/2,0,0]);
+const ATT=[[13,5],[-13,5],[13,-5],[-13,-5]];
+for(const[x,z]of ATT)add(ring,G.rbox(1.2,1.2,1.2,.15),M.dark,[Math.sign(x)*3,0,Math.sign(z)*1.6]);
+const tens=ATT.map(([x,z])=>{const t=makeTensioner(20);scene.add(t);return{t,hull:V(x,-7.2,z),ring:V(Math.sign(x)*3,0,Math.sign(z)*1.6)}});
+anchor('tens',tens[0].t,0,8,1.2);
+// MPD e coluna de riser (instanciada)
+const mpd=makeRiserJoint(14,{mpd:true});mpd.position.y=-34;scene.add(mpd);anchor('mpd',mpd,0,1.4,2.2);
+function instancify(group,count,parent){group.updateMatrixWorld(true);const by=new Map();const m4=new THREE.Matrix4();
+ group.traverse(o=>{if(!o.isMesh)return;const list=(by.get(o.material)||by.set(o.material,[]).get(o.material));
+  if(o.isInstancedMesh){for(let i=0;i<o.count;i++){o.getMatrixAt(i,m4);list.push(clean(o.geometry.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(o.matrixWorld,m4))))}}
+  else list.push(clean(o.geometry.clone().applyMatrix4(o.matrixWorld)))});
+ const ims=[];for(const[mat,geos]of by){const im=new THREE.InstancedMesh(mergeGeometries(geos),mat,count);im.frustumCulled=false;parent.add(im);ims.push(im)}
+ return{set:(i,m)=>ims.forEach(im=>im.setMatrixAt(i,m)),done:()=>ims.forEach(im=>im.instanceMatrix.needsUpdate=true)}}
+const bop=makeBOP({rams:3,anns:1});bop.position.set(0,SEABED,0);scene.add(bop);const BU=bop.userData;
+const RTOP=-41,RBOT=SEABED+BU.top,NJ=11,JL=(RTOP-RBOT)/NJ;
+const riserI=instancify(makeRiserJoint(JL),NJ,scene);const rdm=new THREE.Object3D();
+const bend=(y,t)=>.8*Math.sin(Math.PI*clamp((y-RBOT)/(RTOP-RBOT)))*Math.sin(t*.25);
+function updRiser(t){for(let i=0;i<NJ;i++){const y=RTOP-JL*(i+.5);rdm.position.set(bend(y,t),y,0);rdm.rotation.set(0,i*.6,0);rdm.updateMatrix();riserI.set(i,rdm.matrix)}riserI.done();mpd.position.x=bend(-34,t)}
+anchor('riser',scene,0,-160,2.6);
+anchor('gxp',bop,0,BU.annYs[0],4.7);anchor('rams',bop,6,BU.ramYs[1],3.3);anchor('wbsr',bop,6,BU.ramYs[0],3.3);anchor('h4',bop,0,9.6,4.1);
+anchor('pods',BU.pods[0],0,3,1.4);anchor('valves',BU.valves[1],0,1.2,.8);
+const k20=makeBOP({rams:4,anns:1,bonnet:pbr(0xc8452c,.25,.5,{clearcoat:.3})});k20.scale.setScalar(.7);k20.position.set(78,SEABED,-108);k20.rotation.y=-.5;scene.add(k20);anchor('k20',k20,0,k20.userData.top*.7,0);
+const eb=makeBOP({rams:2,anns:1,electric:true,body:pbr(0x5c6c78,.5,.4),bonnet:pbr(0x3a4a56,.5,.45),annCol:pbr(0x5c6c78,.5,.4)});eb.scale.setScalar(.7);eb.position.set(48,SEABED,-60);eb.rotation.y=.5;scene.add(eb);anchor('ebop',eb,0,eb.userData.top*.7,0);
+// ROVs com luzes
+const coneMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,
+ vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+ fragmentShader:'varying vec2 vUv;void main(){gl_FragColor=vec4(.8,.95,1.,pow(vUv.y,2.4)*.16);}'});
+function rovWithLights(){const r=makeROV();scene.add(r);const cone=new THREE.ConeGeometry(5,16,32,1,true);cone.translate(0,-8,0);
+ for(const x of[-2.2,2.2]){const s=new THREE.SpotLight(0xdff6ff,600,90,.5,.55,1.3);s.position.set(x,.1,2.5);r.add(s);const tg=new THREE.Object3D();tg.position.set(x*2,-8,14);r.add(tg);s.target=tg;
+  const c=new THREE.Mesh(cone,coneMat);c.position.set(x,.1,2.5);c.rotation.set(-Math.PI/2+.5,0,0);c.renderOrder=5;r.add(c)}return r}
+const rovs=[rovWithLights(),rovWithLights(),rovWithLights()];
+anchor('rovB',rovs[0],0,2.4,0);anchor('rovA',rovs[2],0,2.4,0);
+// poço em corte
+const clip=[new THREE.Plane(V(0,0,-1),0)];
+const halfMat=(m,side=THREE.DoubleSide)=>{const c=m.clone();c.clippingPlanes=clip;c.side=side;return c};
+const cementM=halfMat(pbr(0xc9bb9c,0,.95)),casingM=halfMat(M.steel),holeM=halfMat(pbr(0x2a2420,0,1));
+const shell=(r,y0,y1,mat)=>add(scene,new THREE.CylinderGeometry(r,r,y0-y1,48,1,true),mat,[0,(y0+y1)/2,0]);
+shell(3.8,SEABED,SEABED-22,cementM);shell(3.1,SEABED,SEABED-22,casingM);shell(3.0,SEABED-22,SEABED-50,cementM);shell(2.5,SEABED,SEABED-50,casingM);shell(2.4,SEABED-50,SEABED-80,cementM);shell(1.9,SEABED,SEABED-80,casingM);
+const openHole=add(scene,new THREE.CylinderGeometry(1.55,1.55,1,48,1,true),holeM);
+const dstring=add(scene,G.cyl(.5,.5,1,24),M.pipe);
+const bit=makeBit();bit.scale.setScalar(.55);scene.add(bit);anchor('bit',bit,0,4,3.4);anchor('casing',scene,-3.3,SEABED-35,1.4);
+anchor('reservoir',scene,-48,SEABED-GH*.74,FRONT+1);anchor('dls',scene,70,SEABED-GH*.84,FRONT+1);
+const BIT0=SEABED-95,BIT1=SEABED-GH*.79;
+// lupa com close da broca (render-to-texture)
+const lensRT=new THREE.WebGLRenderTarget(768,768,{samples:4});const lensScene=new THREE.Scene();lensScene.environment=studioEnv;lensScene.environmentIntensity=.8;lensScene.background=new THREE.Color(0x1d1915);
+const lensCam=new THREE.PerspectiveCamera(34,1,.1,100);lensCam.position.set(3,3.2,15.5);lensCam.lookAt(0,4,0);
+lensScene.add(new THREE.HemisphereLight(0xffffff,0x40352a,1));const lk=new THREE.DirectionalLight(0xffe6c8,2.5);lk.position.set(6,10,8);lensScene.add(lk);
+const lensBit=makeBit();lensScene.add(lensBit);
+{const wall=new THREE.Mesh(new THREE.CylinderGeometry(4,4,30,48,1,true,Math.PI/2,Math.PI),new THREE.MeshStandardMaterial({map:sandTex.clone(),color:0x8f7a5c,roughness:1,side:THREE.BackSide}));wall.material.map.repeat.set(3,4);wall.position.y=8;lensScene.add(wall);
+ add(lensScene,G.cyl(.9,.9,20,32),M.pipe,[0,18,0]);add(lensScene,G.cyl(4.2,4.2,1,48),pbr(0x6b5a45,0,1),[0,-.6,0])}
+const chipG=new THREE.BufferGeometry(),chipA=new Float32Array(120*3),chipS=[];for(let i=0;i<120;i++)chipS.push({a:rnd()*6.28,l:rnd(),s:.5+rnd()});chipG.setAttribute('position',new THREE.BufferAttribute(chipA,3));
+lensScene.add(new THREE.Points(chipG,new THREE.PointsMaterial({size:.22,color:0xc9b087})));
+const LENS=V(56,SEABED-74,FRONT+3),LR=17;
+const lens=new THREE.Group();lens.position.copy(LENS);scene.add(lens);
+add(lens,new THREE.CircleGeometry(LR,72),new THREE.MeshBasicMaterial({map:lensRT.texture}));add(lens,G.tor(LR,.7,96),M.lattice,[0,0,.2]);add(lens,G.tor(LR+.9,.2,96),M.dark,[0,0,.1]);
+const beamGeo=new THREE.BufferGeometry();beamGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(9),3));
+const lensBeam=new THREE.Mesh(beamGeo,new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.1,depthWrite:false,side:THREE.DoubleSide}));lensBeam.renderOrder=6;scene.add(lensBeam);
+const bitRing=add(scene,G.tor(2.6,.18,48),M.lampW,[0,0,1]);
+// óleo subindo pela coluna quando a broca chega ao reservatório
+const oilG=new THREE.BufferGeometry(),oilA=new Float32Array(220*3),oilS=[];for(let i=0;i<220;i++)oilS.push({x:(rnd()*2-1)*1.1,y:rnd(),s:.4+rnd()*.6});oilG.setAttribute('position',new THREE.BufferAttribute(oilA,3));
+const oil=new THREE.Points(oilG,new THREE.PointsMaterial({size:.9,map:dotTex,color:0xffb347,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));oil.frustumCulled=false;scene.add(oil);
+// bolhas do BOP
+const NB=160,bubG=new THREE.BufferGeometry(),bubA=new Float32Array(NB*3),bubS=[];for(let i=0;i<NB;i++)bubS.push({x:(rnd()*2-1)*2,y:rnd()*60,z:(rnd()*2-1)*2,s:2+rnd()*3});bubG.setAttribute('position',new THREE.BufferAttribute(bubA,3));
+const bub=new THREE.Points(bubG,new THREE.PointsMaterial({size:.5,map:dotTex,color:0xe6f8ff,transparent:true,opacity:.6,depthWrite:false}));bub.frustumCulled=false;bub.renderOrder=4;scene.add(bub);
+// rótulos no subsolo
+const tagsEl=$('#tags');
+const TAGS=[...LAY.slice(0,7).map((l,i)=>({t:l[3],p:V(-120,SEABED-((l[0]+LAY[i+1][0])/2)*GH,FRONT+.5),s:i<5?4:5})),{t:'gás natural',p:V(18,SEABED-GH*.655,FRONT+.5),s:5,big:1},{t:'óleo',p:V(-26,SEABED-GH*.765,FRONT+.5),s:5,big:1}].map(o=>{const e=document.createElement('div');e.className='tag3d'+(o.big?' big':'');e.textContent=o.t;tagsEl.appendChild(e);return{...o,e}});
+
+/* =====================================================================
+   Câmera: enquadramentos fixos por seção + visão geral
+   ===================================================================== */
+const FR=[{cy:28,h:92,w:150,cx:-4,tl:.17},{cy:-20,h:60,w:66,cx:0,tl:.06},{cy:-155,h:160,w:70,cx:0,tl:.05},{cy:-305,h:72,w:80,cx:0,tl:.12},{cy:-405,h:82,w:120,cx:22,tl:.04},{cy:-468,h:86,w:150,cx:0,tl:.08}];
+const OV={cy:-238,h:700,w:440,cx:0,tl:.06};
+const cur={cx:FR[0].cx,cy:FR[0].cy,h:FR[0].h,tl:FR[0].tl};let overview=false,secF=0,sec=0,settle=1;
+const maxScroll=()=>Math.max(1,document.documentElement.scrollHeight-innerHeight);
+function frameFromScroll(){const f=clamp(scrollY/maxScroll())*(FR.length-1);const i=Math.min(FR.length-2,Math.floor(f));const e=smooth((f-i-.22)/.56);
+ const a=FR[i],b=FR[i+1];secF=i+e;sec=Math.round(secF);settle=1-Math.min(e,1-e)*2;
+ return{cx:lerp(a.cx,b.cx,e),cy:lerp(a.cy,b.cy,e),h:Math.exp(lerp(Math.log(a.h),Math.log(b.h),e)),w:lerp(a.w,b.w,e),tl:lerp(a.tl,b.tl,e),i,e,f}}
+const isWide=()=>innerWidth/innerHeight>1.05&&innerWidth>820;
+let mx=0,my=0,smx=0,smy=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth*2-1;my=e.clientY/innerHeight*2-1},{passive:true});
+function placeCamera(dt,target){
+ const k=RM?1:1-Math.exp(-dt*3.4);cur.cx+=(target.cx-cur.cx)*k;cur.cy+=(target.cy-cur.cy)*k;cur.h=Math.exp(lerp(Math.log(cur.h),Math.log(target.h),k));cur.tl+=(target.tl-cur.tl)*k;
+ const asp=innerWidth/innerHeight,wide=isWide(),usable=wide&&!overview?.7:.94;
+ const h=Math.max(cur.h,(target.w||0)/(asp*usable));const d=(h/2)/Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+ const shift=wide&&!overview?h*asp*.15:0;smx+=(mx-smx)*(1-Math.exp(-dt*2.5));smy+=(my-smy)*(1-Math.exp(-dt*2.5));
+ const tx=cur.cx-shift,ty=cur.cy;camera.position.set(tx+smx*d*.035,ty+d*cur.tl-smy*d*.02,FRONT+d);camera.lookAt(tx,ty,0);
+ camera.near=Math.max(1,d*.25);camera.far=d+1600;camera.updateProjectionMatrix();return d}
+
+/* =====================================================================
+   Som ambiente (Web Audio, procedural)
+   ===================================================================== */
+const audio={on:false,ready:false,u:0,g:0,
+ init(){const C=this.ctx=new (window.AudioContext||window.webkitAudioContext)();this.master=C.createGain();this.master.gain.value=0;this.master.connect(C.destination);this.duckG=C.createGain();this.duckG.connect(this.master);const out=this.duckG;
+  const len=C.sampleRate*4,w=C.createBuffer(1,len,C.sampleRate),b=C.createBuffer(1,len,C.sampleRate),wd=w.getChannelData(0),bd=b.getChannelData(0);let last=0;for(let i=0;i<len;i++){const r=Math.random()*2-1;wd[i]=r;last=(last+.02*r)/1.02;bd[i]=last*3.5}this.white=w;
+  const src=buf=>{const s=C.createBufferSource();s.buffer=buf;s.loop=true;s.start(0,Math.random()*3);return s},filt=(t,f,q=.7)=>{const x=C.createBiquadFilter();x.type=t;x.frequency.value=f;x.Q.value=q;return x},gain=v=>{const g=C.createGain();g.gain.value=v;return g},lfo=(r,d,p)=>{const o=C.createOscillator();o.frequency.value=r;const g=gain(d);o.connect(g);g.connect(p);o.start()};
+  this.surf=gain(0);this.surf.connect(out);{const g=gain(.5);src(b).connect(filt('lowpass',650)).connect(g).connect(this.surf);lfo(.11,.32,g.gain)}{const g=gain(.05);src(w).connect(filt('highpass',2600)).connect(g).connect(this.surf);lfo(.11,.04,g.gain)}
+  {const f=filt('bandpass',500,.6),g=gain(.05);src(w).connect(f).connect(g).connect(this.surf);lfo(.05,.04,g.gain);lfo(.07,200,f.frequency)}{const o=C.createOscillator();o.type='sawtooth';o.frequency.value=48;o.connect(filt('lowpass',170)).connect(gain(.03)).connect(this.surf);o.start()}
+  this.under=gain(0);this.under.connect(out);{const g=gain(.65);src(b).connect(filt('lowpass',300)).connect(g).connect(this.under);lfo(.08,.2,g.gain)}{const g=gain(.045);for(const f of[41,43.3]){const o=C.createOscillator();o.frequency.value=f;o.connect(g);o.start()}g.connect(this.under)}
+  this.verb=C.createConvolver();const L=C.sampleRate*3.4,ib=C.createBuffer(2,L,C.sampleRate);for(let ch=0;ch<2;ch++){const d=ib.getChannelData(ch);for(let i=0;i<L;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/L,3)}this.verb.buffer=ib;this.verb.connect(gain(.7)).connect(this.under);
+  this.ground=gain(0);this.ground.connect(out);{const g=gain(.7);src(b).connect(filt('lowpass',130)).connect(g).connect(this.ground);const o=C.createOscillator();o.frequency.value=2.6;o.connect(gain(.25)).connect(g.gain);o.start()}
+  this.grindG=gain(0);src(w).connect(filt('bandpass',850,3)).connect(this.grindG).connect(this.ground);this.next={ping:2,bub:1,clank:3};this.ready=true},
+ start(){try{if(!this.ready)this.init();this.ctx.resume();this.on=true;this.master.gain.setTargetAtTime(.85,this.ctx.currentTime,.8)}catch(e){this.on=false}sndUI()},
+ stop(){if(this.ready)this.master.gain.setTargetAtTime(0,this.ctx.currentTime,.3);this.on=false;sndUI()},
+ mix(u,g,drill){if(!this.ready)return;const T=this.ctx.currentTime;this.surf.gain.setTargetAtTime((1-u)*(1-g),T,.4);this.under.gain.setTargetAtTime(u*(1-g),T,.4);this.ground.gain.setTargetAtTime(g,T,.5);this.grindG.gain.setTargetAtTime(g*drill*.3,T,.3);this.u=u;this.g=g},
+ duck(v){if(this.ready)this.duckG.gain.setTargetAtTime(v?.15:1,this.ctx.currentTime,.4)},
+ env(n,a,p,d){const T=this.ctx.currentTime;n.gain.setValueAtTime(0,T);n.gain.linearRampToValueAtTime(p,T+a);n.gain.exponentialRampToValueAtTime(.0001,T+a+d)},
+ tone(type,f0,f1,dur,peak,dest){const C=this.ctx,o=C.createOscillator(),g=C.createGain(),T=C.currentTime;o.type=type;o.frequency.setValueAtTime(f0,T);o.frequency.exponentialRampToValueAtTime(f1,T+dur*.7);o.connect(g);[].concat(dest).forEach(d=>g.connect(d));this.env(g,.004,peak,dur);o.start();o.stop(T+dur+.1)},
+ noise(f0,f1,q,dur,peak,dest){const C=this.ctx,s=C.createBufferSource(),f=C.createBiquadFilter(),g=C.createGain(),T=C.currentTime;s.buffer=this.white;f.type='bandpass';f.Q.value=q;f.frequency.setValueAtTime(f0,T);f.frequency.exponentialRampToValueAtTime(f1,T+dur);s.connect(f).connect(g).connect(dest);this.env(g,.01,peak,dur);s.start(0,Math.random()*2);s.stop(T+dur+.1)},
+ update(dt){if(!this.on)return;const n=this.next;n.ping-=dt;n.bub-=dt;n.clank-=dt;
+  if(this.u>.4&&this.g<.5&&n.ping<0){this.tone('sine',1150+Math.random()*80,1140,1.8,.14,[this.under,this.verb]);n.ping=6+Math.random()*5}
+  if(this.u>.4&&this.g<.5&&n.bub<0){this.tone('sine',260+Math.random()*200,900+Math.random()*700,.1,.04,this.under);n.bub=.4+Math.random()*1.6}
+  if(this.u<.5&&n.clank<0){this.noise(1200+Math.random()*1800,1300,12,.5,.07,this.surf);n.clank=3+Math.random()*6}},
+ tick(){if(this.on)this.tone('sine',1700,1650,.05,.03,this.duckG)},whoosh(o){if(this.on)this.noise(o?300:2000,o?2200:300,1.2,.4,.1,this.master)}};
+const sndBtn=$('#sndBtn');function sndUI(){sndBtn.setAttribute('aria-pressed',audio.on)}sndBtn.onclick=()=>audio.on?audio.stop():audio.start();
+
+/* =====================================================================
+   Interface
+   ===================================================================== */
+const panelsEl=$('#panels'),rail=$('#rail'),drawer=$('#drawer'),ovbEl=$('#ovb');
+SECS.forEach((s,i)=>{const p=document.createElement('section');p.className='panel'+(s.light?' light':'');
+ p.innerHTML=`<h2>${s.t}</h2><p>${s.p}</p><div class="row"><a class="btn" href="${BASE+s.u}" target="_blank" rel="noopener">Saiba Mais</a><span class="hint">Clique nos pontos para ver cada equipamento</span></div>`;panelsEl.appendChild(p);s.el=p;
+ const seg=document.createElement('div');seg.className='seg';seg.style.background=s.cor;seg.innerHTML=`<button aria-label="Ir para ${s.t}"></button><span class="ln"><i></i></span>`;seg.firstChild.onclick=()=>go(i);rail.appendChild(seg);s.seg=seg;
+ const b=document.createElement('button');b.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${s.t.slice(4)}</span>`;b.onclick=()=>{go(i);menu(false)};drawer.appendChild(b);s.db=b;
+ const o=document.createElement('button');o.className='ov off';o.innerHTML=`<b>${String(i+1).padStart(2,'0')}</b><span>${s.t.slice(4)}</span>`;o.onclick=()=>go(i);ovbEl.appendChild(o);s.ob=o});
+const OVP=[V(-150,40,0),V(-150,-24,FRONT),V(-150,-150,FRONT),V(-150,SEABED+24,FRONT),V(-150,SEABED-60,FRONT),V(-150,SEABED-140,FRONT)];
+function menu(v){drawer.classList.toggle('on',v);$('#menuBtn').setAttribute('aria-expanded',v)}
+$('#menuBtn').onclick=()=>menu(!drawer.classList.contains('on'));
+function setOverview(v){overview=v;$('#ovBtn').setAttribute('aria-pressed',v);document.body.classList.toggle('is-ov',v)}
+$('#ovBtn').onclick=()=>setOverview(!overview);
+function go(i){i=clamp(i,0,SECS.length-1);setOverview(false);scrollTo({top:i/(SECS.length-1)*maxScroll(),behavior:RM?'auto':'smooth'})}
+$('#bUp').onclick=$('#bPrev').onclick=()=>go(sec-1);$('#bDn').onclick=$('#bNext').onclick=()=>go(sec+1);
+let lastSY=scrollY;addEventListener('scroll',()=>{if(overview&&Math.abs(scrollY-lastSY)>4)setOverview(false);lastSY=scrollY},{passive:true});
+addEventListener('keydown',e=>{if(fpState){if(e.key==='Escape')closePanel();return}if(e.key==='Escape'){menu(false);setOverview(false)}if(e.key==='v'||e.key==='V')setOverview(!overview);if(e.key==='PageDown'||e.key==='ArrowRight'){e.preventDefault();go(sec+1)}if(e.key==='PageUp'||e.key==='ArrowLeft'){e.preventDefault();go(sec-1)}});
+const hotsEl=$('#hots');
+P.forEach(p=>{const b=document.createElement('button');b.className='hp off'+(p.ctx?' ctx':'');b.innerHTML=`<i></i><span>${p.n}</span>`;b.setAttribute('aria-label',p.n);b.onclick=e=>{e.stopPropagation();openPanel(p)};b.onmouseenter=()=>audio.tick();hotsEl.appendChild(b);p.el=b});
+const tmp=new THREE.Vector3();
+const toScreen=v=>{tmp.copy(v).project(camera);return{x:(tmp.x*.5+.5)*innerWidth,y:(-tmp.y*.5+.5)*innerHeight,on:tmp.z<1&&Math.abs(tmp.x)<.97&&Math.abs(tmp.y)<.9}};
+function updUI(){
+ // evita pontos sobrepostos: o primeiro da lista ganha a posição
+ const shown=[];
+ for(const p of P){A[p.id].getWorldPosition(tmp);const s=toScreen(tmp);let on=!overview&&p.s===sec&&settle>.7&&s.on&&!(isWide()&&s.x<innerWidth*.36);
+  if(on&&shown.some(q=>Math.hypot(q.x-s.x,q.y-s.y)<40))on=false;if(on)shown.push(s);
+  p.el.classList.toggle('off',!on);if(on)p.el.style.transform=`translate3d(${(s.x-15).toFixed(1)}px,${(s.y-15).toFixed(1)}px,0)`}
+ SECS.forEach((s,i)=>{const sc=toScreen(OVP[i]);s.ob.classList.toggle('off',!overview);if(overview){s.ob.style.opacity=1;s.ob.style.transform=`translate3d(${(sc.x-30).toFixed(0)}px,${(sc.y-21).toFixed(0)}px,0)`}})}
+
+/* ---------- painel flutuante: gatilho vira painel (mola) + visualizador 3D + vídeo ---------- */
+const fp=$('#fp'),scrim=$('#scrim');let fpState=null;
+function spring(k=240,c=21){const o=[];let x=0,v=0;const dt=1/60;for(let i=0;i<240;i++){v+=(-k*(x-1)-c*v)*dt;x+=v*dt;o.push(x);if(i>8&&Math.abs(1-x)<.0015&&Math.abs(v)<.02)break}o.push(1);return o}
+const isHttp=/^https?:/.test(location.protocol);
+const FACT={topdrive:makeTopDrive,roughneck:makeRoughneck,drawworks:makeDrawworks,rotary:makeRotary,mudpump:makeMudPump,crane:makeCrane,derrick:makeDerrick,tensioner:()=>makeTensioner(14),riser:()=>makeRiserJoint(16),mpd:()=>makeRiserJoint(14,{mpd:true}),
+ rov:makeROV,annular:()=>makeAnnular(),ram:()=>makeRam(),h4:makeH4,pod:makePod,valve:()=>makeGateValve(),bop:()=>makeBOP({rams:4,anns:1,bonnet:pbr(0xc8452c,.25,.5,{clearcoat:.3})}),
+ ebop:()=>makeBOP({rams:2,anns:1,electric:true,body:pbr(0x5c6c78,.5,.4),bonnet:pbr(0x3a4a56,.5,.45),annCol:pbr(0x5c6c78,.5,.4)}),bit:makeBit,ship:makeShip,
+ block:()=>{const g=new THREE.Group();const geo=new THREE.BoxGeometry(16,8,8);const p=geo.attributes.position,uv=geo.attributes.uv,n=geo.attributes.normal;for(let i=0;i<p.count;i++){if(Math.abs(n.getY(i))<.5)uv.setXY(i,.32+(p.getX(i)+8)/16*.36+(Math.abs(n.getX(i))>.5?p.getZ(i)/40:0),(p.getY(i)+4)/8*.92+.06)}g.add(new THREE.Mesh(geo,[strataMat,strataMat,seabedMat,strataMat,strataMat,strataMat]));
+  add(g,new THREE.CylinderGeometry(.35,.35,8.6,24),M.steel,[0,.3,4.05]);const b=makeBit();b.scale.setScalar(.12);b.position.set(0,-1.5,4.1);g.add(b);return g}};
+let viewer=null;
+function getViewer(){if(viewer)return viewer;const c=document.createElement('canvas');const r=new THREE.WebGLRenderer({canvas:c,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.05;
+ const s=new THREE.Scene();s.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;s.environmentIntensity=1.5;const k=new THREE.DirectionalLight(0xffffff,2.2);k.position.set(5,8,6);s.add(k);s.add(new THREE.HemisphereLight(0xffffff,0x303540,.7));
+ const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadowTex,transparent:true,depthWrite:false}));shadow.rotation.x=-Math.PI/2;s.add(shadow);
+ const cam=new THREE.PerspectiveCamera(30,16/9,.1,1000);viewer={c,r,s,cam,shadow,model:null,yaw:.7,pitch:.28,auto:true,raf:0,drag:null};
+ c.addEventListener('pointerdown',e=>{viewer.drag={x:e.clientX,y:e.clientY,yaw:viewer.yaw,pitch:viewer.pitch};viewer.auto=false;c.setPointerCapture(e.pointerId)});
+ c.addEventListener('pointermove',e=>{const d=viewer.drag;if(!d)return;viewer.yaw=d.yaw-(e.clientX-d.x)*.008;viewer.pitch=clamp(d.pitch+(e.clientY-d.y)*.006,-.2,1.2)});
+ c.addEventListener('pointerup',()=>{viewer.drag=null;setTimeout(()=>{if(!viewer.drag)viewer.auto=true},2500)});return viewer}
+function showModel(key,stage){const v=getViewer();if(v.model){v.s.remove(v.model);v.model.traverse(o=>{if(o.isMesh)o.geometry.dispose()})}
+ const m=(FACT[key]||makeBOP)();const box=new THREE.Box3().setFromObject(m),size=box.getSize(V()),c=box.getCenter(V());const sc=10/Math.max(size.x,size.y,size.z);
+ const piv=new THREE.Group();m.position.sub(c);piv.add(m);piv.scale.setScalar(sc);piv.position.y=size.y*sc/2;v.s.add(piv);v.model=piv;v.shadow.scale.set(size.x*sc*1.5,size.z*sc*1.5+4,1);
+ stage.prepend(v.c);const w=stage.clientWidth,h=stage.clientHeight;v.r.setSize(w,h,false);v.cam.aspect=w/h;v.cam.updateProjectionMatrix();v.yaw=.7;v.pitch=.28;v.auto=true;v.t0=performance.now();
+ cancelAnimationFrame(v.raf);const loop=now=>{if(!fpState){return}if(v.auto&&!RM)v.yaw+=.004;const R=17;v.cam.position.set(Math.sin(v.yaw)*Math.cos(v.pitch)*R,5+Math.sin(v.pitch)*R,Math.cos(v.yaw)*Math.cos(v.pitch)*R);v.cam.lookAt(0,4.5,0);
+  const t=(now-v.t0)/1000;anim(v.model.children[0],t);v.r.render(v.s,v.cam);v.raf=requestAnimationFrame(loop)};v.raf=requestAnimationFrame(loop)}
+function anim(m,t){m.traverse(o=>{const u=o.userData;if(u.cones)u.cones.forEach(c=>c.rotation.y=t*3);if(u.drum)u.drum.rotation.x=t*1.5;if(u.rod)u.rod.position.y=u.base+Math.sin(t*1.2)*1.2;if(u.arm)u.arm.rotation.y=Math.sin(t*.8)*.5;if(u.tur)u.tur.rotation.y=Math.sin(t*.4)*.8;if(u.lamps)u.lamps.forEach(l=>l.visible=true)})}
+function stageVideo(stage,p){stage.querySelector('canvas')?.remove();stage.querySelector('iframe')?.remove();stage.querySelector('.play')?.remove();
+ if(!isHttp){stage.insertAdjacentHTML('beforeend',`<a class="play" href="https://www.youtube.com/watch?v=${p.yt}" target="_blank" rel="noopener" style="background-image:url(https://i.ytimg.com/vi/${p.yt}/hqdefault.jpg)"><span>▶</span><div class="note">Arquivo local: o YouTube só toca dentro da página com o site servido por http(s). Clique para assistir no YouTube.</div></a>`);return}
+ stage.insertAdjacentHTML('beforeend',`<iframe src="https://www.youtube-nocookie.com/embed/${p.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1&origin=${encodeURIComponent(location.origin)}" title="${p.n}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`);audio.duck(true)}
+function setTab(tab){const st=fpState;if(!st)return;fp.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===tab));const stage=fp.querySelector('.stage');
+ if(tab==='video')stageVideo(stage,st.p);else{stage.querySelector('iframe')?.remove();stage.querySelector('.play')?.remove();audio.duck(false);showModel(st.p.m,stage)}
+ stage.querySelector('.cap').textContent=tab==='video'?'':'Arraste para girar o modelo 3D'}
+function openPanel(p){
+ if(fpState)return;audio.whoosh(true);const btn=p.el,r=btn.getBoundingClientRect();const W=Math.min(660,innerWidth-24);
+ fp.innerHTML=`<div class="fp-in" style="width:${W}px"><header><i class="${p.ctx?'ctx':''}"></i><b>${p.n}</b><span class="tag ${p.ctx?'ctx':''}">${p.ctx?'Contexto':'Produto HMH'}</span><button class="x" aria-label="Fechar">×</button></header>
+  ${p.yt?`<div class="tabs" role="tablist"><button data-t="video" role="tab">▶ Vídeo</button><button data-t="3d" role="tab">Modelo 3D</button></div>`:''}
+  <div class="stage"><span class="cap"></span><svg class="badge" viewBox="0 0 100 40"><use href="#logo"/></svg></div><p>${p.d}</p>
+  <div class="acts">${p.u?`<a class="pri" href="${BASE+p.u}" target="_blank" rel="noopener">Ver no site da HMH ↗</a>`:''}${p.yt?`<a href="https://www.youtube.com/watch?v=${p.yt}" target="_blank" rel="noopener">Abrir no YouTube ↗</a>`:(p.ctx?'':`<a href="https://www.youtube.com/results?search_query=${encodeURIComponent('HMH '+p.n)}" target="_blank" rel="noopener">Procurar no YouTube ↗</a>`)}</div></div>`;
+ fp.style.cssText=`display:block;visibility:hidden;left:0;top:0;width:${W}px;height:auto;border-radius:16px`;const H=fp.offsetHeight;
+ const to={l:clamp(r.left+r.width/2-W/2,12,innerWidth-W-12),t:clamp(r.top-H*.4,72,innerHeight-H-60),w:W,h:H},from={l:r.left,t:r.top,w:r.width,h:r.height};
+ fp.style.visibility='visible';btn.classList.add('gone');
+ const s=spring();fp.animate(s.map(k=>({left:lerp(from.l,to.l,k)+'px',top:lerp(from.t,to.t,k)+'px',width:Math.max(20,lerp(from.w,to.w,k))+'px',height:Math.max(20,lerp(from.h,to.h,k))+'px',borderRadius:lerp(15,16,k)+'px'})),{duration:s.length*1000/60,easing:'linear',fill:'forwards'});
+ const inner=fp.firstChild;inner.animate([{opacity:0,transform:'translateY(8px) scale(.985)'},{opacity:1,transform:'none'}],{duration:520,delay:110,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
+ scrim.classList.add('on');document.documentElement.style.overflow='hidden';fpState={p,to};
+ inner.querySelector('.x').onclick=closePanel;inner.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.t));
+ setTimeout(()=>{if(fpState&&fpState.p===p)setTab(p.yt?'video':'3d')},300)}
+function closePanel(){if(!fpState||fpState.closing)return;fpState.closing=true;audio.whoosh(false);audio.duck(false);const{p,to}=fpState;
+ const r=p.el.getBoundingClientRect(),vis=!p.el.classList.contains('off')&&r.width>0;const from=vis?{l:r.left,t:r.top,w:r.width,h:r.height}:{l:to.l+to.w/2-15,t:to.t+to.h/2-15,w:30,h:30};
+ fp.querySelector('iframe')?.remove();fp.firstChild.animate([{opacity:1},{opacity:0}],{duration:180,fill:'forwards'});
+ const s=spring(320,30);const a=fp.animate(s.map(k=>({left:lerp(to.l,from.l,k)+'px',top:lerp(to.t,from.t,k)+'px',width:Math.max(20,lerp(to.w,from.w,k))+'px',height:Math.max(20,lerp(to.h,from.h,k))+'px',borderRadius:lerp(16,15,k)+'px',opacity:vis?1:1-k})),{duration:s.length*1000/60,easing:'linear',fill:'forwards'});
+ scrim.classList.remove('on');a.onfinish=()=>{fp.getAnimations().forEach(x=>x.cancel());fp.style.display='none';fp.innerHTML='';p.el.classList.remove('gone');document.documentElement.style.overflow='';fpState=null;if(vis)p.el.focus({preventScroll:true})}}
+scrim.onclick=closePanel;
+
+/* =====================================================================
+   Loop
+   ===================================================================== */
+const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.38,.5,.9);composer.addPass(bloom);composer.addPass(new OutputPass());
+function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.fov=w/h<1?32:24;camera.updateProjectionMatrix();renderer.setSize(w,h);composer.setSize(w,h)}addEventListener('resize',resize);resize();
+const hud={d:$('#hDepth'),p:$('#hPres'),t:$('#hTemp'),z:$('#hZone')};let lastZone='';const fmt=n=>Math.round(n).toLocaleString('pt-BR');
+let last=performance.now()/1000;
+function frame(nowMs){const t=nowMs/1000,dt=Math.min(.05,t-last);last=t;
+ const sf=frameFromScroll();const target=overview?OV:sf;placeCamera(dt,target);const cy=cur.cy;
+ // movimento dos equipamentos
+ const heave=wave(0,0,t)*.45;ship.position.y=heave;ship.rotation.z=(wave(40,0,t)-wave(-40,0,t))/80*.25;
+ const tdy=lerp(19,56,.5-.5*Math.cos(t*.3));SU.td.position.set(0,tdy,0);SU.wires.forEach((w,i)=>{const a=V(i<2?-.6:.6,64,i%2?-.6:.6),b=V(a.x,tdy+7.2,a.z);w.position.copy(a).lerp(b,.5);w.scale.set(1,a.y-b.y,1)});
+ SU.dpipe.position.set(0,(17.9+tdy-.3)/2,0);SU.dpipe.scale.set(1,Math.max(.1,tdy-.3-17.9),1);
+ SU.dw.userData.drum.rotation.x=t*1.2;SU.rn.userData.arm.rotation.y=Math.sin(t*.5)*.5;SU.kc.forEach((c,i)=>c.userData.tur.rotation.y=Math.sin(t*.25+i*2)*.6);SU.pc.forEach((c,i)=>c.t.rotation.y=c.a+Math.sin(t*.12+i)*.35);
+ ship.updateMatrixWorld();
+ for(const T of tens){const a=ship.localToWorld(T.hull.clone()),b=T.ring.clone().add(ring.position);T.t.position.copy(a);T.t.quaternion.setFromUnitVectors(UP,b.clone().sub(a).normalize());const D=a.distanceTo(b);T.t.userData.rod.position.y=T.t.userData.base+(D-T.t.userData.closed)}
+ inner.position.y=-20;ring.position.x=bend(-26,t);updRiser(t);
+ rovs[0].position.set(9+Math.cos(t*.15)*3,-130+Math.sin(t*.22)*6,10);rovs[0].lookAt(0,-136,0);
+ rovs[1].position.set(-16+Math.sin(t*.18)*3,-196+Math.cos(t*.2)*5,6);rovs[1].lookAt(0,-200,0);
+ rovs[2].position.set(19+Math.sin(t*.2)*2,SEABED+5+Math.sin(t*.4)*.8,13);rovs[2].lookAt(0,SEABED+10,0);
+ BU.leds.forEach((l,i)=>l.visible=Math.sin(t*3+i*1.6)>0);
+ // oceano e água
+ if(cy>-90||overview){updOcean(t);updRibbon(t)}waterFront.material.uniforms.t.value=t;
+ rays.forEach(m=>m.material.opacity=.06+.04*Math.sin(t*.5+m.userData.ph));
+ if(cy>SEABED-40||overview){for(let i=0;i<NS;i++){const s=snowS[i];let y=s[1]-t*(.3+s[3]*.6);y=SEABED+((y-SEABED)%(-SEABED-4)+(-SEABED-4))%(-SEABED-4);snowA[i*3]=s[0]+Math.sin(t*.2+i)*.5;snowA[i*3+1]=y;snowA[i*3+2]=s[2]}snowG.attributes.position.needsUpdate=true}
+ for(let i=0;i<NB;i++){const b=bubS[i];b.y+=b.s*dt;if(b.y>70){b.y=0}bubA[i*3]=b.x+Math.sin(t*2+i)*.3;bubA[i*3+1]=SEABED+BU.top-2+b.y;bubA[i*3+2]=b.z}bubG.attributes.position.needsUpdate=true;
+ // perfuração acompanha a rolagem entre as seções 5 e 6
+ const drill=overview?1:smooth((sf.f-3.6)/1.3),bitY=lerp(BIT0,BIT1,drill);bit.position.set(0,bitY,0);bit.rotation.y=t*3;bit.userData.cones.forEach(c=>c.rotation.y=t*6);
+ openHole.position.y=(SEABED-80+bitY+3)/2;openHole.scale.y=Math.max(.1,(SEABED-80)-(bitY+3));dstring.position.y=(SEABED+bitY+4.5)/2;dstring.scale.y=SEABED-bitY-4.5;M.pipe.map.offset.x=-t*.6;
+ bitRing.position.set(0,bitY+2.3,1.5);
+ {const c=LENS,dir=V(c.x,c.y-(bitY+2.3),0).normalize(),pp=V(-dir.y,dir.x,0),p=beamGeo.attributes.position;p.setXYZ(0,0,bitY+2.3,1.6);const a=c.clone().addScaledVector(pp,LR*.96).addScaledVector(dir,-LR*.25),b=c.clone().addScaledVector(pp,-LR*.96).addScaledVector(dir,-LR*.25);p.setXYZ(1,a.x,a.y,a.z);p.setXYZ(2,b.x,b.y,b.z);p.needsUpdate=true;beamGeo.computeBoundingSphere()}
+ const lensOn=sf.f>3.2||overview;lens.visible=lensBeam.visible=bitRing.visible=lensOn;
+ if(lensOn){lensBit.rotation.y=t*2.5;lensBit.userData.cones.forEach(c=>c.rotation.y=t*5);for(let i=0;i<120;i++){const c=chipS[i];c.l=(c.l+dt*c.s*.5)%1;chipA[i*3]=Math.cos(c.a+t)*(2.6+c.l*.8);chipA[i*3+1]=.5+c.l*9;chipA[i*3+2]=Math.abs(Math.sin(c.a+t))*2+.5}chipG.attributes.position.needsUpdate=true;renderer.setRenderTarget(lensRT);renderer.render(lensScene,lensCam);renderer.setRenderTarget(null)}
+ const flow=overview?0:smooth((drill-.92)/.08);oil.material.opacity=flow*.9;if(flow>0){for(let i=0;i<220;i++){const o=oilS[i];o.y=(o.y+dt*o.s*.07)%1;oilA[i*3]=o.x;oilA[i*3+1]=lerp(bitY,SEABED,o.y);oilA[i*3+2]=.9}oilG.attributes.position.needsUpdate=true}
+ // som e HUD
+ const u=smooth((.5-cy)/6),gnd=smooth((SEABED-6-cy)/20);audio.mix(u,gnd,gnd*(1-flow*.5));audio.update(dt);
+ const depth=cy>=0?0:cy>SEABED?-cy/-SEABED*2200:Math.min(5000,2200+(SEABED-cy)/(GH*.8)*2800);
+ hud.d.textContent=fmt(depth)+' m';hud.p.textContent=fmt(1+depth/10)+' bar';hud.t.textContent=Math.round(cy>=0?27:cy>SEABED?lerp(27,4,smooth(-cy/200)):lerp(3,95,clamp((SEABED-cy)/(GH*.8))))+' °C';
+ const zone=overview?'Visão geral':cy>=0?'Superfície':cy>-200?'Coluna d’água':cy>SEABED-10?'Leito marinho':cy>SEABED-110?'Subsolo':'Reservatório';if(zone!==lastZone){hud.z.textContent=zone;lastZone=zone}
+ // textos: troca cruzada suave, só um visível em repouso
+ SECS.forEach((s,i)=>{let o=0;if(!overview){if(i===sf.i)o=1-sf.e;else if(i===sf.i+1)o=sf.e}o=smooth((o-.15)/.7);const dy=i===sf.i?-sf.e*24:(1-sf.e)*24;
+  s.el.style.opacity=o.toFixed(3);s.el.style.transform=`translate3d(0,calc(-50% + ${dy.toFixed(1)}px),0)`;s.el.style.pointerEvents=o>.5?'auto':'none';
+  s.seg.classList.toggle('on',i===sec&&!overview);s.db.classList.toggle('cur',i===sec);s.seg.querySelector('i').style.height=(i<secF?Math.min(100,(secF-i)*100):0)+'%'});
+ updUI();
+ TAGS.forEach(g=>{const sc=toScreen(g.p);const on=!overview&&(g.big?sec===5:sec>=4);g.e.style.opacity=on&&sc.on&&settle>.6?1:0;g.e.style.transform=`translate3d(${sc.x.toFixed(0)}px,${sc.y.toFixed(0)}px,0) translate(-50%,-50%)`});
+ composer.render(dt);requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+window.__ready=true;const goBtn=$('#goBtn');goBtn.disabled=false;goBtn.textContent='Iniciar descida  🔊';
+const enter=s=>{if(s)audio.start();$('#intro').classList.add('out');setTimeout(()=>$('#intro').remove(),1300)};goBtn.onclick=()=>enter(true);$('#muteBtn').onclick=()=>enter(false);
+</script>
+</body>
+</html>
