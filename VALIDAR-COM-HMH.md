@@ -34,6 +34,6 @@ Tudo abaixo foi tirado do hmhw.com, mas precisa de um "ok" de alguém da HMH (Ma
 
 ## 5. Técnica / publicação
 - [ ] Domínio e hospedagem (o site é estático: qualquer servidor HTTP serve; abrir como arquivo mostra só a versão sem 3D).
-- [ ] Atualizar `og:image` com URL absoluta do domínio final.
+- [x] `og:image` com URL absoluta (GitHub Pages). Atualizar se mudar de domínio.
 - [ ] Rodar `python tools/gerar_html.py` depois de qualquer mudança no JSON (atualiza o conteúdo estático).
 - [ ] Modelos CAD oficiais, se existirem: ver `assets/models/README.md`.
