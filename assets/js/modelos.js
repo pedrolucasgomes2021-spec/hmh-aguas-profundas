@@ -1,8 +1,9 @@
 // Fábrica de modelos procedurais: todos no mesmo padrão de materiais e detalhe.
 // Para usar modelos oficiais (GLB), veja assets/models/README.md.
 import * as THREE from 'three';
+import {shipDetail,bopDetail} from './detalhes3d.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {M,G,add,beamG,tubeG,mergeMesh,bolts,clean,V,UP,ZR,lerp,clamp,smooth,rnd,pbr} from './kit.js';
+import {M,G,add,beamG,tubeG,mergeMesh,bolts,bake,clean,V,UP,ZR,lerp,clamp,smooth,rnd,pbr} from './kit.js';
 
 export function makeGateValve(col=M.red,s=1){const g=new THREE.Group();
  add(g,G.rbox(1.6,1.8,1.4,.22),col);
@@ -55,7 +56,8 @@ export function makeBOP(o={}){const g=new THREE.Group();
  for(const k of[-1,1]){add(g,G.cyl(.34,.34,top-ramYs[0]-1,16),M.steel,[k*4.4,(top+ramYs[0]-1)/2,-4]);const v=makeGateValve(M.red,.7);v.position.set(k*4.4,ramYs[1]+3,-4.9);v.rotation.y=Math.PI/2;g.add(v)}
  const lad=[beamG(V(9.7,fy0,5.6),V(9.7,fy1,5.6),.08),beamG(V(11.1,fy0,5.6),V(11.1,fy1,5.6),.08)];for(let yy=fy0+1;yy<fy1;yy+=1.1)lad.push(beamG(V(9.7,yy,5.6),V(11.1,yy,5.6),.06));g.add(mergeMesh(lad,M.yellow));
  const leds=[add(g,G.sph(.18,10),M.ledG,[8.6,fy1+.6,5.7]),add(g,G.sph(.18,10),M.ledR,[-8.6,fy1+.6,5.7])];
- g.userData={top,ramYs,annYs,valves,pods,h4,leds};return g}
+ const bd=bopDetail({ramYs,top,fy0,fy1});bake(bd.A);bake(bd.B);g.add(bd.A,bd.B);
+ g.userData={top,ramYs,annYs,valves,pods,h4,leds,detA:bd.A,detB:bd.B};return g}
 export function makeTensioner(L=20){const g=new THREE.Group();
  add(g,G.rbox(2.8,1.3,2.4,.18),M.blue,[0,.65,0]);for(const k of[-1,1])add(g,G.rbox(.45,2,1.5,.12),M.blue,[k*.95,1.9,0]);add(g,G.cyl(.32,.32,2.9,16),M.steel,[0,2.1,0],ZR);
  const b0=2.6,bl=L*.55;add(g,G.cyl(.9,.9,bl,48),M.red,[0,b0+bl/2,0]);add(g,G.cyl(1.08,1.08,.7,48),M.red,[0,b0+.35,0]);add(g,G.cyl(1.08,1.08,.7,48),M.red,[0,b0+bl-.35,0]);
@@ -142,11 +144,18 @@ function hullGeometry(){
  const hull=mergeGeometries(parts);
  const dpos=[],duv=[],didx=[];const yd=8,[xs,xb]=xr(yd);for(let i=0;i<=NX;i++){const x=lerp(xs,xb,i/NX),w=hb(x,yd)*.97;dpos.push(x,yd,-w,x,yd,w);duv.push(x/6,-w/6,x/6,w/6)}
  for(let i=0;i<NX;i++){const a=i*2;didx.push(a,a+1,a+3,a,a+3,a+2)}const deck=new THREE.BufferGeometry();deck.setAttribute('position',new THREE.Float32BufferAttribute(dpos,3));deck.setAttribute('uv',new THREE.Float32BufferAttribute(duv,2));deck.setIndex(didx);deck.computeVertexNormals();
- return{hull,deck,hb}}
+ return{hull,deck,hb,xr}}
 export function makeShip(){const s=new THREE.Group();const H=hullGeometry();const hull=new THREE.Mesh(H.hull,M.hull);hull.receiveShadow=hull.castShadow=true;s.add(hull);const deck=new THREE.Mesh(H.deck,M.deck);deck.receiveShadow=true;s.add(deck);
- for(const[x0,x1,hw,y]of[[33,58,11,8],[34,57,11,11],[36,55,10.4,14],[39,53,9.4,17]]){const w=x1-x0,cx=(x0+x1)/2;add(s,G.rbox(w,3,hw*2,.2),M.white,[cx,y+1.5,0]);add(s,G.box(w-.8,.85,hw*2+.06),M.glass,[cx,y+1.85,0]);add(s,G.box(.06,.85,hw*2-.8),M.glass,[x1+.01,y+1.85,0]);add(s,G.box(w+.5,.22,hw*2+.5),M.white,[cx,y+3.05,0])}
+ // guarda-corpo em volta do convés: duas réguas e montantes seguindo a borda do casco
+ {const[xs,xb]=H.xr(9.6),rl=[];for(const k of[1,-1]){const P=[];for(let i=0;i<=64;i++){const x=lerp(xs+2,xb-1.2,i/64);P.push(V(x,9.6,k*H.hb(x,9.6)*.975))}
+   for(let i=0;i<P.length-1;i++){for(const yy of[10.2,10.85])rl.push(beamG(P[i].clone().setY(yy),P[i+1].clone().setY(yy),.045,5));if(i%3===0)rl.push(beamG(P[i],P[i].clone().setY(10.85),.05,5))}}
+  s.add(mergeMesh(rl,M.white))}
+ // janelas: planos com a textura de vidro, no comprimento exato de cada face (a repetição acompanha o tamanho)
+ const wp=(len,hgt,x,y,z,ry)=>{const g=new THREE.PlaneGeometry(len,hgt),uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setX(i,uv.getX(i)*len/8.8);const m=new THREE.Mesh(g,M.windows);m.position.set(x,y,z);m.rotation.y=ry;s.add(m)};
+ for(const[x0,x1,hw,y]of[[33,58,11,8],[34,57,11,11],[36,55,10.4,14],[39,53,9.4,17]]){const w=x1-x0,cx=(x0+x1)/2;add(s,G.rbox(w,3,hw*2,.2),M.white,[cx,y+1.5,0]);wp(w-2,1.7,cx,y+1.7,hw+.03,0);wp(w-2,1.7,cx,y+1.7,-hw-.03,Math.PI);wp(hw*2-2,1.7,x1+.03,y+1.7,0,Math.PI/2);wp(hw*2-2,1.7,x0-.03,y+1.7,0,-Math.PI/2);add(s,G.box(w+.5,.22,hw*2+.5),M.white,[cx,y+3.05,0])}
  add(s,G.rbox(3.6,2.6,30,.15),M.white,[51.5,21.5,0]);add(s,G.box(.06,1,29),M.glass,[53.35,21.7,0]);
  add(s,G.cyl(.22,.3,9,12),M.white,[46,26,0]);add(s,G.box(.4,.15,5),M.dark,[46,28.2,0]);add(s,G.box(.3,.12,3.5),M.dark,[46,29.4,0]);add(s,G.cyl(.55,.55,.4,16),M.white,[46,30.6,0]);
+ for(const z of[-7,7]){add(s,G.sph(.95,24),M.white,[54,23.7,z]);add(s,G.cyl(.12,.12,1.4,8),M.dark,[54,22.9,z])}add(s,G.rbox(3.4,.5,7,.1),M.white,[47,22.9,0]);for(const z of[-3.5,0,3.5])add(s,G.cyl(.05,.05,3.2,6),M.dark,[56.5,24.4,z]);
  add(s,G.rbox(4,1.8,3,.15),M.white,[44,21.6,-6]);add(s,G.rbox(4,1.8,3,.15),M.white,[44,21.6,6]);
  const hd=new THREE.Group();hd.position.set(68,23.5,0);s.add(hd);
  add(hd,new THREE.CylinderGeometry(10.5,10.5,.5,8),[M.dark,M.heli,M.dark],[0,0,0],[0,Math.PI/8,0]);
@@ -178,7 +187,8 @@ export function makeShip(){const s=new THREE.Group();const H=hullGeometry();cons
  for(const[x,z,c]of[[-70,8,0x2f6db3],[-70,3,0xc8242b],[-64,-10,0xe9eef2],[-70,-10,0x2f6db3]])add(s,G.rbox(5.8,2.5,2.4,.08),pbr(c,.3,.55),[x,9.25,z]);
  const disp=new THREE.Group();disp.position.set(-19,8,-11);s.add(disp);add(disp,G.rbox(7,.5,5,.1),M.yellow,[0,.25,0]);const ra=makeRam();ra.scale.setScalar(.26);ra.position.set(0,1.1,0);disp.add(ra);const an=makeAnnular();an.scale.setScalar(.26);an.position.set(0,1.75,0);disp.add(an);
  for(const[x,y,z]of[[-70,17,-11],[-40,12,-12],[20,12,12],[-80,10,0],[60,13,11],[60,13,-11],[-30,15,12],[10,10,-12]])add(s,G.sph(.3,8),M.lampN,[x,y,z]);
- s.userData={td,wires,dpipe,rn,dw,kc,pc,der,disp,mm};return s}
+ const sd=shipDetail(H);bake(sd.A);bake(sd.B);s.add(sd.A,sd.B);
+ s.userData={td,wires,dpipe,rn,dw,kc,pc,der,disp,mm,detA:sd.A,detB:sd.B};return s}
 export function makeBit(){const g=new THREE.Group();
  add(g,G.cyl(1.2,1.45,2.8,40),M.steel,[0,7.6,0]);for(let i=0;i<9;i++)add(g,G.tor(1.28+i*.02,.07,40),M.steel,[0,6.4+i*.28,0],[Math.PI/2,0,0]);
  add(g,G.cyl(2.25,2.25,.6,48),M.steel,[0,6,0]);add(g,G.cyl(2.35,2.15,1.8,48),M.steel,[0,4.9,0]);

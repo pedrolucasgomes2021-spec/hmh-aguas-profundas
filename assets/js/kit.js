@@ -25,13 +25,14 @@ export const shadowTex=ctex(256,256,g=>{const r=g.createRadialGradient(128,128,0
 export const foamTex=ctex(512,512,(g,w,h)=>{g.clearRect(0,0,w,h);for(let i=0;i<2600;i++){const x=rnd()*w,y=rnd()*h,r=1+rnd()*7;const a=rnd()*.5;const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,`rgba(255,255,255,${a})`);gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,r*2,r*2)}},{repeat:[8,2]});
 
 /* ---------- materiais (paleta HMH) ---------- */
-export const pbr=(color,metal,rough,o={})=>new THREE.MeshPhysicalMaterial({color,metalness:metal,roughness:rough,roughnessMap:grime,...o});
+// só usa o material físico (mais pesado de compilar e de desenhar) onde há verniz; o resto é PBR padrão
+export const pbr=(color,metal,rough,o={})=>new (o.clearcoat?THREE.MeshPhysicalMaterial:THREE.MeshStandardMaterial)({color,metalness:metal,roughness:rough,roughnessMap:grime,...o});
 const TL=new THREE.TextureLoader();
 export const signTex=TL.load('assets/img/hmh-logo-placa.png');signTex.colorSpace=THREE.SRGBColorSpace;
 export const M={
  red:pbr(0xb51f2a,.2,.55,{clearcoat:.35,clearcoatRoughness:.35}),yellow:pbr(0xe7aa12,.2,.55,{clearcoat:.3,clearcoatRoughness:.4}),blue:pbr(0x1d4f8c,.25,.55,{clearcoat:.3,clearcoatRoughness:.35}),
  white:pbr(0xe9ecee,.1,.6,{clearcoat:.2}),grey:pbr(0x9aa2a8,.55,.55),lattice:pbr(0xc9cdd0,.55,.55),steel:pbr(0xc9cfd4,.78,.34),
- chrome:new THREE.MeshPhysicalMaterial({color:0xf2f5f7,metalness:1,roughness:.07}),dark:pbr(0x353b41,.6,.6),black:pbr(0x15171a,.2,.75),rubber:pbr(0x2a2c2f,0,.9),hoseGrey:pbr(0x9aa0a5,0,.8),
+ chrome:new THREE.MeshStandardMaterial({color:0xf2f5f7,metalness:1,roughness:.07}),dark:pbr(0x353b41,.6,.6),black:pbr(0x15171a,.2,.75),rubber:pbr(0x2a2c2f,0,.9),hoseGrey:pbr(0x9aa0a5,0,.8),
  glass:new THREE.MeshPhysicalMaterial({color:0x1a2a38,metalness:.4,roughness:.06,clearcoat:1,emissive:0xffcf8a,emissiveIntensity:0}),orange:pbr(0xff6a13,.1,.55,{clearcoat:.4}),
  deck:new THREE.MeshStandardMaterial({color:0x6b706d,roughness:.9,metalness:.3,roughnessMap:grime}),
  wall:new THREE.MeshStandardMaterial({color:0xe8ebec,roughness:.7,metalness:.3}),
@@ -42,7 +43,13 @@ export const M={
  pipe:new THREE.MeshStandardMaterial({map:pipeTex,metalness:.9,roughness:.3}),
  cement:new THREE.MeshStandardMaterial({color:0xcfc2a6,roughness:.95}),rock:new THREE.MeshStandardMaterial({color:0x5a5047,roughness:1}),seabed:new THREE.MeshStandardMaterial({color:0xb7a789,roughness:1})};
 // gavetas do BOP principal com material próprio, para o destaque no "Como funciona"
+// janelas da superestrutura: linhas de vidro escuro com moldura e reflexo; o mapa emissivo acende só os vidros à noite
+const winTile=emi=>ctex(256,64,(g,w,h)=>{g.fillStyle=emi?'#000':'#e9edef';g.fillRect(0,0,w,h);const n=4,pw=w/n;
+ for(let i=0;i<n;i++){const x=i*pw+7,y=11,ww=pw-14,hh=h-22;g.fillStyle=emi?'#ffd7a0':'#17222d';g.fillRect(x,y,ww,hh);
+  if(!emi){const r=g.createLinearGradient(0,y,0,y+hh);r.addColorStop(0,'rgba(150,195,225,.55)');r.addColorStop(.55,'rgba(150,195,225,.05)');g.fillStyle=r;g.fillRect(x,y,ww,hh);g.fillStyle='#c4cbd0';g.fillRect(x+ww/2-1,y,2,hh)}}},{color:!emi});
+M.windows=new THREE.MeshStandardMaterial({map:winTile(false),emissiveMap:winTile(true),emissive:0xffffff,emissiveIntensity:0,roughness:.35,metalness:.15});
 M.ramBody=M.yellow.clone();M.ramBon=M.red.clone();
+M.hull.userData.detParam={escala:1/34,desgaste:.3,sujeira:.55,incrustacao:.6,altura:2.4};
 export const PAINTED=[M.red,M.yellow,M.blue,M.white,M.grey,M.lattice,M.hull,M.dark,M.ramBody,M.ramBon];
 
 /* ---------- utilitários de geometria ---------- */
@@ -70,4 +77,4 @@ export function instancify(group,count,parent){group.updateMatrixWorld(true);con
  group.traverse(o=>{if(!o.isMesh)return;const list=by.get(o.material)||by.set(o.material,[]).get(o.material);
   if(o.isInstancedMesh){for(let i=0;i<o.count;i++){o.getMatrixAt(i,m4);list.push(clean(o.geometry.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(o.matrixWorld,m4))))}}else list.push(clean(o.geometry.clone().applyMatrix4(o.matrixWorld)))});
  const ims=[];for(const[mat,geos]of by){const im=new THREE.InstancedMesh(mergeGeometries(geos),mat,count);im.frustumCulled=false;im.castShadow=im.receiveShadow=true;parent.add(im);ims.push(im)}
- return{set:(i,m)=>ims.forEach(im=>im.setMatrixAt(i,m)),done:()=>ims.forEach(im=>im.instanceMatrix.needsUpdate=true)}}
+ return{ims,set:(i,m)=>ims.forEach(im=>im.setMatrixAt(i,m)),done:()=>ims.forEach(im=>im.instanceMatrix.needsUpdate=true)}}

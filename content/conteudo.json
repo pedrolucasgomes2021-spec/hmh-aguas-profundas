@@ -1,221 +1,2157 @@
 {
-  "_leia": "Conteúdo editável do site. Textos em pt e en; 'fotos' são nomes de arquivo das páginas da HMH (rode tools/baixar_assets.py após mudar); 'u' é o caminho em hmhw.com; 'yt' é o id do vídeo no YouTube; 's' é a seção (0 a 5); 'm' é o modelo 3D usado quando não há foto.",
-  "secoes": [
-    {"id": "superficie", "u": "/archives/business_area/drilling-equipment-offshore/",
-     "pt": {"tab": "Superfície", "t": "Operação de superfície (topsides)", "eb": "Superfície · 0 m", "prof": "0 m", "zona": "Superfície",
-            "p": "Sonda de perfuração offshore operando na superfície. Em destaque, os equipamentos de topside da HMH: derrick, top drive, roughneck, drawworks, bombas de lama e guindastes de manuseio."},
-     "en": {"tab": "Surface", "t": "Surface operations (topsides)", "eb": "Surface · 0 m", "prof": "0 m", "zona": "Surface",
-            "p": "An offshore drilling rig at the surface. In focus, HMH topside equipment: derrick, top drive, roughneck, drawworks, mud pumps and handling cranes."}},
-    {"id": "tensionadores", "u": "/service/motion-compensation-systems/",
-     "pt": {"tab": "Tensionadores", "t": "Sistema de tensionadores de riser", "eb": "Abaixo do casco", "prof": "Logo abaixo da linha d’água", "zona": "Abaixo do casco",
-            "p": "Abaixo da plataforma, os tensionadores de riser compensam o movimento das ondas, garantindo a estabilidade da coluna sob a superfície da água."},
-     "en": {"tab": "Tensioners", "t": "Riser tensioner system", "eb": "Below the hull", "prof": "Just below the waterline", "zona": "Below the hull",
-            "p": "Below the rig, riser tensioners compensate for wave motion, keeping the riser string stable under the water surface."}},
-    {"id": "riser", "u": "/service/drilling-risers/",
-     "pt": {"tab": "Riser", "t": "Coluna de riser QTR™", "eb": "Coluna d’água", "prof": "Coluna d’água", "zona": "Coluna d’água",
-            "p": "A coluna de riser de perfuração estende-se pela coluna d’água, conectando a sonda ao poço de forma rápida e segura."},
-     "en": {"tab": "Riser", "t": "QTR™ riser string", "eb": "Water column", "prof": "Water column", "zona": "Water column",
-            "p": "The drilling riser string runs through the water column, connecting the rig to the well quickly and safely."}},
-    {"id": "bop", "u": "/archives/business_area/drilling-equipment-offshore-pressure-control/",
-     "pt": {"tab": "BOP", "t": "Leito marinho e BOP", "eb": "Leito marinho · ~1.500 m", "prof": "~1.500 m", "zona": "Leito marinho",
-            "p": "No leito marinho, a coluna de riser se conecta ao BOP (Blowout Preventer) e ao sistema de cabeça de poço, garantindo o controle total da pressão."},
-     "en": {"tab": "BOP", "t": "Seabed and BOP", "eb": "Seabed · ~1,500 m", "prof": "~1,500 m", "zona": "Seabed",
-            "p": "On the seabed, the riser connects to the BOP (blowout preventer) and the wellhead system, keeping full control of well pressure."}},
-    {"id": "perfuracao", "u": "/archives/business_area/drilling-equipment/",
-     "pt": {"tab": "Perfuração", "t": "Perfuração do poço (drilling)", "eb": "Subsolo", "prof": "~1.500 a 3.500 m", "zona": "Subsolo",
-            "p": "Abaixo do leito marinho, a broca avança pelas camadas de rocha, guiada pela tecnologia de perfuração, abrindo o caminho com segurança."},
-     "en": {"tab": "Drilling", "t": "Drilling the well", "eb": "Subsurface", "prof": "~1,500 to 3,500 m", "zona": "Subsurface",
-            "p": "Below the seabed, the bit advances through the rock layers, guided by drilling technology, opening the way safely."}},
-    {"id": "reservatorio", "u": "/archives/business_area/drilling-equipment/",
-     "pt": {"tab": "Reservatório", "t": "Reservatório e produção", "eb": "Reservatório · ~4.500 m", "prof": "~4.500 m", "zona": "Reservatório",
-            "p": "Alcançando o objetivo: o reservatório de óleo e gás. A perfuração segura é o primeiro passo da jornada de engenharia da HMH."},
-     "en": {"tab": "Reservoir", "t": "Reservoir and production", "eb": "Reservoir · ~4,500 m", "prof": "~4,500 m", "zona": "Reservoir",
-            "p": "Reaching the goal: the oil and gas reservoir. Safe drilling is the first step of HMH’s engineering journey."}}
-  ],
-  "produtos": [
-    {"id": "topdrive", "s": 0, "m": "topdrive", "u": "/service/top-drives-offshore/", "fotos": ["DSC3555-Edit-sort-hvit-scaled-ca14dab2.webp", "TD1250-1500-series-0e401e44.webp"],
-     "pt": {"n": "MH Top Drive", "c": "Içamento e rotação", "d": "Gira a coluna de perfuração a partir do topo do mastro e sustenta o peso da coluna durante as manobras."},
-     "en": {"n": "MH Top Drive", "c": "Hoisting and rotation", "d": "Rotates the drill string from the top of the derrick and carries the string weight during trips."}},
-    {"id": "roughneck", "s": 0, "m": "roughneck", "u": "/service/roughnecks-2/", "yt": "bNNf88Jm3e8", "fotos": ["Roughneck-9bd8c643.jpeg"],
-     "pt": {"n": "Bulldog™ Iron Roughneck", "c": "Manuseio de tubos", "d": "Roughneck automatizado que aperta e desaperta as conexões dos tubos no piso da sonda, com rapidez e repetibilidade."},
-     "en": {"n": "Bulldog™ Iron Roughneck", "c": "Pipe handling", "d": "Automated roughneck that makes up and breaks out pipe connections on the drill floor, fast and repeatably."}},
-    {"id": "drawworks", "s": 0, "m": "drawworks", "u": "/service/drawworks-2/", "yt": "pDR-Pp-MrxQ", "fotos": ["multi-gear-drawworks-eb7f056c.webp", "Single-gear-drawworks-offshore-c39c8040.webp"],
-     "pt": {"n": "Wirth™ Drawworks", "c": "Içamento e rotação", "d": "Guincho principal que iça e abaixa a coluna de perfuração."},
-     "en": {"n": "Wirth™ Drawworks", "c": "Hoisting and rotation", "d": "Main hoisting winch that raises and lowers the drill string."}},
-    {"id": "rotary", "s": 0, "m": "rotary", "u": "/service/rotary-tables-2/", "fotos": ["Rotary-Table-Offshore-fd1d74d3.jpeg"],
-     "pt": {"n": "Wirth™ Rotary Table", "c": "Içamento e rotação", "d": "Mesa rotativa no centro do piso: transmite torque e apoia a coluna durante as conexões."},
-     "en": {"n": "Wirth™ Rotary Table", "c": "Hoisting and rotation", "d": "Rotary table at the center of the drill floor: transmits torque and holds the string during connections."}},
-    {"id": "mudpumps", "s": 0, "m": "mudpump", "u": "/service/wirth-offshore-mud-pumps/", "yt": "EUrHhekngWU", "fotos": ["HMH-Wirth-TPK2200-2-scaled-16eb4e4f.jpeg", "HMH-Wirth-TPK1600-scaled-4b7ac908.jpeg", "HMH-Wirth-TPK1000-scaled-50d5ff1a.jpeg"],
-     "pt": {"n": "Wirth™ TPK Mud Pumps", "c": "Fluido de perfuração", "d": "Bombas de alta pressão que circulam o fluido de perfuração até a broca e de volta à superfície."},
-     "en": {"n": "Wirth™ TPK Mud Pumps", "c": "Drilling fluid", "d": "High-pressure pumps that circulate drilling fluid down to the bit and back to the surface."}},
-    {"id": "mudsys", "s": 0, "m": "mudpump", "u": "/service/mh-mud-systems/", "fotos": ["nytt_DSC1591_Rebranded_72px-bcf59a96.jpeg", "Agitator-horizontal-8358d203.jpeg", "Bulk-storage_DSC6521-024f0143.jpeg"],
-     "pt": {"n": "HMH Mud Systems", "c": "Fluido de perfuração", "d": "Peneiras, tanques e tratamento do fluido de perfuração que retorna do poço."},
-     "en": {"n": "HMH Mud Systems", "c": "Drilling fluid", "d": "Shakers, tanks and treatment of the drilling fluid returning from the well."}},
-    {"id": "cranes", "s": 0, "m": "crane", "u": "/service/handling-equipment-and-cranes/", "fotos": ["Crane-5e8a8fb2.jpeg", "Riser-feeding-machine-6c210120.jpeg", "Access-Basket-1abb0c18.jpeg"],
-     "pt": {"n": "Guindastes e manuseio", "c": "Manuseio de tubos", "d": "Movimentação de tubos, risers e cargas no convés."},
-     "en": {"n": "Cranes and handling", "c": "Pipe handling", "d": "Moving pipe, risers and loads around the deck."}},
-    {"id": "structures", "s": 0, "m": "derrick", "u": "/service/ramrig/", "fotos": ["RamRig-79693c94.jpeg", "Derrick-scaled-a5483996.jpeg"],
-     "pt": {"n": "Derrick e subestrutura", "c": "Estruturas", "d": "A torre e a subestrutura que sustentam todo o sistema de içamento."},
-     "en": {"n": "Derrick and substructure", "c": "Structures", "d": "The tower and substructure that carry the whole hoisting system."}},
-    {"id": "motion", "s": 0, "m": "tensioner", "u": "/service/motion-compensation-systems/", "fotos": ["Crown-Mounted-Compansator-a0438471.webp", "Tensioners-d8db4abb.webp"],
-     "pt": {"n": "Compensação de movimento", "c": "Compensação", "d": "Compensa o balanço da embarcação para manter constante o peso sobre a broca."},
-     "en": {"n": "Motion compensation", "c": "Compensation", "d": "Compensates for vessel heave to keep the weight on bit constant."}},
-    {"id": "diverter", "s": 0, "m": "annular", "u": "/service/diverters/", "fotos": ["Diverter-MSP-29-SLIM-82bd2929.jpeg", "Diverter-MSP-21-v2-f427e682.jpeg"],
-     "pt": {"n": "Diverter", "c": "Controle de pressão", "d": "Desvia o fluxo do poço para longe do piso da sonda em situações de gás raso."},
-     "en": {"n": "Diverter", "c": "Pressure control", "d": "Diverts well flow away from the drill floor in shallow-gas situations."}},
-    {"id": "deal", "s": 0, "m": "ship", "u": "/archives/business_area/cads-automation-system-for-rig-sequences/", "yt": "1Q5nu2Zouf4", "fotos": ["MicrosoftTeams-image-c362553c.png"],
-     "pt": {"n": "DEAL™ & CADS", "c": "Automação", "d": "Plataforma de automação das sequências de perfuração, que recebe módulos de software inteligentes (Smart Modules)."},
-     "en": {"n": "DEAL™ & CADS", "c": "Automation", "d": "Automation platform for drilling sequences that hosts intelligent software modules (Smart Modules)."}},
-    {"id": "beaware", "s": 0, "m": "ship", "u": "/archives/business_area/drilling-digitalization-beaware/", "fotos": ["beAware-0fb628cc.jpeg", "drillView-GO-and-driller-2-11c8c840.jpeg", "wellMap-web-c12af036.jpeg"],
-     "pt": {"n": "beAware™", "c": "Digitalização", "d": "Dados e monitoramento dos equipamentos da sonda para decisões mais rápidas."},
-     "en": {"n": "beAware™", "c": "Digitalization", "d": "Rig equipment data and monitoring for faster decisions."}},
-    {"id": "gk", "s": 0, "m": "annular", "u": "/service/bop-annulars-2/", "yt": "DZ8fkK0ZY1A", "fotos": ["GK-13-5-Radial-Latch-faafcaea.webp"],
-     "pt": {"n": "Hydril® GK™ 13-5", "c": "Controle de pressão", "d": "BOP anular compacto da linha Hydril (Radial Latch), em exposição no convés."},
-     "en": {"n": "Hydril® GK™ 13-5", "c": "Pressure control", "d": "Compact Hydril annular BOP (Radial Latch), on display on deck."}},
-    {"id": "sentry", "s": 0, "m": "ram", "u": "/service/bop-rams-2/", "yt": "cvjERw0n1D4", "fotos": ["sentry-no-shadow-1-7e749e7d.png"],
-     "pt": {"n": "Hydril® Sentry RAM BOP", "c": "Controle de pressão", "d": "BOP de gaveta da linha Hydril, em exposição no convés."},
-     "en": {"n": "Hydril® Sentry RAM BOP", "c": "Pressure control", "d": "Hydril ram BOP, on display on deck."}},
-    {"id": "tens", "s": 1, "m": "tensioner", "u": "/service/motion-compensation-systems/", "fotos": ["Tensioners-d8db4abb.webp", "Crown-Mounted-Compansator-a0438471.webp"],
-     "pt": {"n": "Tensionadores de riser", "c": "Compensação", "d": "Cilindros hidráulicos que mantêm o riser tracionado enquanto o navio sobe e desce com as ondas."},
-     "en": {"n": "Riser tensioners", "c": "Compensation", "d": "Hydraulic cylinders that keep the riser in tension while the vessel rises and falls with the waves."}},
-    {"id": "telescopic", "s": 1, "m": "riser", "u": "/service/drilling-risers/", "yt": "DU6cz-VVQA4", "fotos": ["Telescopic-Joint-e72ec5fa.jpeg"],
-     "pt": {"n": "Junta telescópica", "c": "Riser", "d": "Permite que o topo do riser deslize conforme o balanço do navio."},
-     "en": {"n": "Telescopic joint", "c": "Riser", "d": "Lets the top of the riser slide with the vessel’s motion."}},
-    {"id": "mpd", "s": 1, "m": "mpd", "u": "/service/mpd-system/", "fotos": ["mpd-riser_angled_400-04377ffa.jpeg", "RCD-3-9b543d78.png", "HMH-MPD-Offering-363c4003.png"],
-     "pt": {"n": "Sistema MPD", "c": "Controle de pressão", "d": "Perfuração com pressão gerenciada: controla com precisão a pressão no fundo do poço."},
-     "en": {"n": "MPD system", "c": "Pressure control", "d": "Managed pressure drilling: precise control of bottom-hole pressure."}},
-    {"id": "riser", "s": 2, "m": "riser", "u": "/service/drilling-risers/", "yt": "DU6cz-VVQA4", "fotos": ["qtr-fa4e157e.png", "Drilling-Risers-43778c2a.png", "QuickTurnRiserConnector-6d6a4ef5.png"],
-     "pt": {"n": "HMH QTR™ Marine Risers", "c": "Riser", "d": "Risers QTR™ 4000LS e QTR™ 3500, com linhas auxiliares de choke, kill e hidráulica, ligando a sonda ao BOP. A linha inclui o HMF™ Riser e o Quick-Turn Riser Connector."},
-     "en": {"n": "HMH QTR™ Marine Risers", "c": "Riser", "d": "QTR™ 4000LS and QTR™ 3500 risers with choke, kill and hydraulic auxiliary lines, linking the rig to the BOP. The range includes the HMF™ Riser and the Quick-Turn Riser Connector."}},
-    {"id": "rovB", "s": 2, "m": "rov", "ctx": 1,
-     "pt": {"n": "ROV", "c": "Contexto", "d": "Veículo operado remotamente que inspeciona o riser e opera equipamentos no fundo."},
-     "en": {"n": "ROV", "c": "Context", "d": "Remotely operated vehicle that inspects the riser and operates subsea equipment."}},
-    {"id": "gxp", "s": 3, "m": "annular", "u": "/service/bop-annulars-2/", "yt": "_fddKTH_0G4", "fotos": ["BOP-Annular-9aaa4ed7.webp"],
-     "pt": {"n": "Hydril® GXP Annular BOP", "c": "Controle de pressão", "d": "BOP anular que veda em volta de qualquer tubular, com alta resistência a temperatura e a químicos."},
-     "en": {"n": "Hydril® GXP Annular BOP", "c": "Pressure control", "d": "Annular BOP that seals around any tubular, with high temperature and chemical resistance."}},
-    {"id": "rams", "s": 3, "m": "ram", "u": "/service/bop-rams-2/", "yt": "kdZE4N9fCrs", "fotos": ["18-15-CompactBOP-scaled-17785956.jpeg", "13-10-conventional-white-014d8d6c.png"],
-     "pt": {"n": "Hydril® Compact™ RAM BOP", "c": "Controle de pressão", "d": "Gavetas que fecham e vedam o poço. No site da HMH: 18¾\" para 15.000 psi."},
-     "en": {"n": "Hydril® Compact™ RAM BOP", "c": "Pressure control", "d": "Rams that close and seal the well. Per hmhw.com: 18¾\" rated to 15,000 psi."}},
-    {"id": "wbsr", "s": 3, "m": "ram", "u": "/service/ram-blocks-2/", "yt": "TTbdtZv8JHU", "fotos": ["WBSR-X-LX-f452a567.png", "x-shear-6-hi-res-c8ca4efe.png"],
-     "pt": {"n": "Gavetas cisalhantes WBSR-X", "c": "Controle de pressão", "d": "Gavetas capazes de cortar a coluna e selar o poço nas condições mais severas."},
-     "en": {"n": "WBSR-X shear rams", "c": "Pressure control", "d": "Rams able to shear the string and seal the well in the harshest conditions."}},
-    {"id": "h4", "s": 3, "m": "h4", "u": "/service/h4-connector/", "fotos": ["SHD_27-fa51a93d.png", "Gasket-33a6f741.png"],
-     "pt": {"n": "Vetco H-4 Connector", "c": "Conexão", "d": "Conecta o conjunto de BOP à cabeça de poço."},
-     "en": {"n": "Vetco H-4 Connector", "c": "Connection", "d": "Connects the BOP stack to the wellhead."}},
-    {"id": "pods", "s": 3, "m": "pod", "u": "/service/bop-control-and-analytics/", "fotos": ["SeaOnxy-V8--scaled-98c670ad.jpeg", "SeaLytics-ac7f4d85.png", "SeaPrime-f0717002.png"],
-     "pt": {"n": "BOP Controls & Analytics", "c": "Controle", "d": "Pods de controle e análise de dados de cada função do BOP."},
-     "en": {"n": "BOP Controls & Analytics", "c": "Control", "d": "Control pods and data analytics for every BOP function."}},
-    {"id": "valves", "s": 3, "m": "valve", "u": "/service/xtrm-tm-gate-valves/", "fotos": ["XTRM-valve-3b621524.jpeg", "Manifold1-fbe51912.png"],
-     "pt": {"n": "Válvulas e manifolds", "c": "Controle de pressão", "d": "Válvulas gaveta XTRM/TM e manifolds das linhas de choke e kill."},
-     "en": {"n": "Valves and manifolds", "c": "Pressure control", "d": "XTRM/TM gate valves and choke and kill manifolds."}},
-    {"id": "ebop", "s": 3, "m": "ebop", "u": "/service/all-electric-bop/", "fotos": ["IONIC-stack-pipe-shear-pipe-pipe-0135a0be.webp", "HMH-Electric-BOP-Key-Benefits-397893b5.webp"],
-     "pt": {"n": "HMH ionic™ Electric BOP", "c": "Controle de pressão", "d": "BOP totalmente elétrico, para novos equipamentos ou conversão de BOPs existentes."},
-     "en": {"n": "HMH ionic™ Electric BOP", "c": "Pressure control", "d": "All-electric BOP for new builds or conversion of existing BOPs."}},
-    {"id": "k20", "s": 3, "m": "bop", "u": "/service/20k-subsea-drilling-system/", "yt": "gD0S_CNolEs", "fotos": ["20K-RBOP-5b771fdb.png", "H-4-SHD-20K-6d802ed9.png"],
-     "pt": {"n": "20k Subsea Drilling System", "c": "Controle de pressão", "d": "Sistema de perfuração submarina para 20.000 psi."},
-     "en": {"n": "20k Subsea Drilling System", "c": "Pressure control", "d": "Subsea drilling system rated to 20,000 psi."}},
-    {"id": "rovA", "s": 3, "m": "rov", "ctx": 1,
-     "pt": {"n": "ROV", "c": "Contexto", "d": "Veículo operado remotamente com câmeras e braços manipuladores."},
-     "en": {"n": "ROV", "c": "Context", "d": "Remotely operated vehicle with cameras and manipulator arms."}},
-    {"id": "casing", "s": 4, "m": "block", "ctx": 1,
-     "pt": {"n": "Revestimentos e cimentação", "c": "Contexto", "d": "Colunas de aço cimentadas na rocha isolam o poço das formações."},
-     "en": {"n": "Casing and cementing", "c": "Context", "d": "Steel casing strings cemented into the rock isolate the well from the formations."}},
-    {"id": "bit", "s": 4, "m": "bit", "ctx": 1,
-     "pt": {"n": "Broca tricônica", "c": "Contexto", "d": "Corta a rocha na ponta da coluna; o fluido bombeado pelas mud pumps traz os cascalhos para cima."},
-     "en": {"n": "Tricone bit", "c": "Context", "d": "Cuts the rock at the end of the string; fluid pumped by the mud pumps carries the cuttings up."}},
-    {"id": "reservoir", "s": 5, "m": "block", "ctx": 1,
-     "pt": {"n": "Reservatório", "c": "Contexto", "d": "Rocha porosa que armazena óleo e, no topo da estrutura, gás natural."},
-     "en": {"n": "Reservoir", "c": "Context", "d": "Porous rock holding oil and, at the top of the structure, natural gas."}},
-    {"id": "dls", "s": 5, "m": "ship", "u": "/archives/business_area/hmh-drilling-optimization-services-dls/", "fotos": ["HMH-helmet_4-scaled-05e6bfca.jpeg"],
-     "pt": {"n": "Drilling Lifecycle Services", "c": "Serviços", "d": "Serviços da HMH ao longo de todo o ciclo de vida dos equipamentos de perfuração."},
-     "en": {"n": "Drilling Lifecycle Services", "c": "Services", "d": "HMH services across the full lifecycle of drilling equipment."}}
-  ],
-  "esg": [
-    {"id": "esg_ebop", "s": 3, "m": "ebop", "u": "/service/all-electric-bop/", "fotos": ["IONIC-stack-pipe-shear-pipe-pipe-0135a0be.webp", "HMH-Electric-BOP-Key-Benefits-397893b5.webp"],
-     "pt": {"cat": "Emissões", "st": "Zero", "sl": "emissões no subsea", "n": "ionic™ Electric BOP: zero emissões no subsea",
-            "d": "Sem mistura de glicol/fluidos e sem ventilação de fluido de controle no fundo do mar. Pelo menos 75 t a menos de equipamento na superfície e um design mais leve, com menos custos e emissões de transporte, segundo a HMH."},
-     "en": {"cat": "Emissions", "st": "Zero", "sl": "subsea emissions", "n": "ionic™ Electric BOP: zero subsea emissions",
-            "d": "No glycol/fluid mixing and no control-fluid venting on the seabed. At least 75 t less topside equipment and a lighter design, with lower transport costs and emissions, according to HMH."}},
-    {"id": "esg_bop", "s": 3, "m": "bop", "u": "/sustainability/", "fotos": ["18-15-CompactBOP-scaled-17785956.jpeg"],
-     "pt": {"cat": "Meio ambiente", "st": "Barreira", "sl": "de controle do poço", "n": "Controle de pressão como proteção ambiental",
-            "d": "O conjunto de BOP mantém o poço sob controle. A HMH declara o compromisso de reduzir o risco de impacto ambiental adverso causado por seus produtos e operações."},
-     "en": {"cat": "Environment", "st": "Barrier", "sl": "of well control", "n": "Pressure control as environmental protection",
-            "d": "The BOP stack keeps the well under control. HMH states a commitment to reduce the risk of adverse environmental impact from its products and operations."}},
-    {"id": "esg_mpd", "s": 1, "m": "mpd", "u": "/service/mpd-system/", "fotos": ["mpd-riser_angled_400-04377ffa.jpeg", "HMH-MPD-Offering-363c4003.png"],
-     "pt": {"cat": "Eficiência", "st": "65%", "sl": "menos tempo de rig-up", "n": "MPD: mais controle, menos tempo de sonda",
-            "d": "O Integrated MPD Riser reduz o tempo de rig-up em até 65% e as paradas relacionadas ao MPD, com mais segurança operacional (dados da HMH)."},
-     "en": {"cat": "Efficiency", "st": "65%", "sl": "less rig-up time", "n": "MPD: more control, less rig time",
-            "d": "The Integrated MPD Riser cuts rig-up time by up to 65% and reduces MPD-related downtime, with greater operational safety (HMH data)."}},
-    {"id": "esg_dls", "s": 0, "m": "derrick", "u": "/archives/business_area/hmh-drilling-optimization-services-dls/", "fotos": ["HMH-helmet_4-scaled-05e6bfca.jpeg"],
-     "pt": {"cat": "Ciclo de vida", "st": "+ vida útil", "sl": "dos equipamentos", "n": "Drilling Lifecycle Services",
-            "d": "Serviços para estender a vida útil dos equipamentos e maximizar o tempo de operação. O SmartCert oferece certificação API contínua para equipamentos de controle de pressão."},
-     "en": {"cat": "Lifecycle", "st": "+ life", "sl": "of equipment", "n": "Drilling Lifecycle Services",
-            "d": "Services to extend equipment life and maximize uptime. SmartCert provides continuous API certification for pressure control equipment."}},
-    {"id": "esg_hsse", "s": 0, "m": "ship", "u": "/sustainability/hsse/", "fotos": ["MicrosoftTeams-image-6f3af98b.webp"],
-     "pt": {"cat": "HSSE", "st": "Zero dano", "sl": "a pessoas e ao meio ambiente", "n": "HSSE: objetivo de zero dano",
-            "d": "A HMH trata HSSE como parte central da cultura: objetivo de zero dano a pessoas, ao meio ambiente e a ativos, e melhoria do desempenho ambiental pela gestão responsável dos aspectos ambientais."},
-     "en": {"cat": "HSSE", "st": "Zero harm", "sl": "to people and environment", "n": "HSSE: a zero-harm goal",
-            "d": "HMH treats HSSE as a core part of its culture: a goal of zero harm to people, the environment and assets, and better environmental performance through responsible management."}},
-    {"id": "esg_digital", "s": 0, "m": "ship", "u": "/sustainability/", "fotos": ["beAware-0fb628cc.jpeg"],
-     "pt": {"cat": "Inovação", "st": "Digital", "sl": "beAware™ · DEAL™", "n": "Inovação e digitalização",
-            "d": "Investir em inovação e digitalização é um dos compromissos de sustentabilidade da HMH. Ferramentas como beAware™ e DEAL™ buscam mais eficiência operacional."},
-     "en": {"cat": "Innovation", "st": "Digital", "sl": "beAware™ · DEAL™", "n": "Innovation and digitalization",
-            "d": "Investing in innovation and digitalization is one of HMH’s sustainability commitments. Tools such as beAware™ and DEAL™ aim for higher operational efficiency."}},
-    {"id": "esg_supply", "s": 0, "m": "ship", "u": "/sustainability/global-supply-chain/", "fotos": ["Our-Values_stripe2-1c144e57.webp"],
-     "pt": {"cat": "Governança", "st": "Código", "sl": "de Conduta na cadeia", "n": "Cadeia de suprimentos responsável",
-            "d": "Fornecedores e subcontratados devem atuar conforme o Código de Conduta da HMH, com due diligence de direitos humanos no onboarding de parceiros."},
-     "en": {"cat": "Governance", "st": "Code", "sl": "of Conduct in the chain", "n": "Responsible supply chain",
-            "d": "Suppliers and subcontractors must act according to the HMH Code of Conduct, with human-rights due diligence when onboarding partners."}},
-    {"id": "esg_ods", "s": -1, "u": "/sustainability/", "fotos": ["UN-Sustainable-Development-Goalds-SDG-040a5360.jpeg"],
-     "pt": {"cat": "ODS da ONU", "st": "5 · 8 · 12 · 13", "sl": "ODS em foco", "n": "Objetivos de Desenvolvimento Sustentável",
-            "d": "A HMH declara foco particular nos ODS 5 (igualdade de gênero), 8 (trabalho decente e crescimento econômico), 12 (consumo e produção responsáveis) e 13 (ação contra a mudança global do clima)."},
-     "en": {"cat": "UN SDGs", "st": "5 · 8 · 12 · 13", "sl": "SDGs in focus", "n": "Sustainable Development Goals",
-            "d": "HMH states a particular focus on SDGs 5 (gender equality), 8 (decent work and economic growth), 12 (responsible consumption and production) and 13 (climate action)."}}
-  ],
-  "tour": [
-    {"s": 0, "foco": "mudpumps", "pt": {"t": "1 · Bombas de lama", "d": "As bombas Wirth™ empurram o fluido de perfuração em alta pressão até o top drive, no alto da torre."},
-     "en": {"t": "1 · Mud pumps", "d": "Wirth™ pumps push drilling fluid at high pressure up to the top drive at the top of the derrick."}},
-    {"s": 0, "foco": "topdrive", "pt": {"t": "2 · Top drive", "d": "O fluido entra na coluna de perfuração pelo top drive, que também gira a coluna."},
-     "en": {"t": "2 · Top drive", "d": "The fluid enters the drill string through the top drive, which also rotates the string."}},
-    {"s": 2, "foco": "riser", "pt": {"t": "3 · Descendo pelo riser", "d": "Dentro do riser, o fluido desce pela coluna de perfuração em direção ao fundo do mar (linha azul)."},
-     "en": {"t": "3 · Down the riser", "d": "Inside the riser, the fluid travels down the drill string toward the seabed (blue line)."}},
-    {"s": 3, "foco": "rams", "bop": 1, "pt": {"t": "4 · Passando pelo BOP", "d": "A coluna atravessa o BOP. Se o poço der um influxo, as gavetas e o anular fecham e vedam o poço."},
-     "en": {"t": "4 · Through the BOP", "d": "The string runs through the BOP. If the well kicks, the rams and the annular close and seal the well."}},
-    {"s": 4, "foco": "bit", "pt": {"t": "5 · Na broca", "d": "O fluido sai pelos jatos da broca, resfria a ferramenta e carrega os cascalhos de rocha."},
-     "en": {"t": "5 · At the bit", "d": "The fluid exits through the bit nozzles, cools the tool and carries the rock cuttings."}},
-    {"s": 2, "foco": "riser", "pt": {"t": "6 · Retorno pelo anular", "d": "O fluido volta pelo espaço entre a coluna e o revestimento e o riser, trazendo os cascalhos à superfície (linha âmbar)."},
-     "en": {"t": "6 · Back up the annulus", "d": "The fluid returns through the space between the string and the casing and riser, bringing cuttings to the surface (amber line)."}},
-    {"s": 0, "foco": "mudsys", "pt": {"t": "7 · Peneiras e tratamento", "d": "Na superfície, os HMH Mud Systems separam os cascalhos e devolvem o fluido aos tanques para circular de novo."},
-     "en": {"t": "7 · Shakers and treatment", "d": "At the surface, HMH Mud Systems separate the cuttings and send the fluid back to the tanks to circulate again."}}
-  ],
-  "camadas": {"pt": ["Sedimentos", "Argila", "Arenito", "Folhelho", "Calcário", "Rocha selante", "Reservatório", "gás natural", "óleo"],
-              "en": ["Sediments", "Clay", "Sandstone", "Shale", "Limestone", "Cap rock", "Reservoir", "natural gas", "oil"]},
-  "ui": {
-    "pt": {"esg": "ESG Point", "visao": "Visão geral", "catalogo": "Catálogo", "tour": "Como funciona", "noite": "Noite", "secoes": "Seções", "som": "Som ambiente", "lang": "EN", "langNome": "English",
-           "nesta": "Nesta seção", "nestaEsg": "ESG nesta seção", "saiba": "Saiba mais", "contato": "Fale com a HMH", "semEsg": "Nenhum ponto ESG nesta seção. Abra o ESG Point para ver todos.",
-           "prof": "Prof.", "pressao": "Pressão", "temp": "Temp.", "visaoZona": "Visão geral", "rolar": "Role para descer", "deslizar": "Deslize para descer",
-           "intro": "Da sonda ao reservatório · em 3D", "carregando": "Carregando texturas realistas…", "carregado": "Texturas carregadas", "preparando": "Preparando a cena…", "iniciar": "Iniciar descida", "semSom": "Entrar sem som",
-           "produto": "Produto HMH", "contexto": "Contexto", "video": "▶ Vídeo", "foto": "Foto", "fotos": "Fotos", "modelo": "Modelo 3D", "destaque": "Destaque",
-           "verHmh": "Ver no site da HMH ↗", "abrirYt": "Abrir no YouTube ↗", "buscarYt": "Procurar no YouTube ↗", "verFonte": "Ver fonte na HMH ↗",
-           "linha": "Linha", "categoria": "Categoria", "secao": "Seção", "profundidade": "Profundidade", "fonte": "Fonte", "credito": "Foto: HMH · hmhw.com", "arraste": "Arraste para girar o modelo 3D",
-           "fotoIndisp": "Foto indisponível no momento", "arquivoLocal": "Para tocar o vídeo aqui, abra o site por http(s). Clique para assistir no YouTube.",
-           "esgTitulo": "ESG Point", "esgSub": "Pontos ambientais e de sustentabilidade que a HMH declara considerar. Os pontos verdes aparecem na cena.", "verCena": "Ver na cena", "fonteLink": "Fonte ↗",
-           "esgRodape": "Fonte: páginas oficiais em hmhw.com (Sustentabilidade, HSSE, Electric BOP, MPD e Drilling Lifecycle Services). Indicadores detalhados estão nos Relatórios de Sustentabilidade 2024 e 2025 da HMH.",
-           "catTitulo": "Catálogo HMH", "catSub": "Todos os equipamentos da descida. Toque em um para ir até ele.", "todos": "Todos", "buscar": "Buscar equipamento…", "nenhum": "Nenhum equipamento encontrado.",
-           "tourTitulo": "Como funciona: a circulação do fluido de perfuração", "anterior": "Anterior", "proximo": "Próximo", "encerrar": "Encerrar", "passo": "Passo", "de": "de", "pausar": "Pausar", "continuar": "Continuar",
-           "fechar": "Fechar", "noWebgl": "Seu navegador não exibiu a cena 3D. Abaixo está todo o conteúdo do site.", "erroCarga": "A cena 3D precisa de um navegador com WebGL."},
-    "en": {"esg": "ESG Point", "visao": "Overview", "catalogo": "Catalog", "tour": "How it works", "noite": "Night", "secoes": "Sections", "som": "Ambient sound", "lang": "PT", "langNome": "Português",
-           "nesta": "In this section", "nestaEsg": "ESG in this section", "saiba": "Learn more", "contato": "Contact HMH", "semEsg": "No ESG point in this section. Open ESG Point to see them all.",
-           "prof": "Depth", "pressao": "Pressure", "temp": "Temp.", "visaoZona": "Overview", "rolar": "Scroll to dive", "deslizar": "Swipe to dive",
-           "intro": "From rig to reservoir · in 3D", "carregando": "Loading realistic textures…", "carregado": "Textures loaded", "preparando": "Preparing the scene…", "iniciar": "Start the dive", "semSom": "Enter without sound",
-           "produto": "HMH product", "contexto": "Context", "video": "▶ Video", "foto": "Photo", "fotos": "Photos", "modelo": "3D model", "destaque": "Highlight",
-           "verHmh": "View on hmhw.com ↗", "abrirYt": "Open on YouTube ↗", "buscarYt": "Search YouTube ↗", "verFonte": "View source on hmhw.com ↗",
-           "linha": "Line", "categoria": "Category", "secao": "Section", "profundidade": "Depth", "fonte": "Source", "credito": "Photo: HMH · hmhw.com", "arraste": "Drag to rotate the 3D model",
-           "fotoIndisp": "Photo unavailable right now", "arquivoLocal": "To play the video here, open the site over http(s). Click to watch on YouTube.",
-           "esgTitulo": "ESG Point", "esgSub": "Environmental and sustainability points HMH states it considers. Green points appear in the scene.", "verCena": "Show in scene", "fonteLink": "Source ↗",
-           "esgRodape": "Source: official pages on hmhw.com (Sustainability, HSSE, Electric BOP, MPD and Drilling Lifecycle Services). Detailed indicators are in HMH’s 2024 and 2025 Sustainability Reports.",
-           "catTitulo": "HMH catalog", "catSub": "Every piece of equipment on the dive. Tap one to go to it.", "todos": "All", "buscar": "Search equipment…", "nenhum": "No equipment found.",
-           "tourTitulo": "How it works: drilling fluid circulation", "anterior": "Back", "proximo": "Next", "encerrar": "Close", "passo": "Step", "de": "of", "pausar": "Pause", "continuar": "Resume",
-           "fechar": "Close", "noWebgl": "Your browser could not show the 3D scene. All of the site’s content is below.", "erroCarga": "The 3D scene needs a browser with WebGL."}
+ "_leia": "Conteúdo editável do site. Textos em pt e en; 'fotos' são nomes de arquivo das páginas da HMH (rode tools/baixar_assets.py após mudar); 'u' é o caminho em hmhw.com; 'yt' é o id do vídeo no YouTube; 's' é a seção (0 a 5); 'm' é o modelo 3D usado quando não há foto.",
+ "secoes": [
+  {
+   "id": "superficie",
+   "u": "/archives/business_area/drilling-equipment-offshore/",
+   "pt": {
+    "tab": "Superfície",
+    "t": "Operação de superfície (topsides)",
+    "eb": "Superfície · 0 m",
+    "prof": "0 m",
+    "zona": "Superfície",
+    "p": "Sonda de perfuração offshore operando na superfície. Em destaque, os equipamentos de topside da HMH: derrick, top drive, roughneck, drawworks, bombas de lama e guindastes de manuseio."
+   },
+   "en": {
+    "tab": "Surface",
+    "t": "Surface operations (topsides)",
+    "eb": "Surface · 0 m",
+    "prof": "0 m",
+    "zona": "Surface",
+    "p": "An offshore drilling rig at the surface. In focus, HMH topside equipment: derrick, top drive, roughneck, drawworks, mud pumps and handling cranes."
+   }
+  },
+  {
+   "id": "tensionadores",
+   "u": "/service/motion-compensation-systems/",
+   "pt": {
+    "tab": "Tensionadores",
+    "t": "Sistema de tensionadores de riser",
+    "eb": "Abaixo do casco",
+    "prof": "Logo abaixo da linha d’água",
+    "zona": "Abaixo do casco",
+    "p": "Abaixo da plataforma, os tensionadores de riser compensam o movimento das ondas, garantindo a estabilidade da coluna sob a superfície da água."
+   },
+   "en": {
+    "tab": "Tensioners",
+    "t": "Riser tensioner system",
+    "eb": "Below the hull",
+    "prof": "Just below the waterline",
+    "zona": "Below the hull",
+    "p": "Below the rig, riser tensioners compensate for wave motion, keeping the riser string stable under the water surface."
+   }
+  },
+  {
+   "id": "riser",
+   "u": "/service/drilling-risers/",
+   "pt": {
+    "tab": "Riser",
+    "t": "Coluna de riser QTR™",
+    "eb": "Coluna d’água",
+    "prof": "Coluna d’água",
+    "zona": "Coluna d’água",
+    "p": "A coluna de riser de perfuração estende-se pela coluna d’água, conectando a sonda ao poço de forma rápida e segura."
+   },
+   "en": {
+    "tab": "Riser",
+    "t": "QTR™ riser string",
+    "eb": "Water column",
+    "prof": "Water column",
+    "zona": "Water column",
+    "p": "The drilling riser string runs through the water column, connecting the rig to the well quickly and safely."
+   }
+  },
+  {
+   "id": "bop",
+   "u": "/archives/business_area/drilling-equipment-offshore-pressure-control/",
+   "pt": {
+    "tab": "BOP",
+    "t": "Leito marinho e BOP",
+    "eb": "Leito marinho · ~1.500 m",
+    "prof": "~1.500 m",
+    "zona": "Leito marinho",
+    "p": "No leito marinho, a coluna de riser se conecta ao BOP (Blowout Preventer) e ao sistema de cabeça de poço, garantindo o controle total da pressão."
+   },
+   "en": {
+    "tab": "BOP",
+    "t": "Seabed and BOP",
+    "eb": "Seabed · ~1,500 m",
+    "prof": "~1,500 m",
+    "zona": "Seabed",
+    "p": "On the seabed, the riser connects to the BOP (blowout preventer) and the wellhead system, keeping full control of well pressure."
+   }
+  },
+  {
+   "id": "perfuracao",
+   "u": "/archives/business_area/drilling-equipment/",
+   "pt": {
+    "tab": "Perfuração",
+    "t": "Perfuração do poço (drilling)",
+    "eb": "Subsolo",
+    "prof": "~1.500 a 3.500 m",
+    "zona": "Subsolo",
+    "p": "Abaixo do leito marinho, a broca avança pelas camadas de rocha, guiada pela tecnologia de perfuração, abrindo o caminho com segurança."
+   },
+   "en": {
+    "tab": "Drilling",
+    "t": "Drilling the well",
+    "eb": "Subsurface",
+    "prof": "~1,500 to 3,500 m",
+    "zona": "Subsurface",
+    "p": "Below the seabed, the bit advances through the rock layers, guided by drilling technology, opening the way safely."
+   }
+  },
+  {
+   "id": "reservatorio",
+   "u": "/archives/business_area/drilling-equipment/",
+   "pt": {
+    "tab": "Reservatório",
+    "t": "Reservatório e produção",
+    "eb": "Reservatório · ~4.500 m",
+    "prof": "~4.500 m",
+    "zona": "Reservatório",
+    "p": "Alcançando o objetivo: o reservatório de óleo e gás. A perfuração segura é o primeiro passo da jornada de engenharia da HMH."
+   },
+   "en": {
+    "tab": "Reservoir",
+    "t": "Reservoir and production",
+    "eb": "Reservoir · ~4,500 m",
+    "prof": "~4,500 m",
+    "zona": "Reservoir",
+    "p": "Reaching the goal: the oil and gas reservoir. Safe drilling is the first step of HMH’s engineering journey."
+   }
   }
+ ],
+ "produtos": [
+  {
+   "id": "topdrive",
+   "s": 0,
+   "m": "topdrive",
+   "u": "/service/top-drives-offshore/",
+   "fotos": [
+    "DSC3555-Edit-sort-hvit-scaled-ca14dab2.webp",
+    "TD1250-1500-series-0e401e44.webp"
+   ],
+   "pt": {
+    "n": "MH Top Drive",
+    "c": "Içamento e rotação",
+    "d": "Gira a coluna de perfuração a partir do topo do mastro e sustenta o peso da coluna durante as manobras."
+   },
+   "en": {
+    "n": "MH Top Drive",
+    "c": "Hoisting and rotation",
+    "d": "Rotates the drill string from the top of the derrick and carries the string weight during trips."
+   },
+   "a": "off"
+  },
+  {
+   "id": "roughneck",
+   "s": 0,
+   "m": "roughneck",
+   "u": "/service/roughnecks-2/",
+   "yt": "bNNf88Jm3e8",
+   "fotos": [
+    "Roughneck-9bd8c643.jpeg"
+   ],
+   "pt": {
+    "n": "Bulldog™ Iron Roughneck",
+    "c": "Manuseio de tubos",
+    "d": "Roughneck automatizado que aperta e desaperta as conexões dos tubos no piso da sonda, com rapidez e repetibilidade."
+   },
+   "en": {
+    "n": "Bulldog™ Iron Roughneck",
+    "c": "Pipe handling",
+    "d": "Automated roughneck that makes up and breaks out pipe connections on the drill floor, fast and repeatably."
+   },
+   "a": "off"
+  },
+  {
+   "id": "drawworks",
+   "s": 0,
+   "m": "drawworks",
+   "u": "/service/drawworks-2/",
+   "yt": "pDR-Pp-MrxQ",
+   "fotos": [
+    "multi-gear-drawworks-eb7f056c.webp",
+    "Single-gear-drawworks-offshore-c39c8040.webp"
+   ],
+   "pt": {
+    "n": "Wirth™ Drawworks",
+    "c": "Içamento e rotação",
+    "d": "Guincho principal que iça e abaixa a coluna de perfuração."
+   },
+   "en": {
+    "n": "Wirth™ Drawworks",
+    "c": "Hoisting and rotation",
+    "d": "Main hoisting winch that raises and lowers the drill string."
+   },
+   "a": "off"
+  },
+  {
+   "id": "rotary",
+   "s": 0,
+   "m": "rotary",
+   "u": "/service/rotary-tables-2/",
+   "fotos": [
+    "Rotary-Table-Offshore-fd1d74d3.jpeg"
+   ],
+   "pt": {
+    "n": "Wirth™ Rotary Table",
+    "c": "Içamento e rotação",
+    "d": "Mesa rotativa no centro do piso: transmite torque e apoia a coluna durante as conexões."
+   },
+   "en": {
+    "n": "Wirth™ Rotary Table",
+    "c": "Hoisting and rotation",
+    "d": "Rotary table at the center of the drill floor: transmits torque and holds the string during connections."
+   },
+   "a": "off"
+  },
+  {
+   "id": "mudpumps",
+   "s": 0,
+   "m": "mudpump",
+   "u": "/service/wirth-offshore-mud-pumps/",
+   "yt": "EUrHhekngWU",
+   "fotos": [
+    "HMH-Wirth-TPK2200-2-scaled-16eb4e4f.jpeg",
+    "HMH-Wirth-TPK1600-scaled-4b7ac908.jpeg",
+    "HMH-Wirth-TPK1000-scaled-50d5ff1a.jpeg"
+   ],
+   "pt": {
+    "n": "Wirth™ TPK Mud Pumps",
+    "c": "Fluido de perfuração",
+    "d": "Bombas de alta pressão que circulam o fluido de perfuração até a broca e de volta à superfície."
+   },
+   "en": {
+    "n": "Wirth™ TPK Mud Pumps",
+    "c": "Drilling fluid",
+    "d": "High-pressure pumps that circulate drilling fluid down to the bit and back to the surface."
+   },
+   "a": "off"
+  },
+  {
+   "id": "mudsys",
+   "s": 0,
+   "m": "mudpump",
+   "u": "/service/mh-mud-systems/",
+   "fotos": [
+    "nytt_DSC1591_Rebranded_72px-bcf59a96.jpeg",
+    "Agitator-horizontal-8358d203.jpeg",
+    "Bulk-storage_DSC6521-024f0143.jpeg"
+   ],
+   "pt": {
+    "n": "HMH Mud Systems",
+    "c": "Fluido de perfuração",
+    "d": "Peneiras, tanques e tratamento do fluido de perfuração que retorna do poço."
+   },
+   "en": {
+    "n": "HMH Mud Systems",
+    "c": "Drilling fluid",
+    "d": "Shakers, tanks and treatment of the drilling fluid returning from the well."
+   },
+   "a": "off"
+  },
+  {
+   "id": "cranes",
+   "s": 0,
+   "m": "crane",
+   "u": "/service/handling-equipment-and-cranes/",
+   "fotos": [
+    "Crane-5e8a8fb2.jpeg",
+    "Riser-feeding-machine-6c210120.jpeg",
+    "Access-Basket-1abb0c18.jpeg"
+   ],
+   "pt": {
+    "n": "Guindastes e manuseio",
+    "c": "Manuseio de tubos",
+    "d": "Movimentação de tubos, risers e cargas no convés."
+   },
+   "en": {
+    "n": "Cranes and handling",
+    "c": "Pipe handling",
+    "d": "Moving pipe, risers and loads around the deck."
+   },
+   "a": "off"
+  },
+  {
+   "id": "structures",
+   "s": 0,
+   "m": "derrick",
+   "u": "/service/ramrig/",
+   "fotos": [
+    "RamRig-79693c94.jpeg",
+    "Derrick-scaled-a5483996.jpeg"
+   ],
+   "pt": {
+    "n": "Derrick e subestrutura",
+    "c": "Estruturas",
+    "d": "A torre e a subestrutura que sustentam todo o sistema de içamento."
+   },
+   "en": {
+    "n": "Derrick and substructure",
+    "c": "Structures",
+    "d": "The tower and substructure that carry the whole hoisting system."
+   },
+   "a": "off"
+  },
+  {
+   "id": "motion",
+   "s": 0,
+   "m": "tensioner",
+   "u": "/service/motion-compensation-systems/",
+   "fotos": [
+    "Crown-Mounted-Compansator-a0438471.webp",
+    "Tensioners-d8db4abb.webp"
+   ],
+   "pt": {
+    "n": "Compensação de movimento",
+    "c": "Compensação",
+    "d": "Compensa o balanço da embarcação para manter constante o peso sobre a broca."
+   },
+   "en": {
+    "n": "Motion compensation",
+    "c": "Compensation",
+    "d": "Compensates for vessel heave to keep the weight on bit constant."
+   },
+   "a": "off"
+  },
+  {
+   "id": "diverter",
+   "s": 0,
+   "m": "annular",
+   "u": "/service/diverters/",
+   "fotos": [
+    "Diverter-MSP-29-SLIM-82bd2929.jpeg",
+    "Diverter-MSP-21-v2-f427e682.jpeg"
+   ],
+   "pt": {
+    "n": "Diverter",
+    "c": "Controle de pressão",
+    "d": "Desvia o fluxo do poço para longe do piso da sonda em situações de gás raso."
+   },
+   "en": {
+    "n": "Diverter",
+    "c": "Pressure control",
+    "d": "Diverts well flow away from the drill floor in shallow-gas situations."
+   },
+   "a": "off"
+  },
+  {
+   "id": "deal",
+   "s": 0,
+   "m": "ship",
+   "u": "/archives/business_area/cads-automation-system-for-rig-sequences/",
+   "yt": "1Q5nu2Zouf4",
+   "fotos": [
+    "MicrosoftTeams-image-c362553c.png"
+   ],
+   "pt": {
+    "n": "DEAL™ & CADS",
+    "c": "Automação",
+    "d": "Plataforma de automação das sequências de perfuração, que recebe módulos de software inteligentes (Smart Modules)."
+   },
+   "en": {
+    "n": "DEAL™ & CADS",
+    "c": "Automation",
+    "d": "Automation platform for drilling sequences that hosts intelligent software modules (Smart Modules)."
+   },
+   "a": "srv"
+  },
+  {
+   "id": "beaware",
+   "s": 0,
+   "m": "ship",
+   "u": "/archives/business_area/drilling-digitalization-beaware/",
+   "fotos": [
+    "beAware-0fb628cc.jpeg",
+    "drillView-GO-and-driller-2-11c8c840.jpeg",
+    "wellMap-web-c12af036.jpeg"
+   ],
+   "pt": {
+    "n": "beAware™",
+    "c": "Digitalização",
+    "d": "Dados e monitoramento dos equipamentos da sonda para decisões mais rápidas."
+   },
+   "en": {
+    "n": "beAware™",
+    "c": "Digitalization",
+    "d": "Rig equipment data and monitoring for faster decisions."
+   },
+   "a": "srv"
+  },
+  {
+   "id": "gk",
+   "s": 0,
+   "m": "annular",
+   "u": "/service/bop-annulars-2/",
+   "yt": "DZ8fkK0ZY1A",
+   "fotos": [
+    "GK-13-5-Radial-Latch-faafcaea.webp"
+   ],
+   "pt": {
+    "n": "Hydril® GK™ 13-5",
+    "c": "Controle de pressão",
+    "d": "BOP anular compacto da linha Hydril (Radial Latch), em exposição no convés."
+   },
+   "en": {
+    "n": "Hydril® GK™ 13-5",
+    "c": "Pressure control",
+    "d": "Compact Hydril annular BOP (Radial Latch), on display on deck."
+   },
+   "a": "off"
+  },
+  {
+   "id": "sentry",
+   "s": 0,
+   "m": "ram",
+   "u": "/service/bop-rams-2/",
+   "yt": "cvjERw0n1D4",
+   "fotos": [
+    "sentry-no-shadow-1-7e749e7d.png"
+   ],
+   "pt": {
+    "n": "Hydril® Sentry RAM BOP",
+    "c": "Controle de pressão",
+    "d": "BOP de gaveta da linha Hydril, em exposição no convés."
+   },
+   "en": {
+    "n": "Hydril® Sentry RAM BOP",
+    "c": "Pressure control",
+    "d": "Hydril ram BOP, on display on deck."
+   },
+   "a": "off"
+  },
+  {
+   "id": "tens",
+   "s": 1,
+   "m": "tensioner",
+   "u": "/service/motion-compensation-systems/",
+   "fotos": [
+    "Tensioners-d8db4abb.webp",
+    "Crown-Mounted-Compansator-a0438471.webp"
+   ],
+   "pt": {
+    "n": "Tensionadores de riser",
+    "c": "Compensação",
+    "d": "Cilindros hidráulicos que mantêm o riser tracionado enquanto o navio sobe e desce com as ondas."
+   },
+   "en": {
+    "n": "Riser tensioners",
+    "c": "Compensation",
+    "d": "Hydraulic cylinders that keep the riser in tension while the vessel rises and falls with the waves."
+   },
+   "a": "off"
+  },
+  {
+   "id": "telescopic",
+   "s": 1,
+   "m": "riser",
+   "u": "/service/drilling-risers/",
+   "yt": "DU6cz-VVQA4",
+   "fotos": [
+    "Telescopic-Joint-e72ec5fa.jpeg"
+   ],
+   "pt": {
+    "n": "Junta telescópica",
+    "c": "Riser",
+    "d": "Permite que o topo do riser deslize conforme o balanço do navio."
+   },
+   "en": {
+    "n": "Telescopic joint",
+    "c": "Riser",
+    "d": "Lets the top of the riser slide with the vessel’s motion."
+   },
+   "a": "off"
+  },
+  {
+   "id": "mpd",
+   "s": 1,
+   "m": "mpd",
+   "u": "/service/mpd-system/",
+   "fotos": [
+    "mpd-riser_angled_400-04377ffa.jpeg",
+    "RCD-3-9b543d78.png",
+    "HMH-MPD-Offering-363c4003.png"
+   ],
+   "pt": {
+    "n": "Sistema MPD",
+    "c": "Controle de pressão",
+    "d": "Perfuração com pressão gerenciada: controla com precisão a pressão no fundo do poço."
+   },
+   "en": {
+    "n": "MPD system",
+    "c": "Pressure control",
+    "d": "Managed pressure drilling: precise control of bottom-hole pressure."
+   },
+   "a": "off"
+  },
+  {
+   "id": "riser",
+   "s": 2,
+   "m": "riser",
+   "u": "/service/drilling-risers/",
+   "yt": "DU6cz-VVQA4",
+   "fotos": [
+    "qtr-fa4e157e.png",
+    "Drilling-Risers-43778c2a.png",
+    "QuickTurnRiserConnector-6d6a4ef5.png"
+   ],
+   "pt": {
+    "n": "HMH QTR™ Marine Risers",
+    "c": "Riser",
+    "d": "Risers QTR™ 4000LS e QTR™ 3500, com linhas auxiliares de choke, kill e hidráulica, ligando a sonda ao BOP. A linha inclui o HMF™ Riser e o Quick-Turn Riser Connector."
+   },
+   "en": {
+    "n": "HMH QTR™ Marine Risers",
+    "c": "Riser",
+    "d": "QTR™ 4000LS and QTR™ 3500 risers with choke, kill and hydraulic auxiliary lines, linking the rig to the BOP. The range includes the HMF™ Riser and the Quick-Turn Riser Connector."
+   },
+   "a": "off"
+  },
+  {
+   "id": "rovB",
+   "s": 2,
+   "m": "rov",
+   "ctx": 1,
+   "pt": {
+    "n": "ROV",
+    "c": "Contexto",
+    "d": "Veículo operado remotamente que inspeciona o riser e opera equipamentos no fundo."
+   },
+   "en": {
+    "n": "ROV",
+    "c": "Context",
+    "d": "Remotely operated vehicle that inspects the riser and operates subsea equipment."
+   },
+   "a": "off"
+  },
+  {
+   "id": "gxp",
+   "s": 3,
+   "m": "annular",
+   "u": "/service/bop-annulars-2/",
+   "yt": "_fddKTH_0G4",
+   "fotos": [
+    "BOP-Annular-9aaa4ed7.webp"
+   ],
+   "pt": {
+    "n": "Hydril® GXP Annular BOP",
+    "c": "Controle de pressão",
+    "d": "BOP anular que veda em volta de qualquer tubular, com alta resistência a temperatura e a químicos."
+   },
+   "en": {
+    "n": "Hydril® GXP Annular BOP",
+    "c": "Pressure control",
+    "d": "Annular BOP that seals around any tubular, with high temperature and chemical resistance."
+   },
+   "a": "off"
+  },
+  {
+   "id": "rams",
+   "s": 3,
+   "m": "ram",
+   "u": "/service/bop-rams-2/",
+   "yt": "kdZE4N9fCrs",
+   "fotos": [
+    "18-15-CompactBOP-scaled-17785956.jpeg",
+    "13-10-conventional-white-014d8d6c.png"
+   ],
+   "pt": {
+    "n": "Hydril® Compact™ RAM BOP",
+    "c": "Controle de pressão",
+    "d": "Gavetas que fecham e vedam o poço. No site da HMH: 18¾\" para 15.000 psi."
+   },
+   "en": {
+    "n": "Hydril® Compact™ RAM BOP",
+    "c": "Pressure control",
+    "d": "Rams that close and seal the well. Per hmhw.com: 18¾\" rated to 15,000 psi."
+   },
+   "a": "off"
+  },
+  {
+   "id": "wbsr",
+   "s": 3,
+   "m": "ram",
+   "u": "/service/ram-blocks-2/",
+   "yt": "TTbdtZv8JHU",
+   "fotos": [
+    "WBSR-X-LX-f452a567.png",
+    "x-shear-6-hi-res-c8ca4efe.png"
+   ],
+   "pt": {
+    "n": "Gavetas cisalhantes WBSR-X",
+    "c": "Controle de pressão",
+    "d": "Gavetas capazes de cortar a coluna e selar o poço nas condições mais severas."
+   },
+   "en": {
+    "n": "WBSR-X shear rams",
+    "c": "Pressure control",
+    "d": "Rams able to shear the string and seal the well in the harshest conditions."
+   },
+   "a": "off"
+  },
+  {
+   "id": "h4",
+   "s": 3,
+   "m": "h4",
+   "u": "/service/h4-connector/",
+   "fotos": [
+    "SHD_27-fa51a93d.png",
+    "Gasket-33a6f741.png"
+   ],
+   "pt": {
+    "n": "Vetco H-4 Connector",
+    "c": "Conexão",
+    "d": "Conecta o conjunto de BOP à cabeça de poço."
+   },
+   "en": {
+    "n": "Vetco H-4 Connector",
+    "c": "Connection",
+    "d": "Connects the BOP stack to the wellhead."
+   },
+   "a": "off"
+  },
+  {
+   "id": "pods",
+   "s": 3,
+   "m": "pod",
+   "u": "/service/bop-control-and-analytics/",
+   "fotos": [
+    "SeaOnxy-V8--scaled-98c670ad.jpeg",
+    "SeaLytics-ac7f4d85.png",
+    "SeaPrime-f0717002.png"
+   ],
+   "pt": {
+    "n": "BOP Controls & Analytics",
+    "c": "Controle",
+    "d": "Pods de controle e análise de dados de cada função do BOP."
+   },
+   "en": {
+    "n": "BOP Controls & Analytics",
+    "c": "Control",
+    "d": "Control pods and data analytics for every BOP function."
+   },
+   "a": "off"
+  },
+  {
+   "id": "valves",
+   "s": 3,
+   "m": "valve",
+   "u": "/service/xtrm-tm-gate-valves/",
+   "fotos": [
+    "XTRM-valve-3b621524.jpeg",
+    "Manifold1-fbe51912.png"
+   ],
+   "pt": {
+    "n": "Válvulas e manifolds",
+    "c": "Controle de pressão",
+    "d": "Válvulas gaveta XTRM/TM e manifolds das linhas de choke e kill."
+   },
+   "en": {
+    "n": "Valves and manifolds",
+    "c": "Pressure control",
+    "d": "XTRM/TM gate valves and choke and kill manifolds."
+   },
+   "a": "off"
+  },
+  {
+   "id": "ebop",
+   "s": 3,
+   "m": "ebop",
+   "u": "/service/all-electric-bop/",
+   "fotos": [
+    "IONIC-stack-pipe-shear-pipe-pipe-0135a0be.webp",
+    "HMH-Electric-BOP-Key-Benefits-397893b5.webp"
+   ],
+   "pt": {
+    "n": "HMH ionic™ Electric BOP",
+    "c": "Controle de pressão",
+    "d": "BOP totalmente elétrico, para novos equipamentos ou conversão de BOPs existentes."
+   },
+   "en": {
+    "n": "HMH ionic™ Electric BOP",
+    "c": "Pressure control",
+    "d": "All-electric BOP for new builds or conversion of existing BOPs."
+   },
+   "a": "off"
+  },
+  {
+   "id": "k20",
+   "s": 3,
+   "m": "bop",
+   "u": "/service/20k-subsea-drilling-system/",
+   "yt": "gD0S_CNolEs",
+   "fotos": [
+    "20K-RBOP-5b771fdb.png",
+    "H-4-SHD-20K-6d802ed9.png"
+   ],
+   "pt": {
+    "n": "20k Subsea Drilling System",
+    "c": "Controle de pressão",
+    "d": "Sistema de perfuração submarina para 20.000 psi."
+   },
+   "en": {
+    "n": "20k Subsea Drilling System",
+    "c": "Pressure control",
+    "d": "Subsea drilling system rated to 20,000 psi."
+   },
+   "a": "off"
+  },
+  {
+   "id": "rovA",
+   "s": 3,
+   "m": "rov",
+   "ctx": 1,
+   "pt": {
+    "n": "ROV",
+    "c": "Contexto",
+    "d": "Veículo operado remotamente com câmeras e braços manipuladores."
+   },
+   "en": {
+    "n": "ROV",
+    "c": "Context",
+    "d": "Remotely operated vehicle with cameras and manipulator arms."
+   },
+   "a": "off"
+  },
+  {
+   "id": "casing",
+   "s": 4,
+   "m": "block",
+   "ctx": 1,
+   "pt": {
+    "n": "Revestimentos e cimentação",
+    "c": "Contexto",
+    "d": "Colunas de aço cimentadas na rocha isolam o poço das formações."
+   },
+   "en": {
+    "n": "Casing and cementing",
+    "c": "Context",
+    "d": "Steel casing strings cemented into the rock isolate the well from the formations."
+   },
+   "a": "off"
+  },
+  {
+   "id": "bit",
+   "s": 4,
+   "m": "bit",
+   "ctx": 1,
+   "pt": {
+    "n": "Broca tricônica",
+    "c": "Contexto",
+    "d": "Corta a rocha na ponta da coluna; o fluido bombeado pelas mud pumps traz os cascalhos para cima."
+   },
+   "en": {
+    "n": "Tricone bit",
+    "c": "Context",
+    "d": "Cuts the rock at the end of the string; fluid pumped by the mud pumps carries the cuttings up."
+   },
+   "a": "off"
+  },
+  {
+   "id": "reservoir",
+   "s": 5,
+   "m": "block",
+   "ctx": 1,
+   "pt": {
+    "n": "Reservatório",
+    "c": "Contexto",
+    "d": "Rocha porosa que armazena óleo e, no topo da estrutura, gás natural."
+   },
+   "en": {
+    "n": "Reservoir",
+    "c": "Context",
+    "d": "Porous rock holding oil and, at the top of the structure, natural gas."
+   },
+   "a": "off"
+  },
+  {
+   "id": "dls",
+   "s": 5,
+   "m": "ship",
+   "u": "/archives/business_area/hmh-drilling-optimization-services-dls/",
+   "fotos": [
+    "HMH-helmet_4-scaled-05e6bfca.jpeg"
+   ],
+   "pt": {
+    "n": "Drilling Lifecycle Services",
+    "c": "Serviços",
+    "d": "Serviços da HMH ao longo de todo o ciclo de vida dos equipamentos de perfuração."
+   },
+   "en": {
+    "n": "Drilling Lifecycle Services",
+    "c": "Services",
+    "d": "HMH services across the full lifecycle of drilling equipment."
+   },
+   "a": "srv"
+  },
+  {
+   "id": "mud-buckets-offshore",
+   "s": -1,
+   "a": "off",
+   "u": "/service/mud-buckets-offshore/",
+   "fotos": [
+    "Mud-Buckets-c5e297a9.jpeg"
+   ],
+   "pt": {
+    "n": "MH Mud Buckets",
+    "c": "Manuseio de tubos",
+    "d": "Baldes de lama controlados remotamente que afastam a lama do piso da sonda durante manobras molhadas e desconexões, integrados aos sistemas anticolisão."
+   },
+   "en": {
+    "n": "MH Mud Buckets",
+    "c": "Pipe handling",
+    "d": "Remote-controlled buckets that carry mud away from the drill floor during wet tripping and break-out, fully integrated with anti-collision systems."
+   }
+  },
+  {
+   "id": "annular-packing-elements-2",
+   "s": -1,
+   "a": "off",
+   "u": "/service/annular-packing-elements-2/",
+   "fotos": [
+    "HNBR-GK-24b3be6c.png",
+    "GXP1310-HNBR-bb61c1a7.png",
+    "spherical-packing-unit-e5c27247.png"
+   ],
+   "pt": {
+    "n": "Hydril Annular Packing Elements",
+    "c": "Controle de pressão",
+    "d": "Elementos de vedação para os anulares Hydril, com elastômeros projetados para ambientes mais quentes, de maior pressão e mais ácidos."
+   },
+   "en": {
+    "n": "Hydril Annular Packing Elements",
+    "c": "Pressure control",
+    "d": "Packing elements for Hydril annulars, built with elastomers designed for hotter, higher-pressure and more sour environments."
+   }
+  },
+  {
+   "id": "other-equipment-2",
+   "s": -1,
+   "a": "off",
+   "u": "/service/other-equipment-2/",
+   "fotos": [
+    "DSC2737-Edit-farge-scaled-c18dba3c.webp",
+    "Catheads-0a00cef6.webp",
+    "Mud-Buckets-e38f3040.webp"
+   ],
+   "pt": {
+    "n": "Other Offshore Rig Equipment",
+    "c": "Controle de pressão",
+    "d": "Válvulas Hydril Kellyguard, catheads, baldes de lama e outros equipamentos que completam uma sonda offshore."
+   },
+   "en": {
+    "n": "Other Offshore Rig Equipment",
+    "c": "Pressure control",
+    "d": "Hydril Kellyguard valves, catheads, mud buckets and other equipment that complete an offshore rig."
+   }
+  },
+  {
+   "id": "other-equipment",
+   "s": -1,
+   "a": "off",
+   "u": "/service/other-equipment/",
+   "fotos": [
+    "Kellyguards-4c0d1897.jpeg"
+   ],
+   "pt": {
+    "n": "Other Offshore Pressure Control Equipment",
+    "c": "Controle de pressão",
+    "d": "Válvulas Hydril Kellyguard para uso como kelly cock superior, de top drive e inferior, válvula de segurança da coluna e mud saver."
+   },
+   "en": {
+    "n": "Other Offshore Pressure Control Equipment",
+    "c": "Pressure control",
+    "d": "Field-proven Hydril Kellyguard valves for upper, top-drive and lower kelly cock, drillpipe safety valve and mud saver applications."
+   }
+  },
+  {
+   "id": "valves-and-manifolds",
+   "s": -1,
+   "a": "off",
+   "u": "/service/valves-and-manifolds/",
+   "fotos": [
+    "XTRM-valve-c18bd275.webp",
+    "checkvalve-49ab221b.webp",
+    "XDR-Valve-9b09023c.webp",
+    "Manifold1-2519d357.webp"
+   ],
+   "pt": {
+    "n": "Valves & Manifolds",
+    "c": "Controle de pressão",
+    "d": "Válvulas e manifolds para intervenção em poços e aplicações de alta temperatura e alta pressão: XTRM, XDR, válvulas de retenção e manifolds."
+   },
+   "en": {
+    "n": "Valves & Manifolds",
+    "c": "Pressure control",
+    "d": "Valves and manifolds for well intervention and for high-temperature, high-pressure applications: XTRM, XDR, check valves and manifolds."
+   }
+  },
+  {
+   "id": "nt-2-connector",
+   "s": -1,
+   "a": "off",
+   "u": "/service/nt-2-connector/",
+   "fotos": [
+    "NT-2-for-web-afa069fb.jpeg"
+   ],
+   "pt": {
+    "n": "NT-2™ Connection System",
+    "c": "Conexão",
+    "d": "Família de conectores projetada para segurança e instalação simples. Baseada no conector de cabeça de poço submarino H-4, usado desde 1989."
+   },
+   "en": {
+    "n": "NT-2™ Connection System",
+    "c": "Connection",
+    "d": "Connector family designed for safety and easy installation. Based on the field-proven H-4 subsea wellhead connector, in use since 1989."
+   }
+  },
+  {
+   "id": "mud-systems",
+   "s": -1,
+   "a": "off",
+   "u": "/service/mud-systems/",
+   "fotos": [
+    "Drilling-Fluid-Real-Time-Monitoring_DSC6339-cb19d38c.webp",
+    "Standard-Hopper-db32a5d2.webp",
+    "Agitator-horizontal-2886ae2b.webp"
+   ],
+   "pt": {
+    "n": "Mud Systems (HP & LP)",
+    "c": "Fluido de perfuração",
+    "d": "Sistemas de lama de alta e baixa pressão e todos os equipamentos necessários, herança da STEP Offshore: funis, agitadores e monitoramento do fluido em tempo real."
+   },
+   "en": {
+    "n": "Mud Systems (HP & LP)",
+    "c": "Drilling fluid",
+    "d": "HP and LP mud systems and all required equipment, inherited from the legacy of STEP Offshore: hoppers, agitators and real-time fluid monitoring."
+   }
+  },
+  {
+   "id": "annular-packing-elements",
+   "s": -1,
+   "a": "on",
+   "u": "/service/annular-packing-elements/",
+   "fotos": [
+    "Annular-Packing-Elements-2-2160befb.png"
+   ],
+   "pt": {
+    "n": "Hydril Annular Packing Elements · Onshore",
+    "c": "Controle de pressão",
+    "d": "Mais de 150 compostos de elastômero proprietários, projetos em borracha natural e nitrílica e um novo composto HNBR com maior vida em fadiga e faixa de temperatura."
+   },
+   "en": {
+    "n": "Hydril Annular Packing Elements · Onshore",
+    "c": "Pressure control",
+    "d": "More than 150 proprietary elastomer compounds, natural rubber and nitrile designs, and a new HNBR compound with better fatigue life and temperature ratings."
+   }
+  },
+  {
+   "id": "bop-annulars",
+   "s": -1,
+   "a": "on",
+   "u": "/service/bop-annulars/",
+   "fotos": [
+    "GXP-18-10-cutaway-3f496d12.png",
+    "GK_052714-no-ge-8670d1ed.png",
+    "GL-Annular-scaled-2394bc12.jpeg"
+   ],
+   "pt": {
+    "n": "Hydril Annular BOPs · Onshore",
+    "c": "Controle de pressão",
+    "d": "O melhor anular do mercado, de 7\" a 18\", de 3K a 15K. O GXP é o modelo mais avançado; o GK é amplamente usado há mais de 30 anos."
+   },
+   "en": {
+    "n": "Hydril Annular BOPs · Onshore",
+    "c": "Pressure control",
+    "d": "The best annular in the business, from 7\" to 18\", 3K to 15K. GXP is the most advanced model; GK has been widely used for more than 30 years."
+   }
+  },
+  {
+   "id": "bop-rams",
+   "s": -1,
+   "a": "on",
+   "u": "/service/bop-rams/",
+   "fotos": [
+    "sentry-no-shadow-aa4aaff2.png",
+    "Hydril-BOP-Compact-505c05a4.png",
+    "Hydril-Conventional-8ec5b3e9.png"
+   ],
+   "yt": "cvjERw0n1D4",
+   "pt": {
+    "n": "Hydril RAM BOPs · Onshore",
+    "c": "Controle de pressão",
+    "d": "Preventores de gaveta Hydril Sentry e Compact para perfuração em superfície e workovers. Acionamento hidráulico, projeto simples e travas mecânicas externas."
+   },
+   "en": {
+    "n": "Hydril RAM BOPs · Onshore",
+    "c": "Pressure control",
+    "d": "Hydril Sentry and Compact ram BOPs for surface drilling and workovers. Hydraulically operated, simple design, external mechanical locks."
+   }
+  },
+  {
+   "id": "ram-blocks",
+   "s": -1,
+   "a": "on",
+   "u": "/service/ram-blocks/",
+   "fotos": [
+    "Casing-Shear-Ram-5948bf1b.webp"
+   ],
+   "pt": {
+    "n": "Hydril RAM Blocks · Onshore",
+    "c": "Controle de pressão",
+    "d": "Linha completa de gavetas para BOPs de superfície e submarinos. Vedam ao redor da coluna, ou a cisalham, para conter surtos inesperados do poço."
+   },
+   "en": {
+    "n": "Hydril RAM Blocks · Onshore",
+    "c": "Pressure control",
+    "d": "A full range of ram designs for surface and subsea BOPs. They seal around the pipe, or shear it, to stop unexpected surges from the well."
+   }
+  },
+  {
+   "id": "top-drives",
+   "s": -1,
+   "a": "on",
+   "u": "/service/top-drives/",
+   "fotos": [
+    "TopDrive-HMH_ALT_Colors_2026-03-20_10-scaled-f01e90d1.webp",
+    "DDM-750-AC-1600-754790f5.webp"
+   ],
+   "yt": "ge_YGQHCYDU",
+   "pt": {
+    "n": "MH™ Top Drives · Onshore",
+    "c": "Içamento e rotação",
+    "d": "Séries de top drives TD, PTD e DDM com o maior torque da categoria, compactas e modulares, para ambientes do ártico ao deserto."
+   },
+   "en": {
+    "n": "MH™ Top Drives · Onshore",
+    "c": "Hoisting and rotation",
+    "d": "TD, PTD and DDM top drive series with the highest torque in their class, compact and modular, for arctic to desert environments."
+   }
+  },
+  {
+   "id": "rotary-tables",
+   "s": -1,
+   "a": "on",
+   "u": "/service/rotary-tables/",
+   "fotos": [
+    "Rotary_Tables-ca984f83.jpeg"
+   ],
+   "pt": {
+    "n": "Wirth Rotary Tables · Onshore",
+    "c": "Içamento e rotação",
+    "d": "Mesas rotativas que giram a coluna e suportam seu peso nas conexões. Servem de reserva ao top drive; há modelos com acionamento elétrico."
+   },
+   "en": {
+    "n": "Wirth Rotary Tables · Onshore",
+    "c": "Hoisting and rotation",
+    "d": "Rotary tables that turn the drill string and carry its weight during connections. They back up the top drive; electric-driven models available."
+   }
+  },
+  {
+   "id": "mast-and-sub-structures",
+   "s": -1,
+   "a": "on",
+   "u": "/service/mast-and-sub-structures/",
+   "fotos": [
+    "Image_Mast-and-Sub_v2-d1c02558.webp"
+   ],
+   "pt": {
+    "n": "Pyramid™ Mast and Sub Structures",
+    "c": "Estruturas",
+    "d": "Mastros e subestruturas conforme a sua especificação, com herança de mais de 1.000 mastros e torres Pyramid desde 1956."
+   },
+   "en": {
+    "n": "Pyramid™ Mast and Sub Structures",
+    "c": "Structures",
+    "d": "Masts and substructures built to your specification, on a legacy of more than 1,000 Pyramid masts and derricks since 1956."
+   }
+  },
+  {
+   "id": "mud-pumps",
+   "s": -1,
+   "a": "on",
+   "u": "/service/mud-pumps/",
+   "fotos": [
+    "Mudpump-onshore-1f07f085.webp",
+    "16845-03-53f6cd89.webp"
+   ],
+   "pt": {
+    "n": "Wirth Mud Pumps · Onshore",
+    "c": "Fluido de perfuração",
+    "d": "Desde 1904, bombas de lama projetadas para reduzir desgaste, paradas e custo de manutenção. A usinagem precisa dispensa calços."
+   },
+   "en": {
+    "n": "Wirth Mud Pumps · Onshore",
+    "c": "Drilling fluid",
+    "d": "Since 1904, mud pumps designed to cut wear, downtime and maintenance cost. Precise machining makes shimming unnecessary."
+   }
+  },
+  {
+   "id": "roughnecks-for-land-rigs",
+   "s": -1,
+   "a": "on",
+   "u": "/service/roughnecks-for-land-rigs/",
+   "fotos": [
+    "BD120-80d746ec.png",
+    "BD160-063f208b.png",
+    "Roughneck-1-54525b3d.jpeg"
+   ],
+   "pt": {
+    "n": "Bulldog™ Roughnecks for Land Rigs",
+    "c": "Manuseio de tubos",
+    "d": "Chaves de tubos automatizadas Bulldog BD120 e BD160, que se integram aos sistemas de automação já existentes na sonda."
+   },
+   "en": {
+    "n": "Bulldog™ Roughnecks for Land Rigs",
+    "c": "Pipe handling",
+    "d": "Bulldog BD120 and BD160 automated iron roughnecks that integrate with existing rig automation systems."
+   }
+  },
+  {
+   "id": "bulldog-power-slips",
+   "s": -1,
+   "a": "on",
+   "u": "/service/bulldog-power-slips/",
+   "fotos": [
+    "Bulldog-Power-Slips-e1726512138779-16826386.png"
+   ],
+   "pt": {
+    "n": "Bulldog™ Power Slips",
+    "c": "Manuseio de tubos",
+    "d": "Cunhas automáticas com projeto em 3 peças para remoção e instalação rápidas na mesa rotativa, integráveis às chaves de tubos Bulldog."
+   },
+   "en": {
+    "n": "Bulldog™ Power Slips",
+    "c": "Pipe handling",
+    "d": "Automated power slips with a 3-piece design for quick removal and installation at the rotary table, integrable with Bulldog iron roughnecks."
+   }
+  },
+  {
+   "id": "drilling-catwalks",
+   "s": -1,
+   "a": "on",
+   "u": "/service/drilling-catwalks/",
+   "fotos": [
+    "DC441-Drilling-Catwalk.png",
+    "DC1200-Drilling-Catwalk-198e3e3b.png"
+   ],
+   "pt": {
+    "n": "Drilling Catwalks",
+    "c": "Manuseio de tubos",
+    "d": "Série modular DC440 (unidade simples, dupla e tripla) com capacidade de 16.000 lb e tubos de até 24\", além do DC1200."
+   },
+   "en": {
+    "n": "Drilling Catwalks",
+    "c": "Pipe handling",
+    "d": "Modular DC440 series (single, double and triple unit) with 16,000 lb lift capacity, pipe up to 24\", plus the DC1200."
+   }
+  },
+  {
+   "id": "service-catwalks",
+   "s": -1,
+   "a": "on",
+   "u": "/service/service-catwalks/",
+   "fotos": [
+    "SC800-Service-Catwalk-3e810897.png",
+    "SC820-Service-Catwalk-ef225c6a.png"
+   ],
+   "pt": {
+    "n": "Service Catwalks",
+    "c": "Manuseio de tubos",
+    "d": "Manuseio de tubos sem as mãos para sondas de serviço. O SC800 tem batedores hidráulicos, indexadores, skate e autonivelamento."
+   },
+   "en": {
+    "n": "Service Catwalks",
+    "c": "Pipe handling",
+    "d": "Hands-free tubular handling for service rigs. The SC800 has hydraulic kickers, indexers, a skate and self-leveling."
+   }
+  },
+  {
+   "id": "other-onshore-rig-equipment",
+   "s": -1,
+   "a": "on",
+   "u": "/service/other-onshore-rig-equipment/",
+   "fotos": [
+    "Bulldog-Roughnecks-46a932a1.png"
+   ],
+   "pt": {
+    "n": "Other Onshore Rig Equipment",
+    "c": "Içamento e rotação",
+    "d": "Moitão e bloco da coroa, âncora da linha morta, tambor da linha de perfuração, manuseio de tubos, catheads hidráulicos, swivels, misturadores cáusticos e mais."
+   },
+   "en": {
+    "n": "Other Onshore Rig Equipment",
+    "c": "Hoisting and rotation",
+    "d": "Traveling and crown blocks, deadline anchor, drill line drum, pipe handling, hydraulic catheads, rotary swivels, caustic mixers and more."
+   }
+  },
+  {
+   "id": "sealytics",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/sealytics/",
+   "fotos": [
+    "SeaLytics-93e5ecd2.png"
+   ],
+   "pt": {
+    "n": "SeaLytics™ BOP Advisor",
+    "c": "Digitalização",
+    "d": "Dados e análises do SeaLytics 3.0 BOP Advisor reduzem o tempo não produtivo e aumentam a segurança, sem elevar manutenção ou custo de serviço."
+   },
+   "en": {
+    "n": "SeaLytics™ BOP Advisor",
+    "c": "Digitalization",
+    "d": "Data and insights from the SeaLytics 3.0 BOP Advisor reduce non-productive time and raise safety without raising maintenance or service cost."
+   }
+  },
+  {
+   "id": "smartcert",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/smartcert/",
+   "fotos": [
+    "from-Tyler2-scaled-753bd622.jpeg"
+   ],
+   "pt": {
+    "n": "SmartCERT™",
+    "c": "Serviços",
+    "d": "Programa global e contínuo de certificação API para equipamentos de controle de pressão, baseado em inspeções durante a manutenção e em dados de operação."
+   },
+   "en": {
+    "n": "SmartCERT™",
+    "c": "Services",
+    "d": "A global, continuous API certification program for pressure control equipment, based on inspections during maintenance and operational data."
+   }
+  },
+  {
+   "id": "drillcon",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/drillcon/",
+   "pt": {
+    "n": "DrillCon",
+    "c": "Serviços",
+    "d": "Otimização de manutenção: programas de manutenção baseada em condição, que combinam monitoramento orientado a dados com análise de vibração e de óleo."
+   },
+   "en": {
+    "n": "DrillCon",
+    "c": "Services",
+    "d": "Maintenance optimization: condition-based maintenance programs that combine data-driven monitoring with vibration and oil analysis."
+   }
+  },
+  {
+   "id": "ricon",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/ricon/",
+   "fotos": [
+    "drillCERT-5008991e.webp"
+   ],
+   "pt": {
+    "n": "RiCon™ & drillCERT",
+    "c": "Serviços",
+    "d": "Serviços de manutenção baseada em condição para risers de perfuração, usando dados do sistema de monitoramento da sonda."
+   },
+   "en": {
+    "n": "RiCon™ & drillCERT",
+    "c": "Services",
+    "d": "Condition-based maintenance services for drilling risers, using data from the rig monitoring system."
+   }
+  },
+  {
+   "id": "optimization-services",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/optimization-services/",
+   "pt": {
+    "n": "Optimization Services",
+    "c": "Serviços",
+    "d": "Serviços baseados em processo que usam dados e análises de alta qualidade para melhorar a eficiência e o custo da perfuração."
+   },
+   "en": {
+    "n": "Optimization Services",
+    "c": "Services",
+    "d": "Process-based services that use high-quality data and analytics to improve drilling efficiency and cost."
+   }
+  },
+  {
+   "id": "drillperform",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/drillperform/",
+   "fotos": [
+    "DRILLPerform-62e00a6e.webp"
+   ],
+   "yt": "qWF8W26zXQk",
+   "pt": {
+    "n": "DRILLPerform™",
+    "c": "Serviços",
+    "d": "Processo de melhoria contínua, feito junto ao cliente e movido por análise de dados, para extrair o máximo do ativo instalado e dos Smart Modules."
+   },
+   "en": {
+    "n": "DRILLPerform™",
+    "c": "Services",
+    "d": "A continuous improvement process, done with the customer and powered by data analytics, to get the most from the installed asset and Smart Modules."
+   }
+  },
+  {
+   "id": "smartmodules",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/smartmodules/",
+   "pt": {
+    "n": "Smart Modules",
+    "c": "Automação",
+    "d": "drillersAssist, EKD, Soft Torque-Z e optiWOB: módulos inteligentes projetados para melhorar as operações de perfuração."
+   },
+   "en": {
+    "n": "Smart Modules",
+    "c": "Automation",
+    "d": "drillersAssist, EKD, Soft Torque-Z and optiWOB: smart modules designed to enhance drilling operations."
+   }
+  },
+  {
+   "id": "drilling-control-system-upgrades",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/drilling-control-system-upgrades/",
+   "fotos": [
+    "Drilling-Control-Upgrade-web-scaled-a0f48762.webp",
+    "Drilling-Control-System-Upgrade-Web-601f78d2.webp"
+   ],
+   "pt": {
+    "n": "Drilling Control System Upgrades",
+    "c": "Automação",
+    "d": "Atualizações de hardware e software que tratam obsolescência de componentes, padrões atuais de cibersegurança e novos recursos digitais para operação 24/7."
+   },
+   "en": {
+    "n": "Drilling Control System Upgrades",
+    "c": "Automation",
+    "d": "Hardware and software upgrades that address component obsolescence, current cybersecurity standards and new digital capabilities for 24/7 operation."
+   }
+  },
+  {
+   "id": "cyber-security",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/cyber-security/",
+   "fotos": [
+    "Cyber-Security-c73124c2.webp",
+    "CSIRT-c87e94aa.webp",
+    "Disaster-Recovery-cfe40873.webp"
+   ],
+   "pt": {
+    "n": "Cyber Security",
+    "c": "Digitalização",
+    "d": "Soluções de cibersegurança para sondas: arquitetura virtual e física, backup, gestão de ameaças e recuperação de desastres."
+   },
+   "en": {
+    "n": "Cyber Security",
+    "c": "Digitalization",
+    "d": "Secure cyber solutions for drilling rigs: virtual and physical architecture, backup, threat management and disaster recovery."
+   }
+  },
+  {
+   "id": "mydrilling",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/mydrilling/",
+   "fotos": [
+    "Enquiry-0a416d8f.jpeg",
+    "orders-23811f92.jpeg",
+    "Collaboration-1fdb27a2.jpeg"
+   ],
+   "pt": {
+    "n": "myDrilling™",
+    "c": "Digitalização",
+    "d": "Plataforma web interativa para clientes, com visão geral da correspondência, dos pedidos e dos boletins em andamento."
+   },
+   "en": {
+    "n": "myDrilling™",
+    "c": "Digitalization",
+    "d": "An interactive, web-based platform for customers, with an overview of ongoing correspondence, orders and bulletins."
+   }
+  },
+  {
+   "id": "engage-drilling",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/engage-drilling/",
+   "pt": {
+    "n": "engageDrilling™",
+    "c": "Digitalização",
+    "d": "Contratos de serviço (CSAs) com análise preditiva, especialização e certificação contínua para melhorar a disponibilidade do BOP."
+   },
+   "en": {
+    "n": "engageDrilling™",
+    "c": "Digitalization",
+    "d": "Contractual Service Agreements (CSAs) with predictive analytics, expertise and continuous certification to improve BOP availability."
+   }
+  },
+  {
+   "id": "hmhconnect",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/hmhconnect/",
+   "fotos": [
+    "HMHConnect-fa4cfc2c.jpeg"
+   ],
+   "pt": {
+    "n": "HMHConnect",
+    "c": "Digitalização",
+    "d": "O portal de experiência do cliente que substitui o engageDrilling e o myDrilling por um único site, mais simples."
+   },
+   "en": {
+    "n": "HMHConnect",
+    "c": "Digitalization",
+    "d": "The customer experience portal that replaces engageDrilling and myDrilling with a single, simpler site."
+   }
+  },
+  {
+   "id": "hmhconnect-shop",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/hmhconnect-shop/",
+   "fotos": [
+    "HMH-CONNECT-SHOP_color_rgb-96fb184e.png"
+   ],
+   "pt": {
+    "n": "HMHConnect Shop",
+    "c": "Peças e suporte",
+    "d": "A plataforma oficial de comércio eletrônico da HMH para peças OEM: disponibilidade, prazos, preços, cotações e pedidos oficiais em um só lugar."
+   },
+   "en": {
+    "n": "HMHConnect Shop",
+    "c": "Parts and support",
+    "d": "HMH's official eCommerce platform for OEM spare parts: availability, lead times, pricing, official quotes and orders in one place."
+   }
+  },
+  {
+   "id": "hmhdirect",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/hmhdirect/",
+   "fotos": [
+    "HMHdirect_web_pic-052e49b2.webp"
+   ],
+   "pt": {
+    "n": "HMHDirect",
+    "c": "Peças e suporte",
+    "d": "Loja online de peças OEM originais, incluindo elementos de vedação, selos e packers Hydril, pensada para clientes em terra."
+   },
+   "en": {
+    "n": "HMHDirect",
+    "c": "Parts and support",
+    "d": "An online store for genuine OEM parts, including Hydril packing elements, seals and packers, designed for land customers."
+   }
+  },
+  {
+   "id": "spare-parts",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/spare-parts/",
+   "pt": {
+    "n": "Spare Parts",
+    "c": "Peças e suporte",
+    "d": "Fornecimento regional de peças OEM, com estoque em várias partes do mundo para manter as sondas em operação."
+   },
+   "en": {
+    "n": "Spare Parts",
+    "c": "Parts and support",
+    "d": "Regional OEM spare parts supply, with inventory around the world to keep your rigs running."
+   }
+  },
+  {
+   "id": "support-services",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/support-services/",
+   "pt": {
+    "n": "Support Services",
+    "c": "Peças e suporte",
+    "d": "Especialistas técnicos e resposta rápida, com gerentes de conta de serviço dedicados para comunicação direta."
+   },
+   "en": {
+    "n": "Support Services",
+    "c": "Parts and support",
+    "d": "Technical specialists and quick response, with dedicated Service Account Managers for direct communication."
+   }
+  },
+  {
+   "id": "global-operational-support-center",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/global-operational-support-center/",
+   "pt": {
+    "n": "Global Support Center",
+    "c": "Peças e suporte",
+    "d": "Suporte técnico 24 horas: atendimento de primeira linha para problemas críticos e uma central 24/7 com diagnóstico remoto e busca de falhas."
+   },
+   "en": {
+    "n": "Global Support Center",
+    "c": "Parts and support",
+    "d": "Technical support around the clock: first-line support for critical issues and a 24/7 staffed center with remote diagnostics and fault finding."
+   }
+  },
+  {
+   "id": "overhaul-installation-and-commissioning",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/overhaul-installation-and-commissioning/",
+   "fotos": [
+    "DLS-Compressed-Yard-Stay-9f70fd02.png",
+    "Map-overhaul-6ea5b8d4.jpeg",
+    "Roughneck-test-7bbccb5e.jpeg"
+   ],
+   "pt": {
+    "n": "Overhaul, Installation and Commissioning",
+    "c": "Serviços",
+    "d": "Instalação e comissionamento, certificações, manutenção em todos os níveis, boletins de produto e oportunidades de atualização."
+   },
+   "en": {
+    "n": "Overhaul, Installation and Commissioning",
+    "c": "Services",
+    "d": "Installation and commissioning, certification, maintenance at all levels, product bulletins and upgrade opportunities."
+   }
+  },
+  {
+   "id": "training",
+   "s": -1,
+   "a": "srv",
+   "u": "/service/training/",
+   "fotos": [
+    "Offshore-scaled-8372ddf9.webp",
+    "BOP-trainig-e69c549e.webp",
+    "home_elearning-aaa6b868.webp"
+   ],
+   "pt": {
+    "n": "Training",
+    "c": "Treinamento",
+    "d": "Cursos específicos por cliente e linha de produto, sobre uma base instrutiva sólida, em sala de aula, e-learning e no local."
+   },
+   "en": {
+    "n": "Training",
+    "c": "Training",
+    "d": "Client- and product-line-specific courses on a strong instructional foundation, in the classroom, e-learning and on site."
+   }
+  },
+  {
+   "id": "mining-equipment",
+   "s": -1,
+   "a": "mc",
+   "u": "/archives/business_area/mining-equipment/",
+   "fotos": [
+    "16351_drill-ship-48b9c9e5.webp"
+   ],
+   "pt": {
+    "n": "Mining Equipment",
+    "c": "Mineração e construção",
+    "d": "Pacotes completos e um portfólio amplo para a mineração submarina e a mineração em terra."
+   },
+   "en": {
+    "n": "Mining Equipment",
+    "c": "Mining and construction",
+    "d": "Complete packages and a broad portfolio for subsea and onshore mining."
+   }
+  },
+  {
+   "id": "subsea-mining",
+   "s": -1,
+   "a": "mc",
+   "u": "/service/subsea-mining/",
+   "fotos": [
+    "16351_drill-ship-a8d0787d.webp",
+    "Hydril-Pressue-Control-Subsea-Pump-0aec12bc.webp"
+   ],
+   "pt": {
+    "n": "Subsea Mining",
+    "c": "Mineração e construção",
+    "d": "Tecnologias para explorar e extrair recursos do fundo do mar, com mais de 30 anos de mineração offshore de diamantes por perfuração airlift."
+   },
+   "en": {
+    "n": "Subsea Mining",
+    "c": "Mining and construction",
+    "d": "Technologies to explore and extract seabed resources, with 30+ years of offshore diamond mining by airlift drilling."
+   }
+  },
+  {
+   "id": "slurry-pumps",
+   "s": -1,
+   "a": "mc",
+   "u": "/service/slurry-pumps/",
+   "fotos": [
+    "10880-Slurrypump--a2b6b4fd.jpeg"
+   ],
+   "yt": "0yuISsAMbaM",
+   "pt": {
+    "n": "Wirth Slurry Pumps",
+    "c": "Fluido de perfuração",
+    "d": "Bombas de lama de pistão com diafragma fabricadas há mais de 60 anos, com potências de até 3.000 kW para todo tipo de aplicação com slurry."
+   },
+   "en": {
+    "n": "Wirth Slurry Pumps",
+    "c": "Drilling fluid",
+    "d": "Piston diaphragm slurry pumps built for more than 60 years, with power ratings up to 3,000 kW for every type of slurry application."
+   }
+  },
+  {
+   "id": "hmh-construction-equipment-portfolio",
+   "s": -1,
+   "a": "mc",
+   "u": "/archives/business_area/hmh-construction-equipment-portfolio/",
+   "fotos": [
+    "HMH-PBA-615-5447ab7b.jpeg",
+    "Special-Tool-8eaa2e1b.jpeg",
+    "blind-shaft-517x-bc7c8175.jpeg"
+   ],
+   "pt": {
+    "n": "Construction Equipment",
+    "c": "Mineração e construção",
+    "d": "Portfólio amplo para construção, como as perfuratrizes de topo de estaca (PBA) para fundações em terra e no mar."
+   },
+   "en": {
+    "n": "Construction Equipment",
+    "c": "Mining and construction",
+    "d": "A broad construction portfolio, such as Pile Top Drill Rigs (PBA) for onshore and offshore foundation work."
+   }
+  },
+  {
+   "id": "rcd-rigs-pile-top-drill-rigs",
+   "s": -1,
+   "a": "mc",
+   "u": "/service/rcd-rigs-pile-top-drill-rigs/",
+   "fotos": [
+    "Special-Tool-51985ba6.jpeg"
+   ],
+   "yt": "XFjEc6wpj7k",
+   "pt": {
+    "n": "RCD Rigs & Pile Top Drill Rigs",
+    "c": "Mineração e construção",
+    "d": "Sistemas de topo de estaca confiáveis para perfuração de fundações em terra e no mar, com eficiência de custo e alto desempenho."
+   },
+   "en": {
+    "n": "RCD Rigs & Pile Top Drill Rigs",
+    "c": "Mining and construction",
+    "d": "Reliable pile top systems for onshore and offshore foundation drilling, with cost efficiency and strong performance."
+   }
+  },
+  {
+   "id": "drawworks-onshore",
+   "s": -1,
+   "a": "on",
+   "u": "/service/drawworks/",
+   "pt": {
+    "n": "Wirth Drawworks · Onshore",
+    "c": "Içamento e rotação",
+    "d": "Sistemas de perfuração sob medida para sondas terrestres de petróleo, gás e geotermia, da \"linha clássica\" padronizada a projetos para ambientes severos."
+   },
+   "en": {
+    "n": "Wirth Drawworks · Onshore",
+    "c": "Hoisting and rotation",
+    "d": "Customized drilling systems for onshore oil, gas and geothermal rigs, from the standardized \"classic line\" to harsh-environment designs."
+   }
+  }
+ ],
+ "esg": [
+  {
+   "id": "esg_ebop",
+   "s": 3,
+   "m": "ebop",
+   "u": "/service/all-electric-bop/",
+   "fotos": [
+    "IONIC-stack-pipe-shear-pipe-pipe-0135a0be.webp",
+    "HMH-Electric-BOP-Key-Benefits-397893b5.webp"
+   ],
+   "pt": {
+    "cat": "Emissões",
+    "st": "Zero",
+    "sl": "emissões no subsea",
+    "n": "ionic™ Electric BOP: zero emissões no subsea",
+    "d": "Sem mistura de glicol/fluidos e sem ventilação de fluido de controle no fundo do mar. Pelo menos 75 t a menos de equipamento na superfície e um design mais leve, com menos custos e emissões de transporte, segundo a HMH."
+   },
+   "en": {
+    "cat": "Emissions",
+    "st": "Zero",
+    "sl": "subsea emissions",
+    "n": "ionic™ Electric BOP: zero subsea emissions",
+    "d": "No glycol/fluid mixing and no control-fluid venting on the seabed. At least 75 t less topside equipment and a lighter design, with lower transport costs and emissions, according to HMH."
+   }
+  },
+  {
+   "id": "esg_bop",
+   "s": 3,
+   "m": "bop",
+   "u": "/sustainability/",
+   "fotos": [
+    "18-15-CompactBOP-scaled-17785956.jpeg"
+   ],
+   "pt": {
+    "cat": "Meio ambiente",
+    "st": "Barreira",
+    "sl": "de controle do poço",
+    "n": "Controle de pressão como proteção ambiental",
+    "d": "O conjunto de BOP mantém o poço sob controle. A HMH declara o compromisso de reduzir o risco de impacto ambiental adverso causado por seus produtos e operações."
+   },
+   "en": {
+    "cat": "Environment",
+    "st": "Barrier",
+    "sl": "of well control",
+    "n": "Pressure control as environmental protection",
+    "d": "The BOP stack keeps the well under control. HMH states a commitment to reduce the risk of adverse environmental impact from its products and operations."
+   }
+  },
+  {
+   "id": "esg_mpd",
+   "s": 1,
+   "m": "mpd",
+   "u": "/service/mpd-system/",
+   "fotos": [
+    "mpd-riser_angled_400-04377ffa.jpeg",
+    "HMH-MPD-Offering-363c4003.png"
+   ],
+   "pt": {
+    "cat": "Eficiência",
+    "st": "65%",
+    "sl": "menos tempo de rig-up",
+    "n": "MPD: mais controle, menos tempo de sonda",
+    "d": "O Integrated MPD Riser reduz o tempo de rig-up em até 65% e as paradas relacionadas ao MPD, com mais segurança operacional (dados da HMH)."
+   },
+   "en": {
+    "cat": "Efficiency",
+    "st": "65%",
+    "sl": "less rig-up time",
+    "n": "MPD: more control, less rig time",
+    "d": "The Integrated MPD Riser cuts rig-up time by up to 65% and reduces MPD-related downtime, with greater operational safety (HMH data)."
+   }
+  },
+  {
+   "id": "esg_dls",
+   "s": 0,
+   "m": "derrick",
+   "u": "/archives/business_area/hmh-drilling-optimization-services-dls/",
+   "fotos": [
+    "HMH-helmet_4-scaled-05e6bfca.jpeg"
+   ],
+   "pt": {
+    "cat": "Ciclo de vida",
+    "st": "+ vida útil",
+    "sl": "dos equipamentos",
+    "n": "Drilling Lifecycle Services",
+    "d": "Serviços para estender a vida útil dos equipamentos e maximizar o tempo de operação. O SmartCert oferece certificação API contínua para equipamentos de controle de pressão."
+   },
+   "en": {
+    "cat": "Lifecycle",
+    "st": "+ life",
+    "sl": "of equipment",
+    "n": "Drilling Lifecycle Services",
+    "d": "Services to extend equipment life and maximize uptime. SmartCert provides continuous API certification for pressure control equipment."
+   }
+  },
+  {
+   "id": "esg_hsse",
+   "s": 0,
+   "m": "ship",
+   "u": "/sustainability/hsse/",
+   "fotos": [
+    "MicrosoftTeams-image-6f3af98b.webp"
+   ],
+   "pt": {
+    "cat": "HSSE",
+    "st": "Zero dano",
+    "sl": "a pessoas e ao meio ambiente",
+    "n": "HSSE: objetivo de zero dano",
+    "d": "A HMH trata HSSE como parte central da cultura: objetivo de zero dano a pessoas, ao meio ambiente e a ativos, e melhoria do desempenho ambiental pela gestão responsável dos aspectos ambientais."
+   },
+   "en": {
+    "cat": "HSSE",
+    "st": "Zero harm",
+    "sl": "to people and environment",
+    "n": "HSSE: a zero-harm goal",
+    "d": "HMH treats HSSE as a core part of its culture: a goal of zero harm to people, the environment and assets, and better environmental performance through responsible management."
+   }
+  },
+  {
+   "id": "esg_digital",
+   "s": 0,
+   "m": "ship",
+   "u": "/sustainability/",
+   "fotos": [
+    "beAware-0fb628cc.jpeg"
+   ],
+   "pt": {
+    "cat": "Inovação",
+    "st": "Digital",
+    "sl": "beAware™ · DEAL™",
+    "n": "Inovação e digitalização",
+    "d": "Investir em inovação e digitalização é um dos compromissos de sustentabilidade da HMH. Ferramentas como beAware™ e DEAL™ buscam mais eficiência operacional."
+   },
+   "en": {
+    "cat": "Innovation",
+    "st": "Digital",
+    "sl": "beAware™ · DEAL™",
+    "n": "Innovation and digitalization",
+    "d": "Investing in innovation and digitalization is one of HMH’s sustainability commitments. Tools such as beAware™ and DEAL™ aim for higher operational efficiency."
+   }
+  },
+  {
+   "id": "esg_supply",
+   "s": 0,
+   "m": "ship",
+   "u": "/sustainability/global-supply-chain/",
+   "fotos": [
+    "Our-Values_stripe2-1c144e57.webp"
+   ],
+   "pt": {
+    "cat": "Governança",
+    "st": "Código",
+    "sl": "de Conduta na cadeia",
+    "n": "Cadeia de suprimentos responsável",
+    "d": "Fornecedores e subcontratados devem atuar conforme o Código de Conduta da HMH, com due diligence de direitos humanos no onboarding de parceiros."
+   },
+   "en": {
+    "cat": "Governance",
+    "st": "Code",
+    "sl": "of Conduct in the chain",
+    "n": "Responsible supply chain",
+    "d": "Suppliers and subcontractors must act according to the HMH Code of Conduct, with human-rights due diligence when onboarding partners."
+   }
+  },
+  {
+   "id": "esg_ods",
+   "s": -1,
+   "u": "/sustainability/",
+   "fotos": [
+    "UN-Sustainable-Development-Goalds-SDG-040a5360.jpeg"
+   ],
+   "pt": {
+    "cat": "ODS da ONU",
+    "st": "5 · 8 · 12 · 13",
+    "sl": "ODS em foco",
+    "n": "Objetivos de Desenvolvimento Sustentável",
+    "d": "A HMH declara foco particular nos ODS 5 (igualdade de gênero), 8 (trabalho decente e crescimento econômico), 12 (consumo e produção responsáveis) e 13 (ação contra a mudança global do clima)."
+   },
+   "en": {
+    "cat": "UN SDGs",
+    "st": "5 · 8 · 12 · 13",
+    "sl": "SDGs in focus",
+    "n": "Sustainable Development Goals",
+    "d": "HMH states a particular focus on SDGs 5 (gender equality), 8 (decent work and economic growth), 12 (responsible consumption and production) and 13 (climate action)."
+   }
+  }
+ ],
+ "tour": [
+  {
+   "s": 0,
+   "foco": "mudpumps",
+   "pt": {
+    "t": "1 · Bombas de lama",
+    "d": "As bombas Wirth™ empurram o fluido de perfuração em alta pressão até o top drive, no alto da torre."
+   },
+   "en": {
+    "t": "1 · Mud pumps",
+    "d": "Wirth™ pumps push drilling fluid at high pressure up to the top drive at the top of the derrick."
+   }
+  },
+  {
+   "s": 0,
+   "foco": "topdrive",
+   "pt": {
+    "t": "2 · Top drive",
+    "d": "O fluido entra na coluna de perfuração pelo top drive, que também gira a coluna."
+   },
+   "en": {
+    "t": "2 · Top drive",
+    "d": "The fluid enters the drill string through the top drive, which also rotates the string."
+   }
+  },
+  {
+   "s": 2,
+   "foco": "riser",
+   "pt": {
+    "t": "3 · Descendo pelo riser",
+    "d": "Dentro do riser, o fluido desce pela coluna de perfuração em direção ao fundo do mar (linha azul)."
+   },
+   "en": {
+    "t": "3 · Down the riser",
+    "d": "Inside the riser, the fluid travels down the drill string toward the seabed (blue line)."
+   }
+  },
+  {
+   "s": 3,
+   "foco": "rams",
+   "bop": 1,
+   "pt": {
+    "t": "4 · Passando pelo BOP",
+    "d": "A coluna atravessa o BOP. Se o poço der um influxo, as gavetas e o anular fecham e vedam o poço."
+   },
+   "en": {
+    "t": "4 · Through the BOP",
+    "d": "The string runs through the BOP. If the well kicks, the rams and the annular close and seal the well."
+   }
+  },
+  {
+   "s": 4,
+   "foco": "bit",
+   "pt": {
+    "t": "5 · Na broca",
+    "d": "O fluido sai pelos jatos da broca, resfria a ferramenta e carrega os cascalhos de rocha."
+   },
+   "en": {
+    "t": "5 · At the bit",
+    "d": "The fluid exits through the bit nozzles, cools the tool and carries the rock cuttings."
+   }
+  },
+  {
+   "s": 2,
+   "foco": "riser",
+   "pt": {
+    "t": "6 · Retorno pelo anular",
+    "d": "O fluido volta pelo espaço entre a coluna e o revestimento e o riser, trazendo os cascalhos à superfície (linha âmbar)."
+   },
+   "en": {
+    "t": "6 · Back up the annulus",
+    "d": "The fluid returns through the space between the string and the casing and riser, bringing cuttings to the surface (amber line)."
+   }
+  },
+  {
+   "s": 0,
+   "foco": "mudsys",
+   "pt": {
+    "t": "7 · Peneiras e tratamento",
+    "d": "Na superfície, os HMH Mud Systems separam os cascalhos e devolvem o fluido aos tanques para circular de novo."
+   },
+   "en": {
+    "t": "7 · Shakers and treatment",
+    "d": "At the surface, HMH Mud Systems separate the cuttings and send the fluid back to the tanks to circulate again."
+   }
+  }
+ ],
+ "camadas": {
+  "pt": [
+   "Sedimentos",
+   "Argila",
+   "Arenito",
+   "Folhelho",
+   "Calcário",
+   "Rocha selante",
+   "Reservatório",
+   "gás natural",
+   "óleo"
+  ],
+  "en": [
+   "Sediments",
+   "Clay",
+   "Sandstone",
+   "Shale",
+   "Limestone",
+   "Cap rock",
+   "Reservoir",
+   "natural gas",
+   "oil"
+  ]
+ },
+ "ui": {
+  "pt": {
+   "esg": "ESG Point",
+   "visao": "Visão geral",
+   "catalogo": "Catálogo",
+   "tour": "Como funciona",
+   "noite": "Noite",
+   "secoes": "Seções",
+   "som": "Som ambiente",
+   "lang": "EN",
+   "langNome": "English",
+   "nesta": "Nesta seção",
+   "nestaEsg": "ESG nesta seção",
+   "saiba": "Saiba mais",
+   "contato": "Fale com a HMH",
+   "semEsg": "Nenhum ponto ESG nesta seção. Abra o ESG Point para ver todos.",
+   "prof": "Prof.",
+   "pressao": "Pressão",
+   "temp": "Temp.",
+   "visaoZona": "Visão geral",
+   "rolar": "Role para descer",
+   "deslizar": "Deslize para descer",
+   "intro": "Da sonda ao reservatório · em 3D",
+   "carregando": "Carregando texturas realistas…",
+   "carregado": "Texturas carregadas",
+   "preparando": "Preparando a cena…",
+   "iniciar": "Iniciar descida",
+   "semSom": "Entrar sem som",
+   "produto": "Produto HMH",
+   "contexto": "Contexto",
+   "video": "▶ Vídeo",
+   "foto": "Foto",
+   "fotos": "Fotos",
+   "modelo": "Modelo 3D",
+   "destaque": "Destaque",
+   "verHmh": "Ver no site da HMH ↗",
+   "abrirYt": "Abrir no YouTube ↗",
+   "buscarYt": "Procurar no YouTube ↗",
+   "verFonte": "Ver fonte na HMH ↗",
+   "linha": "Linha",
+   "categoria": "Categoria",
+   "secao": "Seção",
+   "profundidade": "Profundidade",
+   "fonte": "Fonte",
+   "credito": "Foto: HMH · hmhw.com",
+   "arraste": "Arraste para girar o modelo 3D",
+   "fotoIndisp": "Foto indisponível no momento",
+   "arquivoLocal": "Para tocar o vídeo aqui, abra o site por http(s). Clique para assistir no YouTube.",
+   "esgTitulo": "ESG Point",
+   "esgSub": "Pontos ambientais e de sustentabilidade que a HMH declara considerar. Os pontos verdes aparecem na cena.",
+   "verCena": "Ver na cena",
+   "fonteLink": "Fonte ↗",
+   "esgRodape": "Fonte: páginas oficiais em hmhw.com (Sustentabilidade, HSSE, Electric BOP, MPD e Drilling Lifecycle Services). Indicadores detalhados estão nos Relatórios de Sustentabilidade 2024 e 2025 da HMH.",
+   "catTitulo": "Catálogo HMH",
+   "catSub": "Todo o portfólio da HMH: equipamentos offshore e onshore, serviços, soluções digitais, mineração e construção. Toque em um item para ver os detalhes.",
+   "todos": "Todos",
+   "buscar": "Buscar equipamento…",
+   "nenhum": "Nenhum equipamento encontrado.",
+   "tourTitulo": "Como funciona: a circulação do fluido de perfuração",
+   "anterior": "Anterior",
+   "proximo": "Próximo",
+   "encerrar": "Encerrar",
+   "passo": "Passo",
+   "de": "de",
+   "pausar": "Pausar",
+   "continuar": "Continuar",
+   "fechar": "Fechar",
+   "noWebgl": "Seu navegador não exibiu a cena 3D. Abaixo está todo o conteúdo do site.",
+   "erroCarga": "A cena 3D precisa de um navegador com WebGL.",
+   "area": "Área",
+   "areaTodas": "Todas",
+   "areaOff": "Offshore",
+   "areaOn": "Terra (onshore)",
+   "areaSrv": "Serviços e digital",
+   "areaMc": "Mineração e construção",
+   "linhaCompleta": "Catálogo completo",
+   "resumo": "Resumo",
+   "semFotoNota": "Sem foto disponível no site da HMH.",
+   "catContagem": "itens",
+   "catEstatico": "Catálogo completo da HMH",
+   "servico": "Serviço HMH",
+   "catContagem1": "item",
+   "zoom": "Zoom",
+   "zoomIn": "Aproximar",
+   "zoomOut": "Afastar",
+   "zoomReset": "Voltar ao zoom padrão",
+   "qualidade": "Qualidade",
+   "qAuto": "Automática",
+   "qBaixa": "Baixa",
+   "qMedia": "Média",
+   "qAlta": "Alta",
+   "qUltra": "Ultra",
+   "qAutoD": "Escolhe pelo seu computador e ajusta sozinha",
+   "qBaixaD": "Mais leve: sem oclusão ambiente, sombras simples",
+   "qMediaD": "Equilibrada: sombras e brilho, detalhe padrão",
+   "qAltaD": "Full HD nítido, sombras suaves, oclusão ambiente e detalhes extras",
+   "qUltraD": "4K: máxima resolução e sombras, todos os detalhes 3D",
+   "qRender": "Renderizando em",
+   "qFps": "quadros/s",
+   "qAtiva": "Qualidade"
+  },
+  "en": {
+   "esg": "ESG Point",
+   "visao": "Overview",
+   "catalogo": "Catalog",
+   "tour": "How it works",
+   "noite": "Night",
+   "secoes": "Sections",
+   "som": "Ambient sound",
+   "lang": "PT",
+   "langNome": "Português",
+   "nesta": "In this section",
+   "nestaEsg": "ESG in this section",
+   "saiba": "Learn more",
+   "contato": "Contact HMH",
+   "semEsg": "No ESG point in this section. Open ESG Point to see them all.",
+   "prof": "Depth",
+   "pressao": "Pressure",
+   "temp": "Temp.",
+   "visaoZona": "Overview",
+   "rolar": "Scroll to dive",
+   "deslizar": "Swipe to dive",
+   "intro": "From rig to reservoir · in 3D",
+   "carregando": "Loading realistic textures…",
+   "carregado": "Textures loaded",
+   "preparando": "Preparing the scene…",
+   "iniciar": "Start the dive",
+   "semSom": "Enter without sound",
+   "produto": "HMH product",
+   "contexto": "Context",
+   "video": "▶ Video",
+   "foto": "Photo",
+   "fotos": "Photos",
+   "modelo": "3D model",
+   "destaque": "Highlight",
+   "verHmh": "View on hmhw.com ↗",
+   "abrirYt": "Open on YouTube ↗",
+   "buscarYt": "Search YouTube ↗",
+   "verFonte": "View source on hmhw.com ↗",
+   "linha": "Line",
+   "categoria": "Category",
+   "secao": "Section",
+   "profundidade": "Depth",
+   "fonte": "Source",
+   "credito": "Photo: HMH · hmhw.com",
+   "arraste": "Drag to rotate the 3D model",
+   "fotoIndisp": "Photo unavailable right now",
+   "arquivoLocal": "To play the video here, open the site over http(s). Click to watch on YouTube.",
+   "esgTitulo": "ESG Point",
+   "esgSub": "Environmental and sustainability points HMH states it considers. Green points appear in the scene.",
+   "verCena": "Show in scene",
+   "fonteLink": "Source ↗",
+   "esgRodape": "Source: official pages on hmhw.com (Sustainability, HSSE, Electric BOP, MPD and Drilling Lifecycle Services). Detailed indicators are in HMH’s 2024 and 2025 Sustainability Reports.",
+   "catTitulo": "HMH catalog",
+   "catSub": "HMH's full portfolio: offshore and onshore equipment, services, digital solutions, mining and construction. Tap an item for details.",
+   "todos": "All",
+   "buscar": "Search equipment…",
+   "nenhum": "No equipment found.",
+   "tourTitulo": "How it works: drilling fluid circulation",
+   "anterior": "Back",
+   "proximo": "Next",
+   "encerrar": "Close",
+   "passo": "Step",
+   "de": "of",
+   "pausar": "Pause",
+   "continuar": "Resume",
+   "fechar": "Close",
+   "noWebgl": "Your browser could not show the 3D scene. All of the site’s content is below.",
+   "erroCarga": "The 3D scene needs a browser with WebGL.",
+   "area": "Area",
+   "areaTodas": "All",
+   "areaOff": "Offshore",
+   "areaOn": "Onshore",
+   "areaSrv": "Services and digital",
+   "areaMc": "Mining and construction",
+   "linhaCompleta": "Full catalog",
+   "resumo": "Summary",
+   "semFotoNota": "No photo available on the HMH site.",
+   "catContagem": "items",
+   "catEstatico": "Complete HMH catalog",
+   "servico": "HMH service",
+   "catContagem1": "item",
+   "zoom": "Zoom",
+   "zoomIn": "Zoom in",
+   "zoomOut": "Zoom out",
+   "zoomReset": "Reset zoom",
+   "qualidade": "Quality",
+   "qAuto": "Automatic",
+   "qBaixa": "Low",
+   "qMedia": "Medium",
+   "qAlta": "High",
+   "qUltra": "Ultra",
+   "qAutoD": "Picks for your computer and adjusts by itself",
+   "qBaixaD": "Lightest: no ambient occlusion, simple shadows",
+   "qMediaD": "Balanced: shadows and glow, standard detail",
+   "qAltaD": "Crisp Full HD, soft shadows, ambient occlusion and extra details",
+   "qUltraD": "4K: maximum resolution and shadows, all 3D details",
+   "qRender": "Rendering at",
+   "qFps": "fps",
+   "qAtiva": "Quality"
+  }
+ }
 }

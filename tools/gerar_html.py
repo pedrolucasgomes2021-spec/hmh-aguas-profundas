@@ -49,8 +49,19 @@ if gerais:
     li = ''.join(f'<li><h3>{e(x["pt"]["n"])} <b>{e(x["pt"]["st"])} {e(x["pt"]["sl"])}</b></h3><p>{e(x["pt"]["d"])} <a href="{BASE + x["u"]}" target="_blank" rel="noopener">Fonte ↗</a></p></li>' for x in gerais)
     partes[-1] = partes[-1].replace('</div></section>', f'<h3 class="esgT">ESG Point · HMH</h3><ul class="esgs">{li}</ul></div></section>')
 
+# itens do catálogo fora da descida (onshore, serviços, mineração e construção) vão no fim da última seção
+AREAS = [('off', 'Offshore'), ('on', 'Terra (onshore)'), ('srv', 'Serviços e digital'), ('mc', 'Mineração e construção')]
+extra = ['<h3 class="esgT">Catálogo completo da HMH</h3>']
+for chave, rotulo in AREAS:
+    itens = [p for p in c['produtos'] if p['s'] < 0 and p.get('a') == chave]
+    if not itens:
+        continue
+    li = ''.join(f'<li><div><h3>{e(p["pt"]["n"])}</h3><small>{e(p["pt"]["c"])}</small><p>{e(p["pt"]["d"])} <a href="{BASE + p["u"]}" target="_blank" rel="noopener">hmhw.com ↗</a></p></div></li>' for p in itens)
+    extra.append(f'<h4>{rotulo}</h4><ul class="prods">{li}</ul>')
+partes[-1] = partes[-1].replace('</div></section>', ''.join(extra) + '</div></section>')
+
 arq = RAIZ / 'index.html'
 src = arq.read_text(encoding='utf-8')
 novo = re.sub(r'<!--CONTEUDO-->.*?<!--/CONTEUDO-->', lambda m: '<!--CONTEUDO-->\n' + '\n'.join(partes) + '\n<!--/CONTEUDO-->', src, flags=re.S)
 arq.write_text(novo, encoding='utf-8')
-print(f'{len(partes)} seções, {sum(1 for p in c["produtos"])} itens, {len(c["esg"])} pontos ESG')
+print(f'{len(partes)} seções, {len(c["produtos"])} itens ({sum(1 for p in c["produtos"] if p["s"] < 0)} só no catálogo), {len(c["esg"])} pontos ESG')
