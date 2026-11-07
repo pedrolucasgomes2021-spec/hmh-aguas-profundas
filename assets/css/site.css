@@ -211,6 +211,8 @@ body.nogl .qual,body.nogl .toast{display:none!important}
 .cat header{display:flex;align-items:center;gap:14px;padding:20px 22px 8px;flex-wrap:wrap}
 .cat h3{font-family:Oswald,sans-serif;font-weight:600;font-size:26px;text-transform:uppercase}
 .cat header p{font-size:12.5px;opacity:.88;flex:1;min-width:200px}
+#intro .alt{justify-self:center;font-size:13px;font-weight:600;padding:11px 20px;border-radius:999px;border:1px solid rgba(14,42,74,.3);text-decoration:none;color:var(--navy);transition:background .3s}
+#intro .alt:hover{background:rgba(255,255,255,.7)}
 .cat .search{height:40px;border-radius:999px;border:1px solid rgba(14,42,74,.18);background:rgba(255,255,255,.7);padding:0 16px;min-width:220px;outline:none}
 .cat .search:focus{border-color:var(--azul);box-shadow:0 0 0 3px rgba(0,145,189,.35)!important;outline:2px solid var(--navy)}
 .filt{display:flex;gap:6px;flex-wrap:wrap;padding:6px 22px 12px;align-items:center}

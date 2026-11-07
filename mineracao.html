@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HMH — Mineração em Terra</title>
+<meta name="description" content="Simulação 3D de uma operação de mineração em terra com os equipamentos HMH: perfuração de poço vertical, bombas de slurry Wirth, perfuratrizes de topo de estaca e mais.">
+<link rel="icon" href="assets/img/hmh-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css?v=9788b108">
+<link rel="stylesheet" href="assets/css/componentes.css?v=9788b108">
+<link rel="stylesheet" href="assets/css/mina.css?v=9788b108">
+<script type="importmap">
+{"imports":{"three":"./assets/vendor/three/build/three.module.min.js","three/addons/":"./assets/vendor/three/examples/jsm/","./assets/js/ssao.js":"./assets/js/ssao.js?v=9788b108"}}
+</script>
+<link rel="modulepreload" href="assets/vendor/three/build/three.module.min.js">
+<link rel="preload" href="assets/hdri/ceu.hdr" as="fetch" crossorigin>
+</head>
+<body class="mina">
+<canvas id="gl" role="img" aria-label="Cena 3D de uma mina a céu aberto com equipamentos HMH em operação"></canvas>
+
+<header class="nav glass" id="nav">
+  <a class="logo-wrap" href="https://hmhw.com" target="_blank" rel="noopener" aria-label="HMH (abre hmhw.com)"><img class="logo-img" src="assets/img/hmh-logo.png" alt="HMH"></a>
+  <nav class="tabs" id="tabs" aria-label="Seções"></nav>
+  <div class="acts">
+    <a class="nb" id="deepBtn" href="index.html"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8c2.5 2 5 2 7.5 0s5-2 7.5 0 3.5 1.5 5 1"/><path d="M2 14c2.5 2 5 2 7.5 0s5-2 7.5 0 3.5 1.5 5 1"/><path d="M12 17v5"/></svg><span class="lbl" data-t="deep">Águas profundas</span></a>
+    <button class="nb" id="eqBtn" aria-haspopup="dialog"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="lbl" data-t="eq">Equipamentos</span></button>
+    <button class="nb" id="flowBtn" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h9a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h13"/><path d="m18 16 3 3-3 3"/></svg><span class="lbl" data-t="fluxo">Fluxo do processo</span></button>
+    <div class="qwrap"><button class="nb" id="qBtn" aria-haspopup="true" aria-expanded="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h3M10 18h10M4 12h9M16 12h4M4 6h1M8 6h12"/><circle cx="8.5" cy="18" r="1.8"/><circle cx="14.5" cy="12" r="1.8"/><circle cx="6.5" cy="6" r="1.8"/></svg><span class="lbl" id="qLbl">Auto</span></button>
+      <div class="qmenu glass" id="qMenu" role="menu"></div></div>
+    <button class="nb lang" id="langBtn" aria-label="English"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13.5 13.5 0 0 1 0 18M12 3a13.5 13.5 0 0 0 0 18"/></svg><span class="lt">EN</span></button>
+  </div>
+</header>
+
+<section class="mcopy mcard glass" id="copy" aria-live="polite">
+  <button class="mn" aria-label="Minimizar">–</button><p class="eb" id="cEb"></p>
+  <h2 id="cT"></h2>
+  <div class="mbody"><p id="cP"></p>
+  <div class="chips" id="cChips"></div></div>
+</section>
+
+<div id="hots"></div>
+<div class="flowLeg glass" id="flowLeg" hidden></div>
+<div class="mmap mcard glass" id="mmap">
+  <div class="mmh"><b data-t="mapa">Mapa da operação</b><span id="hudS"></span><span id="hudF"></span><button class="mn" aria-label="Minimizar">–</button></div>
+  <div class="mbody"><canvas id="mm" tabindex="0" aria-label="Mapa da operação"></canvas>
+  <p class="mmd" data-t="dica"></p></div>
+</div>
+<button class="zoomOut glass" id="zoomOut" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M8 11h6M16 16l4.5 4.5"/></svg><span data-t="zoomOut">Visão geral</span></button>
+
+<div id="scrim"></div>
+<div class="mpanel glass" id="panel" role="dialog" aria-modal="true" aria-labelledby="pT">
+  <button class="xb" id="pX" aria-label="Fechar">×</button>
+  <div class="media"><div class="mtabs" id="pTabs"></div><div class="ph" id="pPh"></div><div class="thumbs" id="pTh"></div></div>
+  <div class="in"><small id="pC"></small><h3 id="pT"></h3><p id="pD"></p><div class="lk" id="pL"></div></div>
+</div>
+
+<div class="eqlist glass" id="eqList" role="dialog" aria-modal="true" aria-labelledby="eqT">
+  <header><h3 id="eqT" data-t="eqT">Equipamentos HMH na mineração</h3><p data-t="eqS"></p><button class="xb" id="eqX" aria-label="Fechar">×</button></header>
+  <div class="eqg" id="eqG"></div>
+</div>
+
+<div id="intro">
+  <button class="lng" id="introLang">EN</button>
+  <img class="logo-img" src="assets/img/hmh-logo.png" alt="HMH">
+  <p class="ih" id="introT">MINERAÇÃO</p>
+  <p data-t="introSub">Mina a céu aberto · equipamentos HMH em operação · em 3D</p>
+  <div class="prog"><i id="progBar"></i></div>
+  <button class="go" id="goBtn" disabled data-t="prep">Preparando a cena…</button>
+  <a class="alt" href="index.html" data-t="toDeep">Ver versão Águas Profundas</a>
+</div>
+
+<h1 class="sr">HMH — Mineração em terra</h1>
+
+<script type="module" src="assets/js/mina.js?v=9788b108"></script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{
+ "topdrive": {
+  "nome": "MH Top Drive",
+  "glb": "assets/ar/modelos/topdrive.glb",
+  "usdz": "assets/ar/modelos/topdrive.usdz",
+  "escala": {
+   "altura_m": 5.55,
+   "fonte": "HMH MH Orion TD-516 spec sheet (2026): Height 5 550 mm; weight 16 000 kg sem dolly"
+  }
+ },
+ "mudpumps": {
+  "nome": "Wirth TPK Mud Pumps",
+  "glb": "assets/ar/modelos/mudpump.glb",
+  "usdz": "assets/ar/modelos/mudpump.usdz"
+ },
+ "roughneck": {
+  "nome": "Bulldog Iron Roughneck",
+  "glb": "assets/ar/modelos/roughneck.glb",
+  "usdz": "assets/ar/modelos/roughneck.usdz"
+ },
+ "rams": {
+  "nome": "Hydril Sentry RAM BOP",
+  "glb": "assets/ar/modelos/bop_ram.glb",
+  "usdz": "assets/ar/modelos/bop_ram.usdz",
+  "escala": {
+   "altura_m": 0.823,
+   "fonte": "HMH Sentry Spec Sheet: 13-5/8 in, 5000/10000 psi, stud face to flange face (single) 32.4 in = 823 mm"
+  }
+ },
+ "sentry": {
+  "nome": "Hydril Sentry RAM BOP",
+  "glb": "assets/ar/modelos/bop_ram.glb",
+  "usdz": "assets/ar/modelos/bop_ram.usdz",
+  "escala": {
+   "altura_m": 0.823,
+   "fonte": "HMH Sentry Spec Sheet: 13-5/8 in, 5000/10000 psi, stud face to flange face (single) 32.4 in = 823 mm"
+  }
+ },
+ "wbsr": {
+  "nome": "Gavetas cisalhantes WBSR-X",
+  "glb": "assets/ar/modelos/wbsr.glb",
+  "usdz": "assets/ar/modelos/wbsr.usdz",
+  "sub": "Representação ilustrativa: a gaveta cisalhante não está em escala legal."
+ },
+ "ebop": {
+  "nome": "HMH ionic Electric BOP",
+  "glb": "assets/ar/modelos/ebop.glb",
+  "usdz": "assets/ar/modelos/ebop.usdz"
+ },
+ "riser": {
+  "nome": "HMH QTR Marine Risers",
+  "glb": "assets/ar/modelos/riser_qtr.glb",
+  "usdz": "assets/ar/modelos/riser_qtr.usdz"
+ },
+ "gxp": {
+  "nome": "Hydril® GXP Annular BOP",
+  "glb": "assets/ar/modelos/annular.glb",
+  "usdz": "assets/ar/modelos/annular.usdz"
+ },
+ "gk": {
+  "nome": "Hydril® GK™ 13-5 Annular BOP",
+  "glb": "assets/ar/modelos/annular.glb",
+  "usdz": "assets/ar/modelos/annular.usdz"
+ },
+ "h4": {
+  "nome": "Vetco H-4 Connector",
+  "glb": "assets/ar/modelos/h4.glb",
+  "usdz": "assets/ar/modelos/h4.usdz"
+ },
+ "pods": {
+  "nome": "BOP Control Pods",
+  "glb": "assets/ar/modelos/pods.glb",
+  "usdz": "assets/ar/modelos/pods.usdz"
+ },
+ "valves": {
+  "nome": "Válvulas e manifolds",
+  "glb": "assets/ar/modelos/valves.glb",
+  "usdz": "assets/ar/modelos/valves.usdz"
+ },
+ "telescopic": {
+  "nome": "Junta telescópica",
+  "glb": "assets/ar/modelos/telescopic.glb",
+  "usdz": "assets/ar/modelos/telescopic.usdz"
+ },
+ "rotary": {
+  "nome": "Wirth™ Rotary Table",
+  "glb": "assets/ar/modelos/rotary.glb",
+  "usdz": "assets/ar/modelos/rotary.usdz"
+ },
+ "drawworks": {
+  "nome": "Wirth™ Drawworks",
+  "glb": "assets/ar/modelos/drawworks.glb",
+  "usdz": "assets/ar/modelos/drawworks.usdz"
+ },
+ "cranes": {
+  "nome": "Guindastes e manuseio",
+  "glb": "assets/ar/modelos/cranes.glb",
+  "usdz": "assets/ar/modelos/cranes.usdz"
+ },
+ "structures": {
+  "nome": "Derrick e subestrutura",
+  "glb": "assets/ar/modelos/structures.glb",
+  "usdz": "assets/ar/modelos/structures.usdz"
+ },
+ "diverter": {
+  "nome": "Diverter",
+  "glb": "assets/ar/modelos/diverter.glb",
+  "usdz": "assets/ar/modelos/diverter.usdz"
+ }
+}

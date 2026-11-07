@@ -13,7 +13,7 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 MODULOS = ['kit', 'modelos', 'detalhe', 'detalhes3d', 'ssao']
 
 h = hashlib.sha1()
-for f in sorted((RAIZ / 'assets' / 'js').glob('*.js')) + [RAIZ / 'assets' / 'css' / 'site.css', RAIZ / 'content' / 'conteudo.json']:
+for f in sorted((RAIZ / 'assets' / 'js').glob('*.js')) + [RAIZ / 'assets' / 'css' / 'site.css', RAIZ / 'assets' / 'css' / 'mina.css', RAIZ / 'assets' / 'css' / 'componentes.css', RAIZ / 'content' / 'conteudo.json']:
     h.update(f.read_bytes())
 v = h.hexdigest()[:8]
 
@@ -31,6 +31,7 @@ s = re.sub(r'(<script type="importmap">\s*).*?(\s*</script>)', lambda m: m.group
 # 2) entrada, preloads e CSS
 s = re.sub(r'assets/js/app\.js(\?v=\w+)?"', f'assets/js/app.js?v={v}"', s)
 s = re.sub(r'assets/css/site\.css(\?v=\w+)?"', f'assets/css/site.css?v={v}"', s)
+s = re.sub(r'assets/css/componentes\.css(\?v=\w+)?"', f'assets/css/componentes.css?v={v}"', s)
 s = re.sub(r'content/conteudo\.json(\?v=\w+)?" as="fetch"', f'content/conteudo.json?v={v}" as="fetch"', s)
 
 # 3) versão disponível para o JavaScript (fetch do JSON)
@@ -40,4 +41,15 @@ else:
     s = s.replace('<script>\n// se o módulo 3D', f"<script>\nwindow.__v='{v}';\n// se o módulo 3D", 1)
 
 arq.write_text(s, encoding='utf-8')
+
+# 4) versão Mineração (mineracao.html)
+mina = RAIZ / 'mineracao.html'
+if mina.exists():
+    t = mina.read_text(encoding='utf-8')
+    for f in ['assets/css/site.css', 'assets/css/componentes.css', 'assets/css/mina.css', 'assets/js/mina.js']:
+        t = re.sub(re.escape(f) + r'(\?v=\w+)?"', f'{f}?v={v}"', t)
+    im2 = {'three': './assets/vendor/three/build/three.module.min.js', 'three/addons/': './assets/vendor/three/examples/jsm/', './assets/js/ssao.js': f'./assets/js/ssao.js?v={v}'}
+    mapa2 = '{"imports":' + json.dumps(im2, separators=(',', ':')) + '}'
+    t = re.sub(r'(<script type="importmap">\s*).*?(\s*</script>)', lambda m: m.group(1) + mapa2 + m.group(2), t, count=1, flags=re.S)
+    mina.write_text(t, encoding='utf-8')
 print('versão', v)

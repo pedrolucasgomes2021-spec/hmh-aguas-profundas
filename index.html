@@ -21,21 +21,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=7ab8409e">
+<link rel="stylesheet" href="assets/css/site.css?v=9788b108">
+<link rel="stylesheet" href="assets/css/componentes.css?v=9788b108">
 <script type="importmap">
 {"imports":{
 "three":"./assets/vendor/three/build/three.module.min.js",
 "three/addons/":"./assets/vendor/three/examples/jsm/",
-"./assets/js/kit.js":"./assets/js/kit.js?v=7ab8409e",
-"./assets/js/modelos.js":"./assets/js/modelos.js?v=7ab8409e",
-"./assets/js/detalhe.js":"./assets/js/detalhe.js?v=7ab8409e",
-"./assets/js/detalhes3d.js":"./assets/js/detalhes3d.js?v=7ab8409e",
-"./assets/js/ssao.js":"./assets/js/ssao.js?v=7ab8409e"
+"./assets/js/kit.js":"./assets/js/kit.js?v=9788b108",
+"./assets/js/modelos.js":"./assets/js/modelos.js?v=9788b108",
+"./assets/js/detalhe.js":"./assets/js/detalhe.js?v=9788b108",
+"./assets/js/detalhes3d.js":"./assets/js/detalhes3d.js?v=9788b108",
+"./assets/js/ssao.js":"./assets/js/ssao.js?v=9788b108"
 }}
 </script>
 <link rel="modulepreload" href="assets/vendor/three/build/three.module.min.js">
-<link rel="modulepreload" href="assets/js/app.js?v=7ab8409e">
-<link rel="preload" href="content/conteudo.json?v=7ab8409e" as="fetch" crossorigin>
+<link rel="modulepreload" href="assets/js/app.js?v=9788b108">
+<link rel="preload" href="content/conteudo.json?v=9788b108" as="fetch" crossorigin>
 <link rel="preload" href="assets/img/hmh-logo.png" as="image">
 <link rel="preload" href="assets/hdri/ceu.hdr" as="fetch" crossorigin>
 <link rel="preload" href="assets/texturas/metal_plate_diff.webp" as="image" crossorigin>
@@ -58,6 +59,7 @@
 <link rel="preload" href="assets/texturas/rock_face_diff.webp" as="image" crossorigin>
 </head>
 <body>
+<a class="skip" href="#snaps">Ir para o conteúdo</a>
 <canvas id="gl" role="img" aria-label="Maquete 3D em corte: sonda de perfuração, riser, BOP, poço e reservatório"></canvas>
 
 <header class="nav glass" id="nav">
@@ -66,9 +68,11 @@
   <div class="acts">
     <button class="nb menuBtn" id="menuBtn" aria-expanded="false" aria-controls="sheetMenu" data-i-label="secoes" aria-label="Seções"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="lbl" data-i="secoes">Seções</span></button>
     <button class="nb" id="catBtn" aria-haspopup="dialog" data-i-label="catalogo" aria-label="Catálogo"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="lbl" data-i="catalogo">Catálogo</span></button>
+    <a class="nb" id="minBtn" href="mineracao.html" aria-label="Versão Mineração"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18"/><path d="M4 20 9.5 9l3.5 6 2.5-4L20 20"/><circle cx="17" cy="6" r="2"/></svg><span class="lbl" id="minLbl">Mineração</span></a>
     <button class="nb" id="tourBtn" aria-pressed="false" data-i-label="tour" aria-label="Como funciona"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19h8a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h8"/></svg><span class="lbl" data-i="tour">Como funciona</span></button>
     <button class="nb esg" id="esgBtn" aria-pressed="false" data-i-label="esg" aria-label="ESG Point"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.4 5.1-6C9.5 14.5 12 13 13 12"/></svg><span class="lbl" data-i="esg">ESG Point</span><span class="cnt" id="esgCnt">8</span></button>
     <button class="nb" id="ovBtn" aria-pressed="false" data-i-label="visao" aria-label="Visão geral"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5V5a2 2 0 0 1 2-2h2.5M16.5 3H19a2 2 0 0 1 2 2v2.5M21 16.5V19a2 2 0 0 1-2 2h-2.5M7.5 21H5a2 2 0 0 1-2-2v-2.5"/><path d="M7.5 9h9M7.5 12h9M7.5 15h9"/></svg><span class="lbl" data-i="visao">Visão geral</span></button>
+    <button class="nb" id="kickBtn" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 20h19Z"/><path d="M12 10v4.5M12 17.5v.01"/></svg><span class="lbl" id="kickLbl">Cenário: kick</span></button>
     <span class="sep" aria-hidden="true"></span>
     <button class="nb ic night" id="nightBtn" aria-pressed="false" data-i-label="noite" aria-label="Noite"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.1A8.5 8.5 0 1 1 9.9 3.5a6.6 6.6 0 0 0 10.6 10.6Z"/></svg></button>
     <button class="nb lang" id="langBtn" aria-label="English"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13.5 13.5 0 0 1 0 18M12 3a13.5 13.5 0 0 0 0 18"/></svg><span class="lt">EN</span></button>
@@ -120,7 +124,28 @@
   <div class="ctl"><div class="dots" id="tourDots"></div><button id="tourPrev" data-i="anterior"></button><button id="tourPlay"></button><button class="pri" id="tourNext" data-i="proximo"></button></div>
 </section>
 
+<section class="kick card glass dw" id="kick" hidden role="status" aria-live="polite"><button class="x" id="kClose" aria-label="Fechar">×</button><button class="mn" aria-label="Minimizar">–</button><b id="kTitle"></b><h4 id="kStep"></h4><div class="mbody"><p id="kNote"></p><div class="kd" id="kDots"></div><button class="again" id="kAgain"></button></div></section>
+<aside class="kside card glass dw" id="kside" hidden aria-label="Dentro do BOP"><header><b id="ksT"></b><button class="mn" aria-label="Minimizar">–</button><button class="x2" id="ksX" aria-label="Fechar">×</button></header>
+ <div class="mbody">
+  <div class="kct" role="tablist"><button data-v="3d" aria-pressed="true" id="kcT3"></button><button data-v="2d" aria-pressed="false" id="kcT2"></button></div>
+  <div class="kc" id="kc"><canvas id="kcCanvas"></canvas><span class="kcl" id="kcl0"></span><span class="kcl" id="kcl1"></span><span class="kcl" id="kcl2"></span><span class="kcl" id="kcl3"></span><span class="kcl gas" id="kcl4"></span><small class="kch" id="kcH"></small></div>
+  <svg id="ksSvg" viewBox="0 0 320 300" role="img" aria-label="Corte do BOP" hidden>
+  <defs><linearGradient id="gSt" x1="0" x2="1"><stop offset="0" stop-color="#1a5a8a"/><stop offset="1" stop-color="#0d3556"/></linearGradient></defs>
+  <rect x="118" y="14" width="84" height="278" fill="#041420" opacity=".6"/><rect x="150" y="6" width="20" height="292" rx="3" fill="#9fb4c3"/>
+  <g fill="url(#gSt)" stroke="#59d0ff" stroke-opacity=".45"><rect x="62" y="28" width="56" height="76" rx="6"/><rect x="202" y="28" width="56" height="76" rx="6"/><rect x="62" y="124" width="56" height="48" rx="6"/><rect x="202" y="124" width="56" height="48" rx="6"/><rect x="62" y="196" width="56" height="48" rx="6"/><rect x="202" y="196" width="56" height="48" rx="6"/></g>
+  <rect x="94" y="206" width="24" height="28" rx="3" fill="#6c7f90"/><rect x="202" y="206" width="24" height="28" rx="3" fill="#6c7f90"/>
+  <rect id="kA1" x="96" y="46" width="22" height="40" rx="5" fill="#ff8c5a"/><rect id="kA2" x="202" y="46" width="22" height="40" rx="5" fill="#ff8c5a"/>
+  <rect id="kR1" x="86" y="132" width="32" height="32" rx="3" fill="#ffb347"/><rect id="kR2" x="202" y="132" width="32" height="32" rx="3" fill="#ffb347"/>
+  <path d="M258 148H304" stroke="#9fb4c3" stroke-width="8"/><path id="kCh" d="M258 148H304" stroke="#ffb347" stroke-width="3" stroke-dasharray="6 6" opacity="0"/>
+  <g id="kGas"></g>
+  <g font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#cfe6f4"><text x="64" y="22">Anular · Hydril GK</text><text x="64" y="118">Gaveta de tubo · Sentry RAM</text><text x="64" y="190">Cisalhante · WBSR-X</text><text x="262" y="138">Choke</text></g>
+  <text id="kP" x="10" y="292" font-family="Oswald,sans-serif" font-size="16" fill="#ff8c7a"></text></svg>
+  <p id="ksDesc"></p><ol id="ksList"></ol>
+  <div class="ksv"><div class="ksc" id="ksChips"></div><div class="ksf" id="ksFrame"></div></div>
+ </div></aside>
+
 <div id="scrim"></div>
+
 <div id="fp" role="dialog" aria-modal="true"></div>
 
 <div id="intro">
@@ -132,9 +157,10 @@
   <span class="progt" id="progT"></span>
   <button class="go" id="goBtn" disabled data-i="preparando">Preparando a cena…</button>
   <button class="mute" id="muteBtn" data-i="semSom">Entrar sem som</button>
+  <a class="alt" id="introMine" href="mineracao.html">Ver versão Mineração ⛏</a>
 </div>
 
-<main id="snaps">
+<main id="snaps" tabindex="-1">
 <h1 class="sr">HMH — Águas Profundas</h1>
 <!--CONTEUDO-->
 <section class="snap" id="s0" aria-labelledby="h0"><div class="estatico">
@@ -180,7 +206,7 @@
 </main>
 
 <script>
-window.__v='7ab8409e';
+window.__v='9788b108';
 // se o módulo 3D não iniciar (sem WebGL, navegador antigo ou aberto como arquivo), mostra o conteúdo estático
 window.__fail=function(m){document.body.classList.add('nogl');var n=document.getElementById('noglMsg');
  if(n){n.textContent=m||'Não foi possível exibir a cena 3D. Abaixo está todo o conteúdo do site.';
@@ -194,6 +220,6 @@ if(location.protocol==='file:')addEventListener('DOMContentLoaded',function(){wi
 if(/[?&]nogl/.test(location.search))addEventListener('DOMContentLoaded',function(){window.__fail()});
 setTimeout(function(){if(!window.__ready){window.__err=window.__err||'a cena demorou mais de 60 s para iniciar';window.__fail()}},60000);
 </script>
-<script type="module" src="assets/js/app.js?v=7ab8409e" onerror="window.__esperaErro('falha ao carregar um dos arquivos da cena (assets/js)')"></script>
+<script type="module" src="assets/js/app.js?v=9788b108" onerror="window.__esperaErro('falha ao carregar um dos arquivos da cena (assets/js)')"></script>
 </body>
 </html>

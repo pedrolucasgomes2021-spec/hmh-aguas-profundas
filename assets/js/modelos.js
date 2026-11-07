@@ -5,33 +5,46 @@ import {shipDetail,bopDetail} from './detalhes3d.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {M,G,add,beamG,tubeG,mergeMesh,bolts,bake,clean,V,UP,ZR,lerp,clamp,smooth,rnd,pbr} from './kit.js';
 
+const AQ=pbr(0x8fd6df,.3,.45,{clearcoat:.25});
+const ANN=pbr(0xcdd3d8,.3,.55,{clearcoat:.2}),POD=pbr(0xc8742a,.35,.5),FRM=pbr(0xdfe3e6,.35,.5,{clearcoat:.15});
 export function makeGateValve(col=M.red,s=1){const g=new THREE.Group();
  add(g,G.rbox(1.6,1.8,1.4,.22),col);
  for(const k of[-1,1]){add(g,G.cyl(.55,.55,1.1,24),col,[k*1.25,0,0],ZR);add(g,G.cyl(.9,.9,.32,28),col,[k*1.85,0,0],ZR);bolts(g,.72,8,[k*2.03,0,0],M.steel,'x',.07,.2)}
  add(g,G.cyl(.62,.72,1.3,24),col,[0,1.5,0]);add(g,G.cyl(.08,.08,1.4,8),M.chrome,[0,2.6,0]);
  add(g,G.tor(.78,.08,36),col,[0,3.25,0],[Math.PI/2,0,0]);for(let i=0;i<3;i++)add(g,G.cyl(.05,.05,1.5,6),col,[0,3.25,0],[0,i*Math.PI/3,Math.PI/2]);
  g.scale.setScalar(s);return g}
+// diversor (foto: carcaça vermelha com flange superior de prisioneiros, olhais de içamento e saídas laterais)
+export function makeDiverter(){const g=new THREE.Group();
+ add(g,G.cyl(1.7,1.9,1.9,48),M.red,[0,.95,0]);add(g,G.cyl(2.3,2.3,.45,48),M.red,[0,2.1,0]);bolts(g,2.0,18,[0,2.45,0]);add(g,G.cyl(1.3,1.5,.8,40),M.red,[0,-.3,0]);add(g,G.cyl(.9,.9,1.0,32),M.dark,[0,2.2,0]);
+ for(const k of[-1,1]){add(g,G.tor(.3,.07,12),M.steel,[k*1.9,2.7,0],[0,Math.PI/2,0]);add(g,G.cyl(.35,.35,2.2,16),M.red,[k*2.6,1,0],ZR);add(g,G.cyl(.55,.55,.3,24),M.grey,[k*3.8,1,0],ZR)}
+ return g}
 export function makeRam(o={}){const g=new THREE.Group();const body=o.body||M.yellow,bon=o.bonnet||M.red;
  add(g,G.rbox(11,4.2,6.4,.55),body);add(g,G.cyl(3.15,3.15,4.6,48),bon);
+ // portas de acesso retangulares aparafusadas, frente e trás (foto do Sentry RAM)
+ for(const z of[-1,1])for(const x of[-1,1]){add(g,G.rbox(3.5,2.5,.28,.12),bon,[x*2.7,0,z*3.28]);for(let i=0;i<6;i++){const a=i/5;for(const yy of[-1,1])add(g,G.cyl(.11,.11,.2,8),M.dark,[x*2.7-1.45+a*2.9,yy*1.0,z*3.46],[Math.PI/2,0,0])}}
  for(const k of[-1,1]){
   add(g,G.cyl(2.25,2.25,.8,48),bon,[k*5.9,0,0],ZR);bolts(g,1.95,16,[k*6.35,0,0],M.steel,'x',.13,.3);
   add(g,G.cyl(1.9,1.9,2.6,48),bon,[k*7.5,0,0],ZR);add(g,G.cyl(2.05,2.05,.45,48),body,[k*8.9,0,0],ZR);
-  add(g,G.cyl(1.1,1.1,2,32),o.electric?M.dark:bon,[k*10.1,0,0],ZR);add(g,G.cyl(1.2,1.2,.35,32),M.dark,[k*11.2,0,0],ZR);
+  add(g,G.cyl(1.1,1.1,2,32),o.electric?M.dark:bon,[k*10.1,0,0],ZR);
+  for(let i=0;i<10;i++){const a=i/10*Math.PI*2;add(g,G.cyl(.07,.07,3.6,6),M.black,[k*7.9,Math.sin(a)*2.1,Math.cos(a)*2.1],ZR)}add(g,G.cyl(1.2,1.2,.35,32),M.dark,[k*11.2,0,0],ZR);
   if(o.electric){add(g,G.rbox(2.4,2.4,2.4,.25),M.dark,[k*12.6,0,0]);add(g,G.box(.06,2.42,2.42),M.lampC,[k*11.38,0,0])}
   add(g,G.rbox(1.2,.8,1,.15),M.dark,[k*4.6,2.3,1.6])}
  return g}
-export function makeAnnular(col=M.yellow){const g=new THREE.Group();
+export function makeAnnular(col=ANN){const g=new THREE.Group();
  add(g,G.cyl(3.4,3.4,.8,48),M.red,[0,.4,0]);bolts(g,3,18,[0,.85,0]);
  add(g,G.cyl(4.42,4.6,4,64),col,[0,2.8,0]);add(g,new THREE.SphereGeometry(4.6,64,24,0,Math.PI*2,0,Math.PI*.42),col,[0,3.65,0]);
  for(let i=0;i<10;i++){const a=i/10*Math.PI*2;add(g,G.rbox(.7,1.3,.5,.12),M.dark,[Math.cos(a)*4.6,3.6,Math.sin(a)*4.6],[0,-a,0])}
  add(g,G.cyl(2.2,2.6,1.4,48),col,[0,8.4,0]);add(g,G.cyl(3,3,.7,48),M.red,[0,9.3,0]);bolts(g,2.6,16,[0,9.7,0]);
+ // orelhas de içamento, anel vedante vermelho e segmentos laranja do elemento (foto do GXP)
+ for(const k of[-1,1]){add(g,G.rbox(1.5,.8,1.6,.18),col,[k*4.9,3.2,0]);add(g,G.tor(.38,.1,14),M.dark,[k*5.1,3.2,0],[Math.PI/2,0,0])}
+ add(g,G.tor(4.5,.22,64),M.red,[0,5.4,0],[Math.PI/2,0,0]);for(let i=0;i<12;i++){const a=i/12*Math.PI*2;add(g,G.rbox(.8,.35,.55,.1),M.orange,[Math.cos(a)*1.75,9.8,Math.sin(a)*1.75],[0,-a,0])}
  g.userData.h=9.65;return g}
 export function makeH4(){const g=new THREE.Group();
  add(g,G.cyl(3.8,3.8,3.2,64),M.dark,[0,1.6,0]);add(g,G.cyl(4,4,.5,64),M.grey,[0,.25,0]);add(g,G.cyl(3.3,3.3,.6,48),M.grey,[0,3.5,0]);
  for(let i=0;i<14;i++){const a=i/14*Math.PI*2;add(g,G.rbox(.8,2.2,.6,.12),M.grey,[Math.cos(a)*3.95,1.7,Math.sin(a)*3.95],[0,-a+Math.PI/2,0])}
  g.userData.h=3.8;return g}
 export function makePod(){const g=new THREE.Group();
- add(g,G.rbox(2.6,5.2,2.6,.3),M.yellow,[0,2.6,0]);add(g,G.rbox(2.7,.7,2.7,.2),M.dark,[0,5.4,0]);add(g,G.box(1.8,2.6,.1),M.dark,[0,2.8,1.32]);
+ add(g,G.rbox(2.6,5.2,2.6,.3),POD,[0,2.6,0]);add(g,G.rbox(2.7,.7,2.7,.2),M.dark,[0,5.4,0]);add(g,G.box(1.8,2.6,.1),M.dark,[0,2.8,1.32]);
  for(let i=0;i<6;i++)add(g,G.cyl(.15,.15,.4,10),M.steel,[-.55+(i%3)*.55,2+(i>2?1.2:0),1.5],[Math.PI/2,0,0]);
  add(g,G.sph(.12,10),M.ledG,[.9,4.6,1.33]);return g}
 export function makeBOP(o={}){const g=new THREE.Group();
@@ -50,11 +63,14 @@ export function makeBOP(o={}){const g=new THREE.Group();
  const fy0=1.4,fy1=ramYs[ramYs.length-1]+3.6,posts=[[8.6,5.6],[-8.6,5.6],[8.6,-5.6],[-8.6,-5.6]],fr=[];
  for(const[x,z]of posts)fr.push(tubeG([[x,fy0,z],[x,fy1,z],[x*.93,fy1+2.5,z*.95],[x*.55,top-5,z*.62],[x*.3,top-2,z*.42],[x*.24,top-.8,z*.36]],.48,14));
  for(const yy of[fy0+.6,(fy0+fy1)/2,fy1]){fr.push(beamG(V(-8.6,yy,5.6),V(8.6,yy,5.6),.42,14),beamG(V(-8.6,yy,-5.6),V(8.6,yy,-5.6),.42,14),beamG(V(8.6,yy,-5.6),V(8.6,yy,5.6),.42,14),beamG(V(-8.6,yy,-5.6),V(-8.6,yy,5.6),.42,14))}
- g.add(mergeMesh(fr,M.yellow));
+ g.add(mergeMesh(fr,FRM));
  const pods=[];for(const k of[-1,1]){const p=makePod();p.position.set(k*10.6,ramYs[1]-1,-6.2);g.add(p);pods.push(p);add(g,tubeG([[k*10.6,ramYs[1]+4.6,-6.2],[k*9.6,top-7,-4.5],[k*3,top-3.5,-1.6],[k*1.4,top-1.4,0]],.22),M.rubber)}
  for(let i=0;i<7;i++)add(g,G.cyl(.55,.55,4.4,24),M.white,[-5.4+i*1.8,ramYs[0]+.8,-7]);
- for(const k of[-1,1]){add(g,G.cyl(.34,.34,top-ramYs[0]-1,16),M.steel,[k*4.4,(top+ramYs[0]-1)/2,-4]);const v=makeGateValve(M.red,.7);v.position.set(k*4.4,ramYs[1]+3,-4.9);v.rotation.y=Math.PI/2;g.add(v)}
+ for(const k of[-1,1]){add(g,G.cyl(.34,.34,top-ramYs[0]-1,16),M.steel,[k*4.4,(top+ramYs[0]-1)/2,-4]);const v=makeGateValve(POD,.7);v.position.set(k*4.4,ramYs[1]+3,-4.9);add(g,G.cyl(.4,.4,1.6,16),M.blue,[k*4.4,ramYs[1]+5.3,-4.9]);v.rotation.y=Math.PI/2;g.add(v)}
  const lad=[beamG(V(9.7,fy0,5.6),V(9.7,fy1,5.6),.08),beamG(V(11.1,fy0,5.6),V(11.1,fy1,5.6),.08)];for(let yy=fy0+1;yy<fy1;yy+=1.1)lad.push(beamG(V(9.7,yy,5.6),V(11.1,yy,5.6),.06));g.add(mergeMesh(lad,M.yellow));
+ // plataformas amarelas com guarda-corpo em cada nível de gaveta e bobina de mangueira azul no topo (foto da pilha)
+ for(const yy of[ramYs[0]-2.3,ramYs[1]-2.3,ramYs[2]-2.3])for(const z of[-1,1]){add(g,G.box(17.4,.16,1.5),M.yellow,[0,yy,z*6.1]);add(g,G.box(17.4,.08,.08),M.yellow,[0,yy+1.1,z*6.8]);for(let x=-8.4;x<=8.5;x+=3.5)add(g,G.cyl(.06,.06,1.1,6),M.yellow,[x,yy+.55,z*6.8])}
+ for(let i=0;i<3;i++)add(g,G.tor(1.5,.17,24),M.blue,[-2.5,top-6+i*.4,-2],[Math.PI/2,0,0]);
  const leds=[add(g,G.sph(.18,10),M.ledG,[8.6,fy1+.6,5.7]),add(g,G.sph(.18,10),M.ledR,[-8.6,fy1+.6,5.7])];
  const bd=bopDetail({ramYs,top,fy0,fy1});bake(bd.A);bake(bd.B);g.add(bd.A,bd.B);
  g.userData={top,ramYs,annYs,valves,pods,h4,leds,detA:bd.A,detB:bd.B};return g}
@@ -72,9 +88,10 @@ export function makeRiserJoint(L=24,o={}){const g=new THREE.Group();const h=L/2;
  add(g,G.cyl(1.25,1.25,L-1.6,48),o.body||M.white);
  for(const k of[-1,1]){add(g,G.cyl(2.3,2.3,.8,56),M.grey,[0,k*(h-.4),0]);add(g,G.cyl(1.55,2.25,.6,48),M.grey,[0,k*(h-1.1),0]);bolts(g,1.95,14,[0,k*(h-.4)+k*.45,0])}
  for(const[x,z,r,m]of[[2,0,.32,M.steel],[-2,0,.32,M.steel],[0,2,.2,M.dark],[0,-2,.2,M.dark],[1.42,1.42,.15,M.red],[-1.42,-1.42,.15,M.blue]]){add(g,G.cyl(r,r,L-.3,16),m,[x,0,z]);for(const k of[-1,1])add(g,G.cyl(r*1.55,r*1.55,.8,16),M.grey,[x,k*(h-1.5),z])}
+ for(const[x,z,r]of[[2,0,.32],[-2,0,.32],[0,2,.2],[0,-2,.2]])for(const yy of[-h*.6,-h*.2,h*.2,h*.6])add(g,G.cyl(r*1.6,r*1.6,.35,16),M.black,[x,yy,z]);
  for(const yy of[-h*.48,0,h*.48]){add(g,G.cyl(2.32,2.32,.3,56),M.dark,[0,yy,0]);for(let i=0;i<4;i++){const a=i*Math.PI/2+Math.PI/4;add(g,G.rbox(.5,.5,.5,.08),M.dark,[Math.cos(a)*2.3,yy,Math.sin(a)*2.3])}}
  add(g,G.cyl(1.29,1.29,2.2,40),M.dark,[0,h-2.7,0]);add(g,G.cyl(1.29,1.29,2.2,40),M.dark,[0,-h+2.7,0]);
- if(o.mpd){add(g,G.cyl(2,2,6,48),M.blue,[0,0,0]);for(const k of[-1,1]){add(g,G.cyl(.45,.45,3,16),M.steel,[k*3.2,1.4,0],ZR);const v=makeGateValve(M.red,.55);v.position.set(k*4.6,1.4,0);g.add(v)}}
+ if(o.mpd){add(g,G.cyl(2,2,6,48),M.grey,[0,0,0]);add(g,G.cyl(2.05,2.05,.9,48),M.yellow,[0,0,0]);for(const k of[-1,1]){add(g,G.cyl(.45,.45,3,16),M.steel,[k*3.2,1.4,0],ZR);const v=makeGateValve(M.red,.55);v.position.set(k*4.6,1.4,0);g.add(v)}}
  return g}
 export function makeROV(){const g=new THREE.Group();const X=3,Y0=-1.6,Y1=.4,Z=2;const fr=[];
  const c=[[-X,Y0,-Z],[X,Y0,-Z],[X,Y0,Z],[-X,Y0,Z],[-X,Y1,-Z],[X,Y1,-Z],[X,Y1,Z],[-X,Y1,Z]].map(p=>V(...p));
@@ -89,11 +106,16 @@ export function makeROV(){const g=new THREE.Group();const X=3,Y0=-1.6,Y1=.4,Z=2;
  const arm=[V(1.4,-1.4,2.1),V(1.8,-1.2,3.2),V(1.2,-1.8,4.2),V(1.1,-2.1,4.7)];for(let i=0;i<3;i++){add(g,beamG(arm[i],arm[i+1],.16,10),i%2?M.chrome:M.dark);add(g,G.sph(.24,12),M.dark,arm[i].toArray())}
  add(g,tubeG([[0,2,0],[0,3.5,-.6],[.5,6,-1.8]],.12),M.rubber);g.userData.lamps=lamps;return g}
 export function makeTopDrive(){const g=new THREE.Group();
- add(g,G.box(.5,7.4,.5),M.dark,[-1.5,3.6,-1.2]);add(g,G.box(.5,7.4,.5),M.dark,[1.5,3.6,-1.2]);add(g,G.rbox(3.6,1.2,1,.12),M.dark,[0,6.4,-1.2]);
- add(g,G.rbox(2.6,1.7,2.4,.25),M.red,[0,3.3,0]);add(g,G.rbox(2.4,2.4,2.2,.3),M.red,[0,5.4,0]);add(g,G.cyl(1,1,.4,32),M.dark,[0,6.8,0]);
- add(g,tubeG([[0,7,0],[0,8,.4],[0,8.3,1.4],[0,7.6,2]],.24),M.red);add(g,G.cyl(.3,.3,2.2,16),M.steel,[0,1.6,0]);add(g,G.tor(1,.18,32),M.red,[0,2.2,0],[Math.PI/2,0,0]);
- for(const k of[-1,1])add(g,G.cyl(.09,.09,4,8),M.chrome,[k*.75,.2,0]);add(g,G.rbox(2.1,.6,1.2,.15),M.yellow,[0,-1.8,0]);
- add(g,tubeG([[1.3,5.4,.6],[1.8,4.4,1],[1.4,3,.6]],.1),M.rubber);return g}
+ for(const k of[-1,1]){add(g,G.box(.55,7.6,.55),M.lattice,[k*1.6,3.6,-1.3]);add(g,G.box(.35,7.4,.2),M.dark,[k*1.6,3.6,-.95])}add(g,G.rbox(3.8,1.2,1.1,.12),M.dark,[0,6.4,-1.3]);
+ add(g,G.rbox(2.4,2.4,2.2,.3),M.red,[0,5.5,0]);add(g,G.cyl(.95,1,1.0,32),M.red,[0,7,0]);add(g,G.cyl(1.1,1.1,.3,32),M.dark,[0,7.6,0]);
+ add(g,G.rbox(3.2,1.7,2.6,.3),M.red,[0,3.3,0]);add(g,G.cyl(1.2,1.4,.8,32),M.red,[0,2.2,0]);
+ add(g,tubeG([[0,7.6,0],[0,8.6,.2],[0,8.9,1.4],[0,8,2.3]],.28),M.red);
+ for(const k of[-1,1]){add(g,G.rbox(.9,1.2,.9,.12),M.grey,[k*2.0,4.9,.5]);add(g,G.rbox(.7,.9,.7,.1),M.grey,[k*2.0,3.5,.7])}
+ for(const[x,z]of[[1.8,.9],[-1.8,.9],[1.5,-.6]])add(g,tubeG([[x,5.4,z],[x*1.2,4.4,z+.4],[x*1.1,3,z+.2],[x,1.2,z]],.09),M.rubber);
+ for(let i=0;i<14;i++)add(g,G.tor(.14,.05,8),M.blue,[-1.2,6.2-i*.38,.9],[Math.PI/2,0,0]);
+ add(g,G.cyl(.3,.3,2.2,16),M.steel,[0,1.0,0]);add(g,G.tor(1,.18,32),M.red,[0,2.2,0],[Math.PI/2,0,0]);
+ for(const k of[-1,1]){add(g,G.cyl(.09,.09,4,8),M.chrome,[k*.75,.2,0]);add(g,tubeG([[k*1.2,1.2,0],[k*1.8,0,.3],[k*1.4,-1.4,0]],.18),M.red)}
+ add(g,G.rbox(2.1,.6,1.2,.15),M.red,[0,-1.8,0]);return g}
 export function makeRoughneck(){const g=new THREE.Group();
  add(g,G.rbox(2,.8,2,.15),M.dark,[0,.4,0]);add(g,G.cyl(.45,.55,2.6,24),M.red,[0,2,0]);
  const arm=new THREE.Group();arm.position.y=3.2;g.add(arm);add(arm,G.rbox(3.4,.8,.9,.15),M.red,[1.6,0,0]);add(arm,G.cyl(.18,.18,2.8,12),M.chrome,[1.6,-.6,.35],ZR);
@@ -106,9 +128,13 @@ export function makeDrawworks(){const g=new THREE.Group();
  for(const k of[-1,1])add(g,G.cyl(.9,.9,1.6,32),M.blue,[k*3.5,2,0],ZR);g.userData.drum=drum;return g}
 export function makeRotary(){const g=new THREE.Group();add(g,G.rbox(4,.9,4,.2),M.dark,[0,.45,0]);add(g,G.cyl(1.6,1.6,.4,48),M.orange,[0,1.1,0]);add(g,G.cyl(.6,.6,.45,24),M.black,[0,1.15,0]);return g}
 export function makeMudPump(){const g=new THREE.Group();
- add(g,G.rbox(7,.5,3.6,.1),M.dark,[0,.25,0]);add(g,G.rbox(3.8,2.6,3,.35),M.red,[-.8,1.8,0]);
- for(let i=0;i<3;i++){add(g,G.rbox(1.6,1.6,.9,.15),M.steel,[2.1,1.6,-1+i]);add(g,G.cyl(.32,.32,.4,16),M.chrome,[2.95,1.6,-1+i],ZR)}
- add(g,G.sph(.75,24),M.dark,[2.1,3,0]);add(g,G.cyl(.25,.25,2.4,12),M.steel,[2.1,2.5,0],[Math.PI/2,0,0]);add(g,G.cyl(1,1,2.6,32),M.blue,[-3.1,1.6,0],[Math.PI/2,0,0]);return g}
+ add(g,G.rbox(7.4,.45,3.8,.1),AQ,[0,.25,0]);add(g,G.rbox(3.8,2.5,3.1,.3),AQ,[-.9,1.75,0]);add(g,G.rbox(3.9,.25,3.2,.1),AQ,[-.9,3.1,0]);add(g,G.rbox(1.6,2.1,3.3,.2),AQ,[2.2,1.65,0]);
+ for(let i=0;i<3;i++){const z=-1.05+i*1.05;add(g,G.cyl(.5,.5,1.2,24),AQ,[3.2,1.7,z],ZR);add(g,G.cyl(.54,.54,.15,24),M.steel,[3.85,1.7,z],ZR);add(g,G.cyl(.34,.34,.5,16),AQ,[2.3,2.95,z]);add(g,G.cyl(.4,.4,.15,16),M.steel,[2.3,3.3,z])}
+ add(g,G.cyl(.32,.32,3.8,16),AQ,[2.9,.85,0],[Math.PI/2,0,0]);add(g,G.cyl(.22,.22,3.4,16),AQ,[2.3,3.7,0],[Math.PI/2,0,0]);
+ add(g,G.cyl(.28,.28,.8,12),AQ,[2.3,4.0,-1.7]);add(g,G.sph(.7,24),AQ,[2.3,4.9,-1.7]);
+ add(g,G.rbox(2.6,1.9,.35,.25),AQ,[-1.8,2.2,1.65]);add(g,G.cyl(.95,.95,.35,24),AQ,[-2.7,2.2,1.65],[Math.PI/2,0,0]);
+ for(const x of[-2.4,-1.3])add(g,G.box(.12,1.3,1.5),M.black,[x,3.9,-.4]);
+ add(g,G.cyl(1,1,2.6,32),M.blue,[-3.1,1.6,0],[Math.PI/2,0,0]);return g}
 export function makeCrane(){const g=new THREE.Group();
  add(g,G.cyl(1,1.3,6,32),M.yellow,[0,3,0]);add(g,G.cyl(1.4,1.4,.5,32),M.dark,[0,6.2,0]);
  const tur=new THREE.Group();tur.position.y=6.4;g.add(tur);add(tur,G.rbox(2.6,1.6,2.4,.3),M.yellow,[0,.8,0]);add(tur,G.rbox(1.3,1.5,1.2,.15),M.glass,[.9,1.8,.9]);

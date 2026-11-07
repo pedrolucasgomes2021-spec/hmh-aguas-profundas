@@ -1,0 +1,11 @@
+/* Versão Mineração: layout da página (os componentes vivem em componentes.css) */
+html:has(body.mina){scroll-snap-type:none;overflow:hidden}
+body.mina{background:#a9c7da;overflow:hidden;height:100dvh}
+.mina #gl{touch-action:none;cursor:grab}.mina #gl:active{cursor:grabbing}
+.mina .acts{gap:6px}
+.mina .tabs button.on{background:rgba(255,255,255,.95);box-shadow:0 2px 10px rgba(5,20,40,.18)}
+.mina .nb[aria-pressed="true"]{background:var(--navy);color:#fff}
+.mina #eqBtn .lbl,.mina #flowBtn .lbl{display:none}
+.mina #eqBtn,.mina #flowBtn{padding:0;min-width:var(--ctl)}
+#intro.out{opacity:0;pointer-events:none}
+@media (max-width:980px){.mina .tabs{display:none}}

@@ -43,6 +43,20 @@ O site é estático, mas precisa ser servido por HTTP (aberto como arquivo, most
 python tools/gerar_html.py
 ```
 
+## Versão Mineração (`mineracao.html`)
+
+Mina a céu aberto em 3D com a linha HMH em operação: poço vertical (blind shaft boring + HPU), desaguamento (Wirth TPM), autoclave (Wirth Autoclave Feed), estação de slurry (TPM e DPM), fundações (PBA, ferramentas especiais). Navegação por visão geral + minimapa: clique numa operação para aproximar, arraste para girar, "Visão geral" (ou Esc) para afastar. Botões na barra: **Equipamentos** (lista com fotos e vídeo), e **Fluxo do processo** (minério → slurry → rejeitos → água).
+
+Qualidade (menu na barra, como no Deep Water): Baixa (MSAA, sombras 1024), Média (SMAA, sombras 2048), Alta (+ AO, pacote de detalhes A, texturas 2k), Ultra (+ 4K, pacote de detalhes B). A automática escolhe pela GPU e desce sozinha abaixo de 38 qps. `?q=0..3` força um nível.
+
+Texturas: CC0 do Poly Haven, baixadas por `python tools/baixar_texturas_mina.py` para `assets/texturas/mina/` (terreno em 4 camadas misturadas por vértice; equipamentos com normal e rugosidade, mapeamento por caixa em coordenadas do mundo).
+
+## Deep Water: dados ao vivo, fluxo da lama e cenário de kick
+
+Botões novos na barra: **Fluxo da lama** (reaproveita as partículas do "Como funciona": desce pela coluna em azul, volta pelo anular em âmbar) e **Cenário: kick** (≈18 s: kick detectado → fecha o anular Hydril GK → fecha a gaveta Hydril Sentry RAM → poço fechado → circulação e controle).
+
+O cenário de kick abre à esquerda o painel **Dentro do BOP**: corte 3D (anular com elemento de borracha, gavetas de tubo e de cisalhamento, linha do choke, gás subindo; arraste para girar), esquema 2D, vídeos oficiais da HMH e a lista de passos. Todos os cartões têm botão para minimizar.
+
 ## Direitos
 
 Logo, fotos de produto, nomes de produtos e vídeos são da HMH (hmhw.com). O uso neste projeto ainda depende de validação com a HMH — veja [VALIDAR-COM-HMH.md](VALIDAR-COM-HMH.md). Texturas e céu: [Poly Haven](https://polyhaven.com) e [ambientCG](https://ambientcg.com) (ambos CC0). three.js: licença MIT.

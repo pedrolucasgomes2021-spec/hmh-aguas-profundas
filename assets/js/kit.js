@@ -48,7 +48,7 @@ const winTile=emi=>ctex(256,64,(g,w,h)=>{g.fillStyle=emi?'#000':'#e9edef';g.fill
  for(let i=0;i<n;i++){const x=i*pw+7,y=11,ww=pw-14,hh=h-22;g.fillStyle=emi?'#ffd7a0':'#17222d';g.fillRect(x,y,ww,hh);
   if(!emi){const r=g.createLinearGradient(0,y,0,y+hh);r.addColorStop(0,'rgba(150,195,225,.55)');r.addColorStop(.55,'rgba(150,195,225,.05)');g.fillStyle=r;g.fillRect(x,y,ww,hh);g.fillStyle='#c4cbd0';g.fillRect(x+ww/2-1,y,2,hh)}}},{color:!emi});
 M.windows=new THREE.MeshStandardMaterial({map:winTile(false),emissiveMap:winTile(true),emissive:0xffffff,emissiveIntensity:0,roughness:.35,metalness:.15});
-M.ramBody=M.yellow.clone();M.ramBon=M.red.clone();
+M.ramBody=M.red.clone();M.ramBody.color.set(0x9c1f29);M.ramBon=M.red.clone();
 M.hull.userData.detParam={escala:1/34,desgaste:.3,sujeira:.55,incrustacao:.6,altura:2.4};
 export const PAINTED=[M.red,M.yellow,M.blue,M.white,M.grey,M.lattice,M.hull,M.dark,M.ramBody,M.ramBon];
 
