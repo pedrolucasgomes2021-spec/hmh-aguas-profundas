@@ -57,6 +57,13 @@ Botões novos na barra: **Fluxo da lama** (reaproveita as partículas do "Como f
 
 O cenário de kick abre à esquerda o painel **Dentro do BOP**: corte 3D (anular com elemento de borracha, gavetas de tubo e de cisalhamento, linha do choke, gás subindo; arraste para girar), esquema 2D, vídeos oficiais da HMH e a lista de passos. Todos os cartões têm botão para minimizar.
 
+## Operações (cenários internos) e clima
+
+- **Operações** (botão na barra): abre um cenário em tela cheia "dentro" do equipamento, com etapas clicáveis, linha do tempo, dados ao vivo com mini gráficos, equipamentos envolvidos (abrem a ficha) e câmera automática ou livre (arraste, roda e pinça). Cenários: **Operações de top drive** (perfuração e conexão de seção com racker, roughneck, cunhas e compensador na coroa), **Operações de MPD** (RCD, chokes, Coriolis, separador de gás, janela de pressão com e sem MPD), **Bombas de lama** (casa de bombas, partida em rampa, uma bomba em manutenção) e **Tensionadores e heave** (casco em corte no moonpool, junta telescópica e círculo de vigilância). O menu também leva ao cenário de kick. Link direto: `#cenario/topdrive`, `#cenario/mpd`, `#cenario/pumps`, `#cenario/tens`.
+- Leve: o cenário usa o mesmo renderer da cena principal, que fica pausada enquanto ele está aberto; cada cenário é montado só na primeira vez, sem sombras nem pós-processamento.
+- **Clima** (botão na barra): Calmo, Moderado, Chuva forte, Tempestade e Neblina, mais ajuste fino de onda, vento e chuva. Muda o mar (altura, vagas e espuma), o movimento do navio (heave, arfagem e balanço), o céu, a visibilidade, a chuva (na GPU, inclinada pelo vento), raios com trovão (se o som estiver ligado) e a biruta do heliponto. Os equipamentos reagem pelos limites operacionais típicos (ilustrativos): acima do limite a perfuração para (WOW), os guindastes vão para o descanso e cada cenário interno troca a sequência ou mostra a restrição. O painel lista o estado de cada equipamento e o motivo.
+- Código: `assets/js/cenarios.js` (cenários) e `assets/js/clima.js` (clima e limites em `avaliar()`).
+
 ## Direitos
 
 Logo, fotos de produto, nomes de produtos e vídeos são da HMH (hmhw.com). O uso neste projeto ainda depende de validação com a HMH — veja [VALIDAR-COM-HMH.md](VALIDAR-COM-HMH.md). Texturas e céu: [Poly Haven](https://polyhaven.com) e [ambientCG](https://ambientcg.com) (ambos CC0). three.js: licença MIT.

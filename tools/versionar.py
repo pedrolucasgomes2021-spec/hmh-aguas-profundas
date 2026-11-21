@@ -10,7 +10,7 @@ A versão é um resumo (hash) do conteúdo, então só muda quando algum arquivo
 import hashlib, pathlib, re
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-MODULOS = ['kit', 'modelos', 'detalhe', 'detalhes3d', 'ssao']
+MODULOS = ['kit', 'modelos', 'detalhe', 'detalhes3d', 'ssao', 'operacao', 'clima', 'cenarios']
 
 h = hashlib.sha1()
 for f in sorted((RAIZ / 'assets' / 'js').glob('*.js')) + [RAIZ / 'assets' / 'css' / 'site.css', RAIZ / 'assets' / 'css' / 'mina.css', RAIZ / 'assets' / 'css' / 'componentes.css', RAIZ / 'content' / 'conteudo.json']:

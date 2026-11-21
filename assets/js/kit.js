@@ -10,7 +10,9 @@ export const UP=new THREE.Vector3(0,1,0),ONE=new THREE.Vector3(1,1,1),V=(x,y,z)=
 let seed=7;export const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 export const ZR=[0,0,Math.PI/2];
 // mesma fórmula usada no shader do oceano (app.js)
-export const wave=(x,z,t)=>.5*Math.sin(x*.045+t*.8)+.35*Math.sin(z*.06+t*1.05+1.3)+.18*Math.sin((x+z)*.11+t*1.6);
+// SEA: estado do mar controlado pelo clima (clima.js). amp escala a ondulação, chop soma vagas curtas (mar de vento)
+export const SEA={amp:1,chop:0};
+export const wave=(x,z,t)=>SEA.amp*(.5*Math.sin(x*.045+t*.8)+.35*Math.sin(z*.06+t*1.05+1.3)+.18*Math.sin((x+z)*.11+t*1.6))+SEA.chop*(.32*Math.sin(x*.19-z*.05+t*2.1)+.22*Math.sin(z*.23+x*.08+t*2.6+.7));
 
 /* ---------- texturas procedurais ---------- */
 export const TEXS=[];
