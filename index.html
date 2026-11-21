@@ -21,22 +21,25 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=9788b108">
-<link rel="stylesheet" href="assets/css/componentes.css?v=9788b108">
+<link rel="stylesheet" href="assets/css/site.css?v=7365046b">
+<link rel="stylesheet" href="assets/css/componentes.css?v=7365046b">
 <script type="importmap">
 {"imports":{
 "three":"./assets/vendor/three/build/three.module.min.js",
 "three/addons/":"./assets/vendor/three/examples/jsm/",
-"./assets/js/kit.js":"./assets/js/kit.js?v=9788b108",
-"./assets/js/modelos.js":"./assets/js/modelos.js?v=9788b108",
-"./assets/js/detalhe.js":"./assets/js/detalhe.js?v=9788b108",
-"./assets/js/detalhes3d.js":"./assets/js/detalhes3d.js?v=9788b108",
-"./assets/js/ssao.js":"./assets/js/ssao.js?v=9788b108"
+"./assets/js/kit.js":"./assets/js/kit.js?v=7365046b",
+"./assets/js/modelos.js":"./assets/js/modelos.js?v=7365046b",
+"./assets/js/detalhe.js":"./assets/js/detalhe.js?v=7365046b",
+"./assets/js/detalhes3d.js":"./assets/js/detalhes3d.js?v=7365046b",
+"./assets/js/ssao.js":"./assets/js/ssao.js?v=7365046b",
+"./assets/js/operacao.js":"./assets/js/operacao.js?v=7365046b",
+"./assets/js/clima.js":"./assets/js/clima.js?v=7365046b",
+"./assets/js/cenarios.js":"./assets/js/cenarios.js?v=7365046b"
 }}
 </script>
 <link rel="modulepreload" href="assets/vendor/three/build/three.module.min.js">
-<link rel="modulepreload" href="assets/js/app.js?v=9788b108">
-<link rel="preload" href="content/conteudo.json?v=9788b108" as="fetch" crossorigin>
+<link rel="modulepreload" href="assets/js/app.js?v=7365046b">
+<link rel="preload" href="content/conteudo.json?v=7365046b" as="fetch" crossorigin>
 <link rel="preload" href="assets/img/hmh-logo.png" as="image">
 <link rel="preload" href="assets/hdri/ceu.hdr" as="fetch" crossorigin>
 <link rel="preload" href="assets/texturas/metal_plate_diff.webp" as="image" crossorigin>
@@ -73,6 +76,8 @@
     <button class="nb esg" id="esgBtn" aria-pressed="false" data-i-label="esg" aria-label="ESG Point"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z"/><path d="M2 21c0-3 1.9-5.4 5.1-6C9.5 14.5 12 13 13 12"/></svg><span class="lbl" data-i="esg">ESG Point</span><span class="cnt" id="esgCnt">8</span></button>
     <button class="nb" id="ovBtn" aria-pressed="false" data-i-label="visao" aria-label="Visão geral"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5V5a2 2 0 0 1 2-2h2.5M16.5 3H19a2 2 0 0 1 2 2v2.5M21 16.5V19a2 2 0 0 1-2 2h-2.5M7.5 21H5a2 2 0 0 1-2-2v-2.5"/><path d="M7.5 9h9M7.5 12h9M7.5 15h9"/></svg><span class="lbl" data-i="visao">Visão geral</span></button>
     <button class="nb" id="kickBtn" aria-pressed="false"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 20h19Z"/><path d="M12 10v4.5M12 17.5v.01"/></svg><span class="lbl" id="kickLbl">Cenário: kick</span></button>
+    <button class="nb" id="opsBtn" aria-expanded="false" aria-controls="opsMenu" aria-haspopup="menu"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="m10.5 8.2 4 2.3-4 2.3Z"/><path d="M8 21h8M12 17v4"/></svg><span class="lbl" id="opsLbl">Operações</span></button>
+    <button class="nb" id="wxBtn" aria-pressed="false" aria-controls="wxp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"></svg><span class="lbl">Clima</span></button>
     <span class="sep" aria-hidden="true"></span>
     <button class="nb ic night" id="nightBtn" aria-pressed="false" data-i-label="noite" aria-label="Noite"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.1A8.5 8.5 0 1 1 9.9 3.5a6.6 6.6 0 0 0 10.6 10.6Z"/></svg></button>
     <button class="nb lang" id="langBtn" aria-label="English"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13.5 13.5 0 0 1 0 18M12 3a13.5 13.5 0 0 0 0 18"/></svg><span class="lt">EN</span></button>
@@ -206,7 +211,7 @@
 </main>
 
 <script>
-window.__v='9788b108';
+window.__v='7365046b';
 // se o módulo 3D não iniciar (sem WebGL, navegador antigo ou aberto como arquivo), mostra o conteúdo estático
 window.__fail=function(m){document.body.classList.add('nogl');var n=document.getElementById('noglMsg');
  if(n){n.textContent=m||'Não foi possível exibir a cena 3D. Abaixo está todo o conteúdo do site.';
@@ -220,6 +225,6 @@ if(location.protocol==='file:')addEventListener('DOMContentLoaded',function(){wi
 if(/[?&]nogl/.test(location.search))addEventListener('DOMContentLoaded',function(){window.__fail()});
 setTimeout(function(){if(!window.__ready){window.__err=window.__err||'a cena demorou mais de 60 s para iniciar';window.__fail()}},60000);
 </script>
-<script type="module" src="assets/js/app.js?v=9788b108" onerror="window.__esperaErro('falha ao carregar um dos arquivos da cena (assets/js)')"></script>
+<script type="module" src="assets/js/app.js?v=7365046b" onerror="window.__esperaErro('falha ao carregar um dos arquivos da cena (assets/js)')"></script>
 </body>
 </html>
