@@ -27,6 +27,7 @@ Vale para as duas páginas (Deep Water, `index.html`, e Mineração, `mineracao.
 | Banner do kick | `.kick` (+ `.safe`, `.min`) | alerta, controlado, minimizado |
 | Menu de operações | `.opsMenu` | fechado (`hidden`), aberto |
 | Cartão de clima | `.wxp` (+ `.wxBan` faixa de WOW) | fechado, aberto, minimizado |
+| Modo Cinema | `.cine` (`.cineTop`, `.cineCap` legenda, `.cineBar` controles, `.cineEnd` cartão final) | reproduzindo, pausado, controles ocultos (`.bare`), fim |
 | Cenário interno | `.scn` (`.scnTop`, `.scnL`, `.scnR`, `.scnBar`, `.scl` rótulos 3D) | carregando (`.scnFade`), aberto; no celular `.showR` alterna Etapas/Dados |
 
 ## Regras de uso

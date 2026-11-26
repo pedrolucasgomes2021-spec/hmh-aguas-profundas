@@ -108,6 +108,14 @@ Logo, fotos de produto, nomes de produtos e vídeos são da HMH (hmhw.com). O us
 
 Os pacotes de detalhe ficam mesclados por material e desligados nos níveis menores, então máquinas modestas continuam leves.
 
+## Modo Cinema
+
+- Botão **Cinema** na barra (ou link `#cinema`): sequência de 7 planos (~50 s) com câmera animada sobre a própria cena 3D: mar aberto, convés, torre e top drive, piso de perfuração, proa, riser e BOP. Termina num cartão que leva aos cenários internos.
+- Transições: fade, corte com desfoque de movimento e giro rápido de câmera. Balanço de câmera na mão (mais forte com mar agitado) e câmera embarcada que acompanha a onda.
+- Acabamento numa única passada final (barata): barras de cinema 2,39:1, correção de cor (Natural, Brilho suave, Aço frio, Contraste), granulação e vinheta.
+- Barra de controles: Cor, Luz (Dia, Hora dourada, Noite), Mar (presets do clima), Planos (Auto ou Fixo), Lente, Grão, `H` para ocultar e Sair. Arraste para olhar em volta; espaço pausa; setas trocam de plano; Esc sai.
+- Código em `assets/js/cinema.js` (planos na função `shots`). Para o cinema a cena ganha mar à frente do corte e uma cúpula de céu, só enquanto ele está ativo.
+
 ## Modelos 3D comprimidos e economia de processamento
 
 - Todos os GLB (menos `bop_sim.glb` e `riser_sim.glb`, que têm peças animadas por escala) estão comprimidos com **meshopt**: 186 MB → 60 MB (−68%), sem mudança visível. Os carregadores do site (`app.js`, `operacao.js`, `cenarios.js`, `visor3d.js`) e o AR (`model-viewer`) já decodificam. Para um modelo novo, use `tools/comprimir_modelos.mjs` (instruções no topo do arquivo).

@@ -399,3 +399,37 @@ body.scnOn .nav,body.scnOn #copy,body.scnOn .meter,body.scnOn .read,body.scnOn .
 }
 @media (prefers-reduced-motion:reduce){.wxp,.scnFade{transition:none}.scnFade span{animation:none}}
 @media (max-width:560px){#kickBtn{display:none}}
+
+/* =====================================================================
+   Modo Cinema (.cine): legenda, progresso por plano, barra de controles e cartão final
+   ===================================================================== */
+body.cineOn .nav,body.cineOn #copy,body.cineOn .meter,body.cineOn .read,body.cineOn .dock,body.cineOn .zoom,body.cineOn .qual,body.cineOn #hots,body.cineOn #tags,body.cineOn #ovb,body.cineOn .hint,body.cineOn .tour,body.cineOn .sheetMenu,body.cineOn .wxBan,body.cineOn .opc{visibility:hidden;opacity:0;pointer-events:none}
+.cine{position:fixed;inset:0;z-index:64;pointer-events:none;color:#fff;font-family:Inter,system-ui,sans-serif}
+.cine[hidden]{display:none}.cine>*{pointer-events:auto}
+.cineHit{position:absolute;inset:0;cursor:grab;touch-action:none}.cineHit:active{cursor:grabbing}
+.cineTop{position:absolute;top:18px;left:24px;right:24px;display:flex;align-items:center;gap:var(--sp-4);pointer-events:none;transition:opacity .4s}
+.cineSeg{flex:1;display:flex;gap:4px}.cineSeg i{flex:1;height:2px;background:rgba(255,255,255,.22);border-radius:2px;overflow:hidden}.cineSeg b{display:block;height:100%;background:rgba(255,255,255,.85);transform-origin:0 50%;transform:scaleX(0)}
+.cineNo{font:500 var(--fs-1)/1 Inter,sans-serif;letter-spacing:.2em;opacity:.75;font-variant-numeric:tabular-nums}
+.cineCap{position:absolute;left:clamp(24px,5vw,72px);bottom:calc(13vh + 64px);max-width:min(560px,80vw);pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .8s var(--ease),transform .8s var(--ease);text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.cineCap.on{opacity:1;transform:none}
+.cineCap b{display:block;font:500 clamp(22px,2.6vw,34px)/1.1 Oswald,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.cineCap span{display:block;margin-top:6px;font-size:var(--fs-3);letter-spacing:.02em;opacity:.85}
+.cineBar{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-3) var(--sp-5) var(--sp-4);background:linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,0));transition:opacity .4s}
+.cbSt{font:500 var(--fs-1)/1 Inter,sans-serif;letter-spacing:.18em;opacity:.8;white-space:nowrap}
+.cbCt{flex:1;display:flex;justify-content:center;align-items:center;gap:var(--sp-1);flex-wrap:wrap}
+.cbCt button,.cbCt label{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 var(--sp-3);border-radius:var(--r-pill);font-size:var(--fs-2);font-weight:600;white-space:nowrap;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.cbCt button:hover{background:rgba(255,255,255,.16)}.cbCt small{font-size:var(--fs-2);font-weight:400;opacity:.6}
+.cbCt input{width:76px;accent-color:#fff}.cbCt .cbH{opacity:.65}
+.cbX{height:32px;padding:0 var(--sp-4);border-radius:var(--r-pill);background:rgba(255,255,255,.92);color:var(--navy);font-size:var(--fs-2);font-weight:700;white-space:nowrap}
+.cine.bare .cineBar,.cine.bare .cineTop{opacity:0}.cine.bare .cineBar:hover{opacity:1}
+.cineEnd{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100vw - 32px));text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);animation:ceIn .8s var(--ease)}
+.cineEnd[hidden]{display:none}
+@keyframes ceIn{from{opacity:0;transform:translate(-50%,-46%)}}
+.cineEnd h2{font:500 clamp(28px,3.4vw,44px)/1.05 Oswald,sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.cineEnd p{font-size:var(--fs-3);opacity:.85;max-width:440px;line-height:1.5}
+.ceOps{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--sp-2);margin-top:var(--sp-2)}
+.ceOps button{height:42px;padding:0 var(--sp-4);border-radius:var(--r-pill);background:#fff;color:var(--navy);font-size:var(--fs-3);font-weight:700}
+.ceOps button:hover{background:#dff3ff}
+.ceAlt{display:flex;gap:var(--sp-2)}.ceAlt button{height:36px;padding:0 var(--sp-4);border-radius:var(--r-pill);border:1px solid rgba(255,255,255,.4);font-size:var(--fs-2);font-weight:600}.ceAlt button:hover{background:rgba(255,255,255,.12)}
+@media (max-width:820px){.cineBar{flex-wrap:wrap;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3) var(--sp-3)}.cbSt{display:none}.cbCt{order:2;flex-basis:100%;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}.cbX{margin-left:auto}.cineCap{bottom:120px}.cbCt label{display:none}}
+@media (prefers-reduced-motion:reduce){.cineCap,.cineEnd{transition:none;animation:none}}
