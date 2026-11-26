@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';   // modelos comprimidos (EXT_meshopt_compression)
-import {M,G,add,clamp,lerp,smooth,V,UP,wave,SEA,tubeG,beamG,mergeMesh,ZR,dotTex} from './kit.js';
+import {M,G,add,clamp,lerp,smooth,V,UP,wave,SEA,tubeG,beamG,mergeMesh,ZR,dotTex,GERSTNER_GLSL} from './kit.js';
 import {makeTopDrive,makeRoughneck,makeDrawworks,makeRotary,makeMudPump,makeDerrick,makeTensioner,makeRiserJoint,makeDiverter,makeGateValve} from './modelos.js';
 import {WXU,makeRain,wxIcon} from './clima.js';
 
@@ -314,7 +314,7 @@ export const SCN_IDS=Object.keys(DEF);
 /* =====================================================================
    Fundo: céu e mar (shaders leves) e luzes
    ===================================================================== */
-const WV=`uniform float uTime;uniform vec2 uSea;float wv(vec2 p){return uSea.x*(.5*sin(p.x*.045+uTime*.8)+.35*sin(p.y*.06+uTime*1.05+1.3)+.18*sin((p.x+p.y)*.11+uTime*1.6))+uSea.y*(.32*sin(p.x*.19-p.y*.05+uTime*2.1)+.22*sin(p.y*.23+p.x*.08+uTime*2.6+.7));}`;
+const WV=GERSTNER_GLSL;   // o mesmo mar por fórmula da cena principal (kit.js)
 function backdrop(){const U={uTime:{value:0},uSea:{value:new THREE.Vector2(1,0)},uSt:WXU.storm,uFl:WXU.flash,uN:{value:0},uFog:{value:0},uA:{value:1}};
  const sky=new THREE.Mesh(new THREE.SphereGeometry(1800,32,16),new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,fog:false,uniforms:U,
   vertexShader:'varying vec3 d;void main(){d=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_Position.z=gl_Position.w;}',
@@ -325,7 +325,7 @@ function backdrop(){const U={uTime:{value:0},uSea:{value:new THREE.Vector2(1,0)}
    #include <colorspace_fragment>
    }`}));sky.frustumCulled=false;sky.renderOrder=-10;
  const sea=new THREE.Mesh(new THREE.PlaneGeometry(1600,1600,160,160).rotateX(-PI/2),new THREE.ShaderMaterial({uniforms:U,fog:false,transparent:true,
-  vertexShader:WV+`varying vec3 w;varying vec3 n;void main(){vec3 p=position;vec4 wp=modelMatrix*vec4(p,1.);float h=wv(wp.xz);p.y+=h;float e=.6;n=normalize(vec3(-(wv(wp.xz+vec2(e,0.))-wv(wp.xz-vec2(e,0.)))/(2.*e),1.,-(wv(wp.xz+vec2(0.,e))-wv(wp.xz-vec2(0.,e)))/(2.*e)));wp=modelMatrix*vec4(p,1.);w=wp.xyz;gl_Position=projectionMatrix*viewMatrix*wp;}`,
+  vertexShader:WV+`varying vec3 w;varying vec3 n;void main(){vec4 wp=modelMatrix*vec4(position,1.);vec3 gn;vec3 gd=gerst(wp.xz,gn);wp.xyz+=gd;n=gn;w=wp.xyz;gl_Position=projectionMatrix*viewMatrix*wp;}`,
   fragmentShader:`uniform float uSt,uFl,uN,uFog,uA;uniform vec2 uSea;varying vec3 w;varying vec3 n;void main(){vec3 v=normalize(cameraPosition-w);vec3 nn=normalize(n);float f=pow(1.-max(dot(nn,v),0.),4.);
    vec3 deep=mix(vec3(.02,.17,.24),vec3(.12,.17,.19),uSt*.8);vec3 skyc=mix(vec3(.62,.74,.85),vec3(.42,.46,.5),uSt);vec3 c=mix(deep,skyc,.12+.75*f);
    vec3 sd=normalize(vec3(.45,.6,.65));float sp=pow(max(dot(reflect(-sd,nn),v),0.),180.)*(1.-uSt)*2.;c+=sp;

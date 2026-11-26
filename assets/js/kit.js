@@ -10,9 +10,19 @@ export const UP=new THREE.Vector3(0,1,0),ONE=new THREE.Vector3(1,1,1),V=(x,y,z)=
 let seed=7;export const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 export const ZR=[0,0,Math.PI/2];
 // mesma fórmula usada no shader do oceano (app.js)
-// SEA: estado do mar controlado pelo clima (clima.js). amp escala a ondulação, chop soma vagas curtas (mar de vento)
+// SEA: estado do mar controlado pelo clima (clima.js). amp escala a ondulação (swell), chop as vagas curtas do vento
 export const SEA={amp:1,chop:0};
-export const wave=(x,z,t)=>SEA.amp*(.5*Math.sin(x*.045+t*.8)+.35*Math.sin(z*.06+t*1.05+1.3)+.18*Math.sin((x+z)*.11+t*1.6))+SEA.chop*(.32*Math.sin(x*.19-z*.05+t*2.1)+.22*Math.sin(z*.23+x*.08+t*2.6+.7));
+/* Mar por fórmula (ondas de Gerstner): cada onda é trocoidal, com crista pontuda e vale largo, e a velocidade vem da
+   relação de dispersão de águas profundas (w² = g·k). Tudo é calculado na placa de vídeo, por vértice, com a normal
+   pela derivada analítica: uma passada por onda, sem as avaliações extras que a inclinação por diferenças finitas exigia.
+   [direção x, direção z, comprimento de onda (m), amplitude (m), grupo: 0 = swell (SEA.amp), 1 = vaga de vento (SEA.chop)] */
+export const WAVES=[[.94,.34,118,.50,0],[.57,-.82,71,.34,0],[-.5,.87,41,.2,0],[.17,.98,24,.1,0],[.98,.17,12,.14,1],[-.17,.98,7.5,.09,1],[.71,-.71,4.6,.05,1]];
+const G0=9.8,WK=WAVES.map(w=>2*Math.PI/w[2]),WW=WK.map(k=>Math.sqrt(G0*k)),STEEP=.55;
+// altura da superfície (mesma fórmula do shader, sem o deslocamento horizontal): usada no balanço do navio, na faixa do corte e na câmera embarcada
+export const wave=(x,z,t)=>{let h=0;for(let i=0;i<WAVES.length;i++){const w=WAVES[i],a=w[3]*(w[4]?SEA.chop:SEA.amp);if(a)h+=a*Math.sin(WK[i]*(w[0]*x+w[1]*z)-WW[i]*t)}return h};
+// GLSL: gerst(p) devolve o deslocamento (x, y, z) e a normal; precisa dos uniforms uTime e uSea
+export const GERSTNER_GLSL='uniform float uTime;uniform vec2 uSea;\nvec3 gerst(vec2 p,out vec3 nrm){vec3 d=vec3(0.);vec3 n=vec3(0.,1.,0.);float ph,s,c,a,q;\n'+WAVES.map((w,i)=>{const k=WK[i].toFixed(5),om=WW[i].toFixed(5),Q=(STEEP/(WK[i]*w[3]*WAVES.length)).toFixed(4);
+ return `a=${w[3].toFixed(3)}*${w[4]?'uSea.y':'uSea.x'};ph=${k}*dot(vec2(${w[0]},${w[1]}),p)-${om}*uTime;s=sin(ph);c=cos(ph);q=min(${Q},.9/(${k}*max(a,.001)*${WAVES.length}.));d+=vec3(q*a*${w[0]}*c,a*s,q*a*${w[1]}*c);n-=vec3(${w[0]}*${k}*a*c,q*${k}*a*s,${w[1]}*${k}*a*c);`}).join('\n')+'\nnrm=normalize(n);return d;}\n';
 
 /* ---------- texturas procedurais ---------- */
 export const TEXS=[];

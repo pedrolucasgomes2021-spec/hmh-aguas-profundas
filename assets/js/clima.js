@@ -148,7 +148,8 @@ export function createClima({scene,lang,audio,onChange=()=>{},reduced=false}){
   s.cloud=clamp(Math.max(s.chuva/40,(s.vento-12)/40,s.nevoa*.7));
   // névoa: coeficiente pela visibilidade (3/vis = 95% de perda de contraste na distância de visibilidade)
   s.fogk=clamp(3/(Math.max(.15,s.vis)*1000)-.00015,0,.03);
-  SEA.amp=lerp(.55,1,clamp(s.hs/1))+Math.max(0,s.hs-1)*.42;SEA.chop=clamp((s.vento-10)/38)*1.25;
+  SEA.amp=s.hs/1.82;   // Hs = 4σ e σ² = Σa²/2 das ondas de swell (kit.js): com escala 1 o mar tem Hs = 1,82 m
+  SEA.chop=clamp((s.vento-10)/38)*1.25;
   WXU.storm.value=clamp(s.cloud*.95);
   for(const kk of['drill','pipe','crane']){const on=st[kk]==='stop'?0:st[kk]==='warn'?.55:1;k[kk]+=(on-k[kk])*(1-Math.exp(-dt*.8))}
   // relâmpagos
