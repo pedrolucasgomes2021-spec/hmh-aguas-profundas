@@ -116,6 +116,15 @@ Os pacotes de detalhe ficam mesclados por material e desligados nos níveis meno
 - Barra de controles: Cor, Luz (Dia, Hora dourada, Noite), Mar (presets do clima), Planos (Auto ou Fixo), Lente, Grão, `H` para ocultar e Sair. Arraste para olhar em volta; espaço pausa; setas trocam de plano; Esc sai.
 - Código em `assets/js/cinema.js` (planos na função `shots`). Para o cinema a cena ganha mar à frente do corte e uma cúpula de céu, só enquanto ele está ativo.
 
+## Câmera virtual pelo celular (Fase 3)
+
+- No Modo Cinema, **📱 Celular** mostra um QR code. O celular abre `controle.html` e vira a câmera: joystick **Mover**, controle **Subir/Descer**, joystick **Olhar**, **giroscópio** (mova o próprio celular para enquadrar; **Recentrar** zera a direção), lentes de **18 a 85 mm**, **● Gravar** (o percurso, até 30 s, vira um plano no fim do filme, guardado neste navegador) e controles dos planos (◀ ⏯ ▶).
+- Conexão direta entre os aparelhos por WebRTC com **PeerJS**: o servidor público do PeerJS só apresenta os dois; os comandos não passam por ele. O código da sala é aleatório e vale enquanto a página do computador estiver aberta. Sem notícias do celular por 4 s, a câmera para.
+- Sem computador: no celular, o botão **Giroscópio** da barra do cinema usa o giroscópio do próprio aparelho.
+- Bibliotecas no próprio site: `assets/vendor/peerjs` (PeerJS 1.5.4, MIT) e `assets/vendor/qrcode` (qrcode-generator 1.4.4, MIT), baixadas só quando o painel é aberto.
+- Servidor PeerJS próprio (produção ou testes): `?peer=host:porta/caminho` na URL do computador; o QR repassa a opção ao celular.
+- Código: `assets/js/remoto.js` (computador), `controle.html` + `assets/js/controle.js` (celular), câmera livre e gravação em `assets/js/cinema.js`.
+
 ## Mar por fórmula, fumaça e luzes (Fase 2)
 
 - **Ondas de Gerstner** (`kit.js`: `WAVES`, `wave()` e `GERSTNER_GLSL`): 4 ondas de swell e 3 vagas de vento, com crista pontuda, velocidade pela dispersão de águas profundas (ω² = g·k) e normal pela derivada analítica. Tudo na placa de vídeo, numa passada por onda (antes eram 5 avaliações da superfície por vértice para achar a inclinação). A cena principal, o Modo Cinema e os cenários internos usam a mesma fórmula, e a mesma função em JavaScript move o navio.
