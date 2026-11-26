@@ -433,3 +433,21 @@ body.cineOn .nav,body.cineOn #copy,body.cineOn .meter,body.cineOn .read,body.cin
 .ceAlt{display:flex;gap:var(--sp-2)}.ceAlt button{height:36px;padding:0 var(--sp-4);border-radius:var(--r-pill);border:1px solid rgba(255,255,255,.4);font-size:var(--fs-2);font-weight:600}.ceAlt button:hover{background:rgba(255,255,255,.12)}
 @media (max-width:820px){.cineBar{flex-wrap:wrap;gap:var(--sp-2);padding:var(--sp-2) var(--sp-3) var(--sp-3)}.cbSt{display:none}.cbCt{order:2;flex-basis:100%;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}.cbX{margin-left:auto}.cineCap{bottom:120px}.cbCt label{display:none}}
 @media (prefers-reduced-motion:reduce){.cineCap,.cineEnd{transition:none;animation:none}}
+
+/* ---------- câmera virtual pelo celular: cartão do QR (.rmt) e gravação no cinema ---------- */
+.rmt{position:fixed;z-index:66;right:20px;bottom:84px;width:min(320px,calc(100vw - 32px));padding:var(--sp-4);border-radius:var(--r-3);background:var(--surf-dark);color:var(--ink-dark);border:1px solid var(--line-dark);box-shadow:var(--sh-2);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;flex-direction:column;gap:var(--sp-2)}
+.rmt[hidden]{display:none}
+.rmt header{display:flex;align-items:center;gap:var(--sp-2)}.rmt header b{flex:1;font:600 var(--fs-4)/1.2 Oswald,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.rmX{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.14);font-size:var(--fs-4)}
+.rmP{font-size:var(--fs-2);line-height:1.45;opacity:.85}
+.rmQ{align-self:center;width:200px;height:200px;padding:8px;border-radius:var(--r-2);background:#fff;display:grid;place-content:center}.rmQ svg{width:184px;height:184px;display:block}
+.rmS{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-2);font-weight:600}.rmS i{width:9px;height:9px;border-radius:50%;background:#f5b041;box-shadow:0 0 0 3px rgba(245,176,65,.2)}
+.rmS.on i{background:var(--c-ok);box-shadow:0 0 0 3px rgba(95,220,168,.25)}.rmS.err i,.rmS.lost i{background:var(--c-alert)}
+.rmC{display:flex;align-items:baseline;gap:var(--sp-2)}.rmC small{font-size:var(--fs-1);opacity:.7}.rmC b{font:600 var(--fs-5)/1 Oswald,sans-serif;letter-spacing:.18em}
+.rmU{font-size:var(--fs-1);opacity:.75;word-break:break-all}.rmU a{color:#8fe0ff}
+.rmPv{font-size:var(--fs-1);line-height:1.4;opacity:.6}
+.rmD{height:34px;border-radius:var(--r-pill);background:rgba(255,255,255,.14);font-size:var(--fs-2);font-weight:600}
+.rmt.min .rmP,.rmt.min .rmQ,.rmt.min .rmU,.rmt.min .rmPv,.rmt.min .rmC{display:none}
+.cine.rec .cineNo{color:#ff6b6b;opacity:1;animation:recB 1s steps(2) infinite}
+@keyframes recB{50%{opacity:.4}}
+.cbCt .cbCel{background:rgba(89,208,255,.18);border-color:rgba(89,208,255,.4)}

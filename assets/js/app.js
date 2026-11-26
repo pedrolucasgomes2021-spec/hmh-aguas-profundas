@@ -13,6 +13,7 @@ import {createOp} from './operacao.js';
 import {createClima,WXU} from './clima.js';
 import {createCenarios} from './cenarios.js';
 import {createCinema} from './cinema.js';
+import {createRemoto} from './remoto.js';
 import {riserDetail,seabedDetail,makeJellyfish} from './detalhes3d.js';
 import {applyDetailToScene,setDetailTexture,detLevel} from './detalhe.js';
 import {SEABED,GBOT,GH,FRONT,BACK,HALFW,SLOT,clamp,lerp,smooth,V,UP,rnd,wave,SEA,GERSTNER_GLSL,TEXS,ctex,dotTex,rayTex,shadowTex,foamTex,M,PAINTED,G,add,bake,instancify,pbr,grime} from './kit.js';
@@ -579,7 +580,7 @@ function applyLang(){document.documentElement.lang=L==='pt'?'pt-BR':'en';
  SECS.forEach((s,i)=>{const t=T(s);s.tabEl.innerHTML=`<b>${pad(i+1)}</b> <span>${t.tab}</span>`;s.tabEl.setAttribute('aria-label',`${pad(i+1)} ${t.tab}`);s.menuEl.innerHTML=`<b>${pad(i+1)}</b>${t.t}`;s.tick.firstChild.innerHTML=`<b>${pad(i+1)}</b><span>${t.tab}</span>`;s.tick.firstChild.setAttribute('aria-label',t.t);s.ob.innerHTML=`<b>${pad(i+1)}</b>${t.tab}`});
  for(const p of ALL)if(p.el){p.el.querySelector('em').textContent=T(p).n;p.el.setAttribute('aria-label',T(p).n)}
  TAGS.forEach(g=>g.e.textContent=C.camadas[L][g.k]);renderEsg();renderIN();{const m=L==='pt'?'Mineração':'Mining';$('#minLbl').textContent=m;$('#minBtn').setAttribute('aria-label',L==='pt'?'Versão Mineração':'Mining version');$('#minBtn').dataset.tip=m;{const im=$('#introMine');if(im)im.textContent=L==='pt'?'Ver versão Mineração ⛏':'See the Mining version ⛏'}}if(cat.classList.contains('on')){renderCatFilters();renderCat()}
- {const o=L==='pt'?'Operações':'Operations';$('#opsLbl').textContent=o;$('#opsBtn').setAttribute('aria-label',o);$('#opsBtn').dataset.tip=o}if(typeof WX!=='undefined'){WX.retext();const b=$('#wxBtn');b.setAttribute('aria-label',(L==='pt'?'Clima: ':'Weather: ')+WX.label());b.dataset.tip=b.getAttribute('aria-label');b.querySelector('.lbl').textContent=WX.label();b.querySelector('.i').outerHTML=WX.icon();b.classList.toggle('alert',WX.wow)}if(SCN)SCN.retext();{const c=L==='pt'?'Cinema':'Cinema';const b=$('#cineBtn');b.setAttribute('aria-label',L==='pt'?'Modo Cinema':'Cinema mode');b.dataset.tip=b.getAttribute('aria-label');if(CIN)CIN.retext()}
+ {const o=L==='pt'?'Operações':'Operations';$('#opsLbl').textContent=o;$('#opsBtn').setAttribute('aria-label',o);$('#opsBtn').dataset.tip=o}if(typeof WX!=='undefined'){WX.retext();const b=$('#wxBtn');b.setAttribute('aria-label',(L==='pt'?'Clima: ':'Weather: ')+WX.label());b.dataset.tip=b.getAttribute('aria-label');b.querySelector('.lbl').textContent=WX.label();b.querySelector('.i').outerHTML=WX.icon();b.classList.toggle('alert',WX.wow)}if(SCN)SCN.retext();{const c=L==='pt'?'Cinema':'Cinema';const b=$('#cineBtn');b.setAttribute('aria-label',L==='pt'?'Modo Cinema':'Cinema mode');b.dataset.tip=b.getAttribute('aria-label');if(CIN)CIN.retext();if(typeof REM!=='undefined')REM.retext()}
  if(tourOn)showStep(tourI);if(entered&&!overview&&!tourOn)setCopy(sec,true);if(fpState&&!fpState.closing)rerenderPanel();moveInd(sec)}
 function toggleLang(){L=L==="pt"?"en":"pt";store.set("hmh-lang",L);applyLang();if(typeof OP!=="undefined"&&OP.isOpen())OP.retext()}
 $('#langBtn').onclick=toggleLang;$('#introLang').onclick=toggleLang;
@@ -888,12 +889,14 @@ SCN=createCenarios({renderer,env:()=>scene.environment,lang:()=>L,WX,reduced:RM,
  onOpen:()=>{if(OP.isOpen())OP.close();if(tourOn)setTour(false);if(overview)setOverview(false);if(XK.on||!$('#kick').hidden)kickStop();if(esgSheet.classList.contains('on'))closeEsgSheet();menu(false);audio.duck&&audio.duck(false)},
  onClose:()=>{renderer.shadowMap.needsUpdate=true;last=performance.now()/1000;$('#opsBtn')?.focus({preventScroll:true});if(entered)history.replaceState(null,'','#'+SECS[sec].id)}});
 /* ---------- Modo Cinema (cinema.js): planos com câmera animada, transições e acabamento de imagem ---------- */
-CIN=createCinema({camera,renderer,lang:()=>L,WX,setNight,getNight:()=>night,key,SEABED,reduced:RM,
+CIN=createCinema({camera,renderer,lang:()=>L,WX,setNight,getNight:()=>night,key,SEABED,reduced:RM,touch:TOUCH,remote:()=>REM.open(),
  onStart:()=>{if(OP.isOpen())OP.close();if(tourOn)setTour(false);if(overview)setOverview(false);if(XK.on||!$('#kick').hidden)kickStop();if(esgSheet.classList.contains('on'))closeEsgSheet();menu(false);
   oceanFront.visible=oceanFarFront.visible=skyDome.visible=true;sky.visible=false;ribbon.visible=false;document.documentElement.style.overflow='hidden';$('#cineBtn')?.setAttribute('aria-pressed',true)},
  onEnd:silent=>{oceanFront.visible=oceanFarFront.visible=skyDome.visible=false;sky.visible=true;ribbon.visible=true;document.documentElement.style.overflow='';$('#cineBtn')?.setAttribute('aria-pressed',false);renderer.shadowMap.needsUpdate=true;if(entered)history.replaceState(null,'','#'+SECS[sec].id);if(!silent)$('#cineBtn')?.focus({preventScroll:true})},
  openScenario:id=>SCN.open(id)});
 composer.addPass(CIN.pass);
+// câmera virtual pelo celular (remoto.js + controle.html, PeerJS)
+const REM=createRemoto({lang:()=>L,onInput:(d,reply)=>CIN.input(d,reply)});
 $('#cineBtn').onclick=()=>CIN.active()?CIN.stop():CIN.start();
 $('#opsBtn').onclick=e=>SCN.menu(e.currentTarget);$('#wxBtn').onclick=()=>WX.toggle();
 let last=performance.now()/1000;
