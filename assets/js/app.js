@@ -15,7 +15,7 @@ import {createCenarios} from './cenarios.js';
 import {createCinema} from './cinema.js';
 import {riserDetail,seabedDetail,makeJellyfish} from './detalhes3d.js';
 import {applyDetailToScene,setDetailTexture,detLevel} from './detalhe.js';
-import {SEABED,GBOT,GH,FRONT,BACK,HALFW,SLOT,clamp,lerp,smooth,V,UP,rnd,wave,SEA,TEXS,ctex,dotTex,rayTex,shadowTex,foamTex,M,PAINTED,G,add,bake,instancify,pbr,grime} from './kit.js';
+import {SEABED,GBOT,GH,FRONT,BACK,HALFW,SLOT,clamp,lerp,smooth,V,UP,rnd,wave,SEA,GERSTNER_GLSL,TEXS,ctex,dotTex,rayTex,shadowTex,foamTex,M,PAINTED,G,add,bake,instancify,pbr,grime} from './kit.js';
 import {makeShip,makeBOP,makeTensioner,makeRiserJoint,makeROV,makeBit,makeTopDrive,makeRoughneck,makeDrawworks,makeRotary,makeMudPump,makeCrane,makeDerrick,makeAnnular,makeRam,makeH4,makePod,makeGateValve,makeDiverter,fishGeometry,fishMat,fishTime} from './modelos.js';
 
 const mark=k=>{(window.__t??={})[k]=Math.round(performance.now())};mark('modulo');
@@ -127,9 +127,9 @@ const sky=new THREE.Mesh(new THREE.PlaneGeometry(140000,60000),new THREE.ShaderM
   gl_FragColor=vec4(c,1.);}`}));sky.position.z=-20000;scene.add(sky);
 const oceanMat=new THREE.MeshPhysicalMaterial({color:0x0b3c52,roughness:.12,metalness:0,envMapIntensity:1,clearcoat:.5,clearcoatRoughness:.06});
 const uSea={value:new THREE.Vector2(1,0)};
-oceanMat.onBeforeCompile=s=>{s.uniforms.uTime=uTime;s.uniforms.uSea=uSea;s.vertexShader='uniform float uTime;uniform vec2 uSea;\nfloat wv(vec2 p){return uSea.x*(.5*sin(p.x*.045+uTime*.8)+.35*sin(p.y*.06+uTime*1.05+1.3)+.18*sin((p.x+p.y)*.11+uTime*1.6))+uSea.y*(.32*sin(p.x*.19-p.y*.05+uTime*2.1)+.22*sin(p.y*.23+p.x*.08+uTime*2.6+.7));}\n'+s.vertexShader
- .replace('#include <beginnormal_vertex>','vec2 pp=position.xz;float ee=.6;vec3 objectNormal=normalize(vec3(-(wv(pp+vec2(ee,0.))-wv(pp-vec2(ee,0.)))/(2.*ee),1.,-(wv(pp+vec2(0.,ee))-wv(pp-vec2(0.,ee)))/(2.*ee)));\n#ifdef USE_TANGENT\nvec3 objectTangent=vec3(tangent.xyz);\n#endif')
- .replace('#include <begin_vertex>','vec3 transformed=vec3(position.x,mix(-1.2,position.y+wv(position.xz),smoothstep(-500.,-300.,position.z)),position.z);vWh=transformed.y;\n#ifdef USE_ALPHAHASH\nvPosition=vec3(position);\n#endif').replace('void main() {','varying float vWh;\nvoid main() {');
+oceanMat.onBeforeCompile=s=>{s.uniforms.uTime=uTime;s.uniforms.uSea=uSea;s.vertexShader=GERSTNER_GLSL+s.vertexShader
+ .replace('#include <beginnormal_vertex>','float gF=smoothstep(-500.,-300.,position.z);vec3 gN;vec3 gD=gerst(position.xz,gN);vec3 objectNormal=normalize(mix(vec3(0.,1.,0.),gN,gF));\n#ifdef USE_TANGENT\nvec3 objectTangent=vec3(tangent.xyz);\n#endif')
+ .replace('#include <begin_vertex>','vec3 transformed=vec3(position.x+gD.x*gF,mix(-1.2,position.y+gD.y,gF),position.z+gD.z*gF);vWh=transformed.y;\n#ifdef USE_ALPHAHASH\nvPosition=vec3(position);\n#endif').replace('void main() {','varying float vWh;\nvoid main() {');
  // espuma nas cristas quando há vento (clima.js)
  s.fragmentShader='uniform vec2 uSea;varying float vWh;\n'+s.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb=mix(diffuseColor.rgb,vec3(.8,.85,.87),smoothstep(.35,1.,(vWh-.45*uSea.x)/(.3+uSea.y))*clamp(uSea.y,0.,1.)*.8);')};
 const oceanFar=oceanMat.clone();oceanFar.onBeforeCompile=()=>{};
@@ -863,6 +863,22 @@ const WX=createClima({scene,lang:()=>L,audio,reduced:RM,onChange:w=>{if(CIN)CIN.
 const sock=(()=>{const g=new THREE.Group();g.position.set(57.5,23.2,9.5);ship.add(g);add(g,G.cyl(.07,.07,3.4,8),M.white,[0,1.7,0]);const piv=new THREE.Group();piv.position.y=3.3;g.add(piv);
  const cg=new THREE.CylinderGeometry(.42,.18,2.4,16,4,true);cg.rotateZ(Math.PI/2);cg.translate(1.2,0,0);const cc=cg.attributes.position,col=new Float32Array(cc.count*3);for(let i=0;i<cc.count;i++){const band=Math.floor(cc.getX(i)/.48)%2;col.set(band?[.95,.95,.95]:[1,.33,.08],i*3)}cg.setAttribute('color',new THREE.BufferAttribute(col,3));
  const m=new THREE.Mesh(cg,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8,side:THREE.DoubleSide}));piv.add(m);return piv})();
+// fumaça das chaminés: partículas calculadas na placa de vídeo (idade, subida, deriva pelo vento e crescimento por fórmula); a CPU só informa a posição das chaminés
+const smoke=(()=>{const N=80,E=[V(-74,18.2,-3),V(-74,18.2,3)],pos=new Float32Array(N*2*3),sd=new Float32Array(N*2*2);
+ for(let i=0;i<N*2;i++){sd[i*2]=Math.random();sd[i*2+1]=i<N?0:1}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('aS',new THREE.BufferAttribute(sd,2));
+ const U={uT:{value:0},uE0:{value:V()},uE1:{value:V()},uW:{value:V(3,0,.6)},uS:{value:180},uMap:{value:dotTex},uDark:{value:0}};
+ const m=new THREE.ShaderMaterial({uniforms:U,transparent:true,depthWrite:false,fog:false,
+  vertexShader:`attribute vec2 aS;uniform float uT,uS;uniform vec3 uE0,uE1,uW;varying float vA;
+   void main(){float age=fract(aS.x+uT*.11);vec3 e=aS.y<.5?uE0:uE1;float r=fract(sin(aS.x*91.7)*437.1);
+    vec3 p=e+vec3(0.,1.,0.)*(age*9.+sin(age*6.+r*6.)*.6)+uW*age*age*5.+vec3(sin(r*40.+uT*.7),0.,cos(r*33.+uT*.6))*age*2.;
+    vA=smoothstep(0.,.08,age)*(1.-age);vec4 mv=modelViewMatrix*vec4(p,1.);gl_PointSize=uS*(1.+age*4.)/-mv.z;gl_Position=projectionMatrix*mv;}`,
+  fragmentShader:`uniform sampler2D uMap;uniform float uDark;varying float vA;void main(){float a=texture2D(uMap,gl_PointCoord).a*vA*.26;gl_FragColor=vec4(vec3(mix(.6,.3,uDark)),a);}`});
+ const pts=new THREE.Points(g,m);pts.frustumCulled=false;pts.renderOrder=4;scene.add(pts);const w=V();
+ return t=>{U.uT.value=t;ship.localToWorld(U.uE0.value.copy(E[0]));ship.localToWorld(U.uE1.value.copy(E[1]));const k=WX.s.vento*.5144;U.uW.value.set(k*.9,0,k*.25);U.uS.value=innerHeight*2.4;U.uDark.value=nightK*.6+WX.s.cloud*.3}})();
+// luzes de navegação (bombordo vermelha, boreste verde, mastro e popa brancas): materiais acima de 1 para o bloom fazer o brilho
+{const lm=c=>new THREE.MeshBasicMaterial({color:new THREE.Color(c).multiplyScalar(3.2),toneMapped:false});
+ for(const[x,y,z,c]of[[51,22.9,-11.6,0xff2a2a],[51,22.9,11.6,0x2aff5a],[46,31.2,0,0xffffff],[-81,12.4,0,0xffffff],[0,82.2,0,0xff3030]])add(ship,G.sph(.28,10),lm(c),[x,y,z])}
 function windsock(t){const v=clamp(WX.s.vento/25);sock.rotation.set(0,-.35+Math.sin(t*1.7)*.12*v,-lerp(1.25,.06,v)+Math.sin(t*9)*.04*v)}
 let SCN=null,CIN=null;
 const OP=createOp({photos:id=>{const p=byId[id];return p&&p.fotos?p.fotos.map(fotoUrl):[]},real:id=>{const r=REAL[id];return typeof r==='function'?r():r||null},video:id=>{const p=byId[id];const v=HMHV[id]||(p&&p.yt)||(REAL[id]===BOPM?'DZ8fkK0ZY1A':null);return v?[v]:[]},lang:()=>L,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,anchor:()=>{const o=opItem&&A[opItem.id];if(!o)return null;const v=new THREE.Vector3();o.getWorldPosition(v);return toScreen(v)},sheet:()=>{if(!opItem)return;const p=opItem;OP.close();forcePanel=true;openPanel(p,null)}});
@@ -904,7 +920,7 @@ function frame(nowMs){requestAnimationFrame(frame);
  const tdy=lerp(22,lerp(19,56,.5-.5*Math.cos(PH.td)),WX.k.drill);SU.td.position.set(0,tdy,0);SU.wires.forEach((w,i)=>{const a=V(i<2?-.6:.6,64,i%2?-.6:.6),b=V(a.x,tdy+7.2,a.z);w.position.copy(a).lerp(b,.5);w.scale.set(1,a.y-b.y,1)});
  SU.dpipe.position.set(0,(17.9+tdy-.3)/2,0);SU.dpipe.scale.set(1,Math.max(.1,tdy-.3-17.9),1);
  SU.dw.userData.drum.rotation.x=PH.dw;SU.rn.userData.arm.rotation.y=Math.sin(PH.rn)*.5*WX.k.pipe;SU.kc.forEach((c,i)=>c.userData.tur.rotation.y=Math.sin(PH.kc+i*2)*.6*WX.k.crane);SU.pc.forEach((c,i)=>c.t.rotation.y=c.a+Math.sin(PH.kc*.5+i)*.35*WX.k.crane);
- WX.frame(dt,t,{camT,viewH:cur.h,asp:innerWidth/innerHeight,above:cy>-30||overview,night:nightK,surf:1-audio.u});windsock(t);
+ WX.frame(dt,t,{camT,viewH:cur.h,asp:innerWidth/innerHeight,above:cy>-30||overview,night:nightK,surf:1-audio.u});windsock(t);smoke(t);
  ship.updateMatrixWorld();
  for(const Tn of tens){const a=ship.localToWorld(Tn.hull.clone()),b=Tn.ring.clone().add(ring.position);Tn.t.position.copy(a);Tn.t.quaternion.setFromUnitVectors(UP,b.clone().sub(a).normalize());Tn.t.userData.rod.position.y=Tn.t.userData.base+(a.distanceTo(b)-Tn.t.userData.closed)}
  ring.position.x=bend(-26,t);updRiser(t);

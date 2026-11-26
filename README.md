@@ -116,6 +116,13 @@ Os pacotes de detalhe ficam mesclados por material e desligados nos níveis meno
 - Barra de controles: Cor, Luz (Dia, Hora dourada, Noite), Mar (presets do clima), Planos (Auto ou Fixo), Lente, Grão, `H` para ocultar e Sair. Arraste para olhar em volta; espaço pausa; setas trocam de plano; Esc sai.
 - Código em `assets/js/cinema.js` (planos na função `shots`). Para o cinema a cena ganha mar à frente do corte e uma cúpula de céu, só enquanto ele está ativo.
 
+## Mar por fórmula, fumaça e luzes (Fase 2)
+
+- **Ondas de Gerstner** (`kit.js`: `WAVES`, `wave()` e `GERSTNER_GLSL`): 4 ondas de swell e 3 vagas de vento, com crista pontuda, velocidade pela dispersão de águas profundas (ω² = g·k) e normal pela derivada analítica. Tudo na placa de vídeo, numa passada por onda (antes eram 5 avaliações da superfície por vértice para achar a inclinação). A cena principal, o Modo Cinema e os cenários internos usam a mesma fórmula, e a mesma função em JavaScript move o navio.
+- **Altura de onda calibrada:** o "Hs" do painel de clima é a altura significativa real do mar (Hs = 4σ).
+- **Fumaça das chaminés:** partículas animadas na placa de vídeo, levadas pelo vento do clima; a CPU só informa a posição das chaminés.
+- **Luzes de navegação** (bombordo, boreste, mastro, popa e topo da torre) com brilho pelo bloom.
+
 ## Modelos 3D comprimidos e economia de processamento
 
 - Todos os GLB (menos `bop_sim.glb` e `riser_sim.glb`, que têm peças animadas por escala) estão comprimidos com **meshopt**: 186 MB → 60 MB (−68%), sem mudança visível. Os carregadores do site (`app.js`, `operacao.js`, `cenarios.js`, `visor3d.js`) e o AR (`model-viewer`) já decodificam. Para um modelo novo, use `tools/comprimir_modelos.mjs` (instruções no topo do arquivo).
