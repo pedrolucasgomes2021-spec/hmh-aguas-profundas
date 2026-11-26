@@ -2,9 +2,10 @@
 import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';   // modelos comprimidos (EXT_meshopt_compression)
 
 const cache = {};
-const carrega = u => cache[u] || (cache[u] = new Promise((ok, err) => new GLTFLoader().load(u, g => ok(g.scene), undefined, err)));
+const carrega = u => cache[u] || (cache[u] = new Promise((ok, err) => new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(u, g => ok(g.scene), undefined, err)));
 
 export function mountVisor(box, url, {reduced = false, onReady, onError} = {}) {
   const cv = document.createElement('canvas'); cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none';
