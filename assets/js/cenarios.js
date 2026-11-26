@@ -3,6 +3,8 @@
 // Leve de propósito: usa o renderer da cena principal (a cena principal fica pausada enquanto o cenário está aberto),
 // cada cenário é montado só na primeira abertura, sem sombras e sem pós-processamento.
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';   // modelos comprimidos (EXT_meshopt_compression)
 import {M,G,add,clamp,lerp,smooth,V,UP,wave,SEA,tubeG,beamG,mergeMesh,ZR,dotTex} from './kit.js';
 import {makeTopDrive,makeRoughneck,makeDrawworks,makeRotary,makeMudPump,makeDerrick,makeTensioner,makeRiserJoint,makeDiverter,makeGateValve} from './modelos.js';
 import {WXU,makeRain,wxIcon} from './clima.js';
@@ -15,6 +17,19 @@ const UI={
  en:{voltar:'Back to the rig',etapas:'Steps',dados:'Live data',clima:'Weather',equip:'Equipment in this operation',auto:'Auto camera',livre:'Free camera',mov:'Vessel motion',
   play:'Pause',playB:'Play',vel:'Speed',prep:'Preparing the scene…',dica:'Drag to rotate · scroll to zoom',ilus:'Illustrative simulation: typical values and timings, not data from a real unit.',
   ok:'Operating normally',warn:'Operation restricted by weather',stop:'Operation suspended by weather',cen:'Inside view',menu:'Operations',menuSub:'Step inside the equipment and see the operation',kick:'Well control (kick)',kickD:'Kick detected, the BOP shuts the well and the influx is circulated out.',ver:'Open',info:'Open sheet'}};
+
+/* ---------- modelos fiéis às fotos (os mesmos GLB da aba "Modelo HMH" e do AR, versão leve) ----------
+   Cada cenário monta primeiro as peças procedurais e troca pelo modelo real quando ele carrega; se falhar, fica o procedural. */
+const GLL=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),GLC={};
+const glbUrl=n=>n.includes('/')?n:'assets/ar/modelos/'+n+'.glb';
+function loadGLB(n){const u=glbUrl(n);return GLC[u]??=GLL.loadAsync(u).then(g=>g.scene)}
+// clona, gira, escala pela medida pedida (h altura, l maior lado horizontal, w largura em x) e apoia a base em y=0, centrado em x e z
+async function real(n,o){const m=(await loadGLB(n)).clone(true);const w=new THREE.Group();m.rotation.y=o.ry||0;w.add(m);m.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(m),sz=b.getSize(V());
+ const s=o.h?o.h/sz.y:o.l?o.l/Math.max(sz.x,sz.z):o.w/sz.x;m.scale.multiplyScalar(s);m.updateMatrixWorld(true);b.setFromObject(m);m.position.set(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);
+ m.traverse(c=>{if(c.isMesh&&c.material&&o.emis){c.material=c.material.clone();o.emis.push(c.material)}});w.userData.size=b.getSize(V());return w}
+// troca as peças procedurais de um grupo pelo modelo real
+function swap(group,w,y=0){group.children.forEach(c=>c.visible=false);w.position.y=y;group.add(w);return w}
+const settle=(arr,ms=15000)=>Promise.race([Promise.allSettled(arr),new Promise(r=>setTimeout(r,ms))]);
 
 /* ---------- materiais e peças próprias dos cenários ---------- */
 const stripes=(()=>{const c=document.createElement('canvas');c.width=64;c.height=4;const g=c.getContext('2d');g.fillStyle='#b9c1c7';g.fillRect(0,0,64,4);g.fillStyle='#59626a';g.fillRect(0,0,9,4);g.fillStyle='#e3e8eb';g.fillRect(30,0,4,4);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(3,1);return t})();
@@ -72,10 +87,15 @@ function sceneTopDrive(){
  const lamps=[];for(const[x,y,z]of[[6,30,6],[-6,30,-6],[6,44,-5],[-5,22,6]]){lamps.push(add(rig,G.sph(.32,10),MP.lamp,[x,y,z]))}
  const at=(o,x,y,z)=>{const a=new THREE.Object3D();a.position.set(x,y,z);o.add(a);return a};
  const labs=[[at(td,0,5.5,1.2),'Top drive','Top drive'],[at(rn,1.6,3.6,0),'Iron roughneck','Iron roughneck'],[at(dw,0,3.6,0),'Drawworks','Drawworks'],[at(rig,0,18.6,1.6),'Mesa rotativa e cunhas','Rotary table and slips'],[at(crown,0,1.2,1.2),'Compensador (CMC)','Crown compensator (CMC)'],[at(col,0,8,0),'Racker de tubos','Pipe racker'],[at(rig,-5,46,-3.4),'Estaleiro de seções','Stand setback']];
- const JS=26.2/3,STL=26,STICK=20.7,PARK=V(5.9,17,5.9),WORK=V(3.18,17,3.18),SB=V(-5.2,17.3,-4.6);
+ const JS=26.2/3,STL=26,STICK=20.7,PARK=V(5.9,17,5.9),WORK=V(3.18,17,3.18),SB=V(-5.2,17.3,-4.6);let TDH=8,HOSE=8.6,SLY=18.3;
+ const ready=settle([
+  real('topdrive',{h:11.5,ry:PI/2}).then(w=>{swap(td,w,-.3);TDH=w.userData.size.y-.3;HOSE=TDH*.5}),
+  real('roughneck',{w:3.6}).then(w=>{swap(rn,w,1.6);add(rn,G.rbox(2.6,1.6,2.2,.12),M.dark,[0,.8,-.4]);rn.rotation.y=-.75*PI;PARK.set(5.4,17,5.4);WORK.set(1.2,17,1.2)}),
+  real('drawworks',{l:7.2,ry:PI/2}).then(w=>{swap(dw,w);dw.position.set(-6.4,17,7.2)}),
+  real('rotary',{l:5.2}).then(w=>{swap(rot,w,-.05);w.position.z=-1.55;SLY=18.45})]);
  const S={c:40.7,tdc:41,sx:SB.x,sz:SB.z,sb:SB.y,rot:0,srot:0,slip:0,crown:0,rn:0,arm:0};
  let rot0=0,srot0=0;
- return {rig,labs,dist:34,tgt:V(0,30,0),cams:[[V(48,32,16),V(0,32,0)],[V(5.6,24.5,-5.2),V(.5,20.2,1)],[V(19,58,5),V(0,47,0)],[V(4,30,24),V(-4,30,-3)]],
+ return {rig,labs,ready,dbg:{rn,td,dw,rot},dist:34,tgt:V(0,30,0),cams:[[V(30,27,13),V(0,26,0)],[V(6.2,23,-5.6),V(1.2,19.8,1.2)],[V(19,58,5),V(0,47,0)],[V(4,30,24),V(-4,30,-3)]],
   update(T,c){const{dt,heave,mode}=c,o=c.out;let cx,tdc,sx=SB.x,sz=SB.z,sb=SB.y,slip=0,rnk=0,arm=0,rpm=0,spin=0,torque=1+Math.abs(nz(c.t))*.6,pump=0,att=1,hook=46,wob=0,joined=false;
    if(mode==='stop'){   // aguardando o tempo: broca fora do fundo, coluna pendurada com compensador ativo
     cx=lerp(30,32,ph(T,0,6));tdc=cx;pump=lerp(1,.35,ph(T,0,5));rpm=lerp(40,0,ph(T,0,4));hook=lerp(185,198,ph(T,0,6));
@@ -105,14 +125,14 @@ function sceneTopDrive(){
    const off=S.crown;td.position.set(0,S.tdc+.3+off,0);crown.position.y=64+off*.5;
    const topS=joined?S.tdc+off:S.c+(slip<.5?off:0);str.set(topS,16.6,rot0);
    stand.at(S.sx,S.sz);const sv=!joined&&mode!=='stop';if(sv)stand.set(S.sb+STL,S.sb,srot0);else stand.set(0,1);
-   slips.visible=S.slip>.02;slips.position.y=18.3+(1-S.slip)*1.4;slips.scale.setScalar(.6+.4*S.slip);
+   slips.visible=S.slip>.02;slips.position.y=SLY+(1-S.slip)*1.4;slips.scale.setScalar(.6+.4*S.slip);
    rn.position.lerpVectors(PARK,WORK,S.rn);
-   wires.forEach((w,i)=>w.set(V(i<2?-.6:.6,64+off*.5,i%2?-.6:.6),V(i<2?-.6:.6,S.tdc+8+off,i%2?-.6:.6)));
+   wires.forEach((w,i)=>w.set(V(i<2?-.6:.6,64+off*.5,i%2?-.6:.6),V(i<2?-.6:.6,S.tdc+TDH+off,i%2?-.6:.6)));
    dw.userData.drum.rotation.x=-(S.tdc+off)*.7;
    // racker: braços até a seção quando ela está em movimento
    [3.7,22.7].forEach((h,i)=>{const y=Math.min(45,S.sb+h);arms[i].set(V(-8.8,y,-.6),V(lerp(-7.9,S.sx,S.arm),y,lerp(-1.2,S.sz,S.arm)))});
    // mangueira: catenária entre o tubo bengala e o pescoço de ganso do top drive
-   {const A=V(-6.2,40,6.2),B=V(0,S.tdc+off+8.6,1.6),sag=Math.max(2,12-A.distanceTo(B)*.3);let pv=A.clone();for(let i=0;i<10;i++){const u=(i+1)/10,q=A.clone().lerp(B,u);q.y-=Math.sin(u*PI)*sag;q.z+=Math.sin(u*PI)*1.5;hose[i].set(pv,q);pv=q}}
+   {const A=V(-6.2,40,6.2),B=V(0,S.tdc+off+HOSE,1.6),sag=Math.max(2,12-A.distanceTo(B)*.3);let pv=A.clone();for(let i=0;i<10;i++){const u=(i+1)/10,q=A.clone().lerp(B,u);q.y-=Math.sin(u*PI)*sag;q.z+=Math.sin(u*PI)*1.5;hose[i].set(pv,q);pv=q}}
    lamps.forEach(l=>l.visible=c.night>.3||c.wc>.5);
    // dados
    const sp=pump*(235+nz(c.t*.7)*3);
@@ -137,7 +157,9 @@ function sceneMPD(){
  // manifold MPD com chokes, medidor Coriolis, separador (MGS) e peneiras
  const mf=new THREE.Group();mf.position.set(12,9.1,0);rig.add(mf);add(mf,G.rbox(7,.4,4.4,.1),M.yellow,[0,.2,0]);{const fr=[];for(const[x,z]of[[-3.3,-2],[3.3,-2],[-3.3,2],[3.3,2]])fr.push(beamG(V(x,.4,z),V(x,4.6,z),.12,6));fr.push(beamG(V(-3.3,4.6,-2),V(3.3,4.6,-2),.12,6),beamG(V(-3.3,4.6,2),V(3.3,4.6,2),.12,6));mf.add(mergeMesh(fr,M.yellow))}
  add(mf,G.cyl(.3,.3,6.6,14),M.grey,[0,1.4,-.9],ZR);add(mf,G.cyl(.3,.3,6.6,14),M.grey,[0,1.4,.9],ZR);
- const chokeM=M.red.clone();const chokes=[];for(const x of[-1.9,0,1.9]){const v=makeGateValve(chokeM,.42);v.position.set(x,2.4,0);mf.add(v);const a=add(mf,G.cyl(.12,.12,1.2,10),M.chrome,[x,3.9,0]);chokes.push(a)}
+ const chokeM=M.red.clone();const chokes=[],vals=[],emis=[];for(const x of[-1.9,0,1.9]){const v=makeGateValve(chokeM,.42);v.position.set(x,2.4,0);mf.add(v);vals.push(v);const a=add(mf,G.cyl(.12,.12,1.2,10),M.chrome,[x,3.9,0]);chokes.push(a)}
+ const ready=settle([...vals.map((v,i)=>real('valves',{h:2.4,emis:i===1?emis:null}).then(w=>{const g=new THREE.Group();g.position.copy(v.position).setY(1.55);mf.add(g);g.add(w);v.visible=false;chokes[i].visible=false})),
+  real('assets/modelos/diversor.glb',{w:8.4}).then(w=>{swap(dv,w,-.9)})]);
  const cor=new THREE.Group();cor.position.set(18.5,9.1,0);rig.add(cor);add(cor,G.rbox(2.2,.5,2.6,.1),M.dark,[0,.25,0]);add(cor,new THREE.TorusGeometry(1.1,.2,12,32,PI),M.steel,[0,2.4,0],[0,PI/2,0]);for(const z of[-1.1,1.1])add(cor,G.cyl(.2,.2,1.9,12),M.steel,[0,1.4,z]);add(cor,G.rbox(.9,.7,.5,.08),M.blue,[0,3.7,0]);
  const mgs=new THREE.Group();mgs.position.set(25,9.1,-5);rig.add(mgs);add(mgs,G.cyl(1.5,1.5,8,32),M.white,[0,4.5,0]);add(mgs,G.sph(1.5,24),M.white,[0,8.5,0]);add(mgs,G.cyl(.2,.2,22,10),M.grey,[0,20,0]);for(const[x,z]of[[1.1,1.1],[-1.1,1.1],[1.1,-1.1],[-1.1,-1.1]])add(mgs,G.cyl(.15,.15,1.2,8),M.dark,[x,.6,z]);
  const sh=new THREE.Group();sh.position.set(25,9.1,5);rig.add(sh);add(sh,G.rbox(4.6,1.6,3,.12),M.blue,[0,.8,0]);const scr=add(sh,G.box(4.2,.12,2.6),M.dark,[0,2,0],[0,0,-.12]);add(sh,G.box(4.6,.15,.15),M.blue,[0,2.3,1.4]);
@@ -151,7 +173,7 @@ function sceneMPD(){
  const at=(o,x,y,z)=>{const a=new THREE.Object3D();a.position.set(x,y,z);o.add(a);return a};
  const labs=[[at(rig,2.4,9.6,0),'RCD e flow spool','RCD and flow spool'],[at(rig,0,15.4,1.8),'Diverter','Diverter'],[at(mf,0,4.8,0),'Manifold de chokes MPD','MPD choke manifold'],[at(cor,0,4.3,0),'Medidor Coriolis','Coriolis flowmeter'],[at(mgs,0,9.6,0),'Separador de gás (MGS)','Mud-gas separator'],[at(sh,0,2.8,0),'Peneiras','Shakers'],[at(rig,0,-3,-.9),'Anular (retorno)','Annulus (returns)']];
  let r0=0;const S={sbp:10,ch:55,bhp:1.45};
- return {rig,labs,dist:44,tgt:V(10,6,0),cams:[[V(10,14,44),V(10,6,0)],[V(3,9,13),V(1.5,6,0)],[V(26,18,22),V(16,9,0)],[V(-14,6,26),V(0,0,0)]],
+ return {rig,labs,ready,dist:44,tgt:V(10,6,0),cams:[[V(10,14,44),V(10,6,0)],[V(3,9,13),V(1.5,6,0)],[V(26,18,22),V(16,9,0)],[V(-14,6,26),V(0,0,0)]],
   update(T,c){const{dt,heave,mode}=c,o=c.out;let qin=3000,qout=3000,sbp=10,ch=55,gas=0,dq=0,conv=1.45,rpm=120;
    if(mode==='stop'){qin=qout=1100;sbp=30;ch=22;rpm=0;conv=1.36}
    else{if(T<12){}
@@ -167,7 +189,7 @@ function sceneMPD(){
    const k=1-Math.exp(-dt*4);S.sbp+=(sbp-S.sbp)*k;S.ch+=(ch-S.ch)*k;
    r0+=dt*rpm/60*PI*2;pipe.set(16.6,-30,r0);
    P.down.v=9*qin/3000;P.up.v=P.out.v=7*qout/3000;P.down.on=clamp(qin/3000*1.2);P.up.on=P.out.on=clamp(qout/3000*1.2);P.gas.on=gas;P.gas.v=8;F.update(dt*(c.play?1:0));
-   chokes.forEach((a,i)=>a.position.y=3.6+(i===1?S.ch/100*.9:.45));chokeM.emissive.setRGB(Math.abs(sbp-S.sbp)>1||dq>10?.35:0,0,0);
+   chokes.forEach((a,i)=>a.position.y=3.6+(i===1?S.ch/100*.9:.45));{const e=Math.abs(sbp-S.sbp)>1||dq>10?.35:0;chokeM.emissive.setRGB(e,0,0);emis.forEach(m=>m.emissive&&m.emissive.setRGB(e,e*.15,0))}
    scr.position.y=2+(qout>200?Math.sin(c.t*40)*.03:0);
    Object.assign(o,{qin:qin+nz(c.t)*6*(qin>0),qout:qout+nz(c.t*1.2)*8*(qout>0),dq:qout-qin,sbp:Math.max(0,S.sbp),bhp:bhp,conv:conv+surge*1.2,ch:S.ch,gas})}}}
 
@@ -188,18 +210,19 @@ function scenePumps(){
   gs.push(gauge(rig,[3.6,5.2,z+1.7],0));
   add(rig,tubeG([[2.3,3.7,z+1.7],[2.3,5.6,z+1.7],[3.4,6.6,z+1.7],[4.6,6.6,z+1.7]],.22),M.grey);
   add(rig,tubeG([[-13.5,.9,z-1],[-8,.6,z-2.2],[0,.6,z-2.4],[2.9,.85,z-1.9]],.3),M.blue)}
+ const vib=[];const ready=settle(pumps.map((p,i)=>real('mudpump',{l:7.4,ry:PI}).then(w=>{swap(p,w);w.position.x=-.2;vib[i]=w;fly[i].visible=false;damp[i]=null})));
  add(rig,G.cyl(.38,.38,22,16),M.grey,[4.8,6.6,0],[PI/2,0,0]);add(rig,tubeG([[4.8,6.6,10.8],[4.8,9,11],[4.8,13.5,11]],.38),M.grey);
  const P=[0,1,2].map(i=>{const z=-8+i*8;return path([[2.3,3.7,z+1.7],[2.3,5.6,z+1.7],[3.4,6.6,z+1.7],[4.8,6.6,z+1.7],[4.8,6.6,10.8],[4.8,9,11],[4.8,14,11]],0x5ad1ff,40,6,.1)});
  const F=flow(rig,P);
  const at=(o,x,y,z)=>{const a=new THREE.Object3D();a.position.set(x,y,z);o.add(a);return a};
  const labs=[[at(pumps[0],-1,3.6,0),'Bomba 1','Pump 1'],[at(pumps[1],-1,3.6,0),'Bomba 2','Pump 2'],[at(pumps[2],-1,3.6,0),'Bomba 3','Pump 3'],[at(rig,4.8,7.4,4),'Coletor de descarga','Discharge manifold'],[at(rig,-16,5.6,-1),'Tanques de lama','Mud pits'],[at(rig,4.8,13.6,11),'Para o tubo bengala','To the standpipe']];
  const ang=[0,0,0],S=[0,0,0];
- return {rig,labs,dist:30,tgt:V(0,3,0),cams:[[V(22,12,24),V(0,3,0)],[V(9,6,4),V(1,2.4,0)],[V(16,9,-14),V(2,3,0)]],
+ return {rig,labs,ready,dist:30,tgt:V(0,3,0),cams:[[V(22,12,24),V(0,3,0)],[V(9,6,4),V(1,2.4,0)],[V(16,9,-14),V(2,3,0)]],
   update(T,c){const{dt,mode}=c,o=c.out;const spm=[0,0,0];
    if(mode==='stop'){spm[0]=60*ph(T,0,4)}
    else{for(let i=0;i<3;i++)spm[i]=110*ph(T,i*2,i*2+5)*(1-ph(T,40,46));
     if(win(T,22,34)){const d=ph(T,22,25)-ph(T,31,34);spm[1]*=1-d;spm[0]=lerp(spm[0],125,d);spm[2]=lerp(spm[2],125,d)}}
-   const k=1-Math.exp(-dt*5);let q=0;for(let i=0;i<3;i++){S[i]+=(spm[i]-S[i])*k;ang[i]+=dt*S[i]/60*PI*2;fly[i].rotation.z=-ang[i];if(damp[i])damp[i].scale.setScalar(1+Math.sin(ang[i]*3)*.03*clamp(S[i]/60));q+=S[i]*11.52;
+   const k=1-Math.exp(-dt*5);let q=0;for(let i=0;i<3;i++){S[i]+=(spm[i]-S[i])*k;ang[i]+=dt*S[i]/60*PI*2;fly[i].rotation.z=-ang[i];if(vib[i])vib[i].position.y=S[i]>5?Math.sin(ang[i]*6)*.006:0;if(damp[i])damp[i].scale.setScalar(1+Math.sin(ang[i]*3)*.03*clamp(S[i]/60));q+=S[i]*11.52;
     P[i].v=6*S[i]/110;P[i].on=clamp(S[i]/80)}
    const pr=340*Math.pow(q/3800,1.8)*(1+Math.sin(ang[0]*3+ang[1]*3)*.006);gs.forEach((g,i)=>g.set(pr/520));F.update(dt*(c.play?1:0));
    Object.assign(o,{b1:S[0],b2:S[1],b3:S[2],q,p:pr,kw:pr*q/600})}}}
@@ -412,7 +435,7 @@ export function createCenarios({renderer,env,lang,WX,nome,sheet,kick,night=()=>0
   scene.environment=env();
   if(first){open=true;root.hidden=false;document.body.classList.add('scnOn');onOpen(k);root.classList.remove('ready');root.querySelector('#scnFade').classList.remove('off');{const h=$('#scnT');h.tabIndex=-1;try{h.focus({preventScroll:true})}catch(e){}}}
   try{history.replaceState(history.state,'','#cenario/'+k)}catch(e){}
-  ready=false;if(!cur.compiled){$('#scnFade').classList.remove('off');try{place(0,performance.now()/1000);await renderer.compileAsync(scene,cam)}catch(e){}cur.compiled=true}ready=true;
+  ready=false;if(!cur.compiled){$('#scnFade').classList.remove('off');if(cur.ready)await cur.ready;if(id!==k)return;try{place(0,performance.now()/1000);await renderer.compileAsync(scene,cam)}catch(e){}cur.compiled=true}ready=true;
   requestAnimationFrame(()=>{root.classList.add('ready');$('#scnFade').classList.add('off')})}
  function close(){if(!open)return;open=false;root.hidden=true;document.body.classList.remove('scnOn');showMenu(false);onClose()}
 
@@ -446,4 +469,5 @@ export function createCenarios({renderer,env,lang,WX,nome,sheet,kick,night=()=>0
   const lb=root.querySelectorAll('.scl');cur.labs.forEach((l,i)=>{const e=lb[i];if(!e)return;l[0].getWorldPosition(tv);tv.project(cam);const on=tv.z<1&&Math.abs(tv.x)<1.05&&Math.abs(tv.y)<1.05;e.style.opacity=on?1:0;if(on)e.style.transform=`translate3d(${((tv.x*.5+.5)*innerWidth).toFixed(0)}px,${((-tv.y*.5+.5)*innerHeight).toFixed(0)}px,0)`});
   if(document.hidden||(busy&&frameN%3))return;
   renderer.setRenderTarget(null);renderer.render(scene,cam)}
+ if(/[?&]debug/.test(location.search))window.__scn={get cur(){return cur},view(p,t){auto=false;tgt.set(...t);camT.set(...t);const d=V(...p).sub(V(...t));dist=d.length();az=Math.atan2(d.x,d.z);el=Math.asin(d.y/dist)},setT:v=>{T=v;play=false}};
  return {open:openS,close,isOpen:()=>open,frame,key,retext:()=>{if(open)texts();if(!menu.hidden)buildMenu()},weather:()=>{if(open)weather()},menu:(btn)=>showMenu(menu.hidden,btn),ids:SCN_IDS}}

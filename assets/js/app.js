@@ -77,9 +77,11 @@ renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();t
 const MAXTEX=renderer.capabilities.maxTextureSize;
 const DET2=[],DET3=[];   // pacotes de detalhe 3D: DET2 aparece a partir do nível Alta, DET3 só no Ultra
 // resolução interna: Baixa/Média/Alta respeitam um orçamento de pixels; Ultra renderiza em 4K (com supersampling em telas Full HD)
+// resolução dinâmica: dentro de cada nível, a resolução interna desce em passos de 10% (até 70%) antes de cair de nível, e sobe de volta quando sobra folga
+const DRS={k:1};
 const dprFor=l=>{const n=devicePixelRatio,w=innerWidth,px=w*innerHeight;
  const cap=[Math.min(n,1.15),Math.min(n,1.4),Math.min(n,1.75),Math.max(n,Math.min(2,3840/w))][l],budget=Math.sqrt([2.4e6,3.2e6,4.6e6,8.9e6][l]/px);
- return Math.max(.75,Math.min(cap,budget,MAXTEX/w/1.02))};
+ return Math.max(.75,Math.min(cap,budget,MAXTEX/w/1.02))*DRS.k};
 renderer.setPixelRatio(dprFor(Q.level));renderer.setSize(innerWidth,innerHeight);
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.localClippingEnabled=true;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;   // sombras estáticas: só recalcula quando a câmera muda (ver frame)
@@ -352,7 +354,7 @@ async function loadHD(){
  hdMaps={dm,nm};drawStrata(dm,nm,strataWidth());mark('hd');
 }
 let gltf=null;
-const glbFor=async k=>{if(!MODELS[k])return null;gltf??=new (await import('three/addons/loaders/GLTFLoader.js')).GLTFLoader();return new Promise(res=>gltf.load('assets/models/'+MODELS[k],g=>res(g.scene),undefined,()=>res(null)))};
+const glbFor=async k=>{if(!MODELS[k])return null;gltf??=new (await import('three/addons/loaders/GLTFLoader.js')).GLTFLoader().setMeshoptDecoder((await import('three/addons/libs/meshopt_decoder.module.js')).MeshoptDecoder);return new Promise(res=>gltf.load('assets/models/'+MODELS[k],g=>res(g.scene),undefined,()=>res(null)))};
 // troca o modelo procedural pelo oficial, mantendo posição, escala e âncoras
 async function swapOfficial(k,group){const s=await glbFor(k);if(!s)return;group.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(group),gs=group.getWorldScale(V()),sz=b.getSize(V()).divide(gs),c=group.worldToLocal(b.getCenter(V()));
  const sb=new THREE.Box3().setFromObject(s),ss=sb.getSize(V()),sc=sb.getCenter(V());group.traverse(o=>{if(o.isMesh)o.visible=false});
@@ -866,14 +868,19 @@ let last=performance.now()/1000;
 const cRam=new THREE.Color(),glassDay=0,cOcean=new THREE.Color(0x0b3c52),cOceanN=new THREE.Color(0x02101a),cOceanS=new THREE.Color(0x24363d),STORMC=new THREE.Color().setRGB(.42,.46,.5);
 const PH={td:0,dw:0,rn:0,kc:0};
 let shKey='';
-function frame(nowMs){requestAnimationFrame(frame);if(STATS)renderer.info.reset();const t=nowMs/1000,dt=Math.min(.05,t-last),rawDt=t-last;last=t;frameN++;OP.frame(dt,nowMs);
+// quadros sob demanda: sem interação por 10 s (e fora do tour, do kick e dos cenários), a cena anima a 30 qps em vez de 60
+let lastAct=performance.now();for(const ev of['pointermove','pointerdown','wheel','keydown','touchstart','scroll'])addEventListener(ev,()=>{lastAct=performance.now()},{passive:true,capture:true});
+let idleSkip=false;
+function frame(nowMs){requestAnimationFrame(frame);
+ const idle=nowMs-lastAct>10000&&!tourOn&&!XK.on&&!(SCN&&SCN.isOpen());idleSkip=idle&&!idleSkip;if(idleSkip)return;
+ if(STATS)renderer.info.reset();const t=nowMs/1000,dt=Math.min(.05,t-last),rawDt=t-last;last=t;frameN++;OP.frame(dt,nowMs);
  if(SCN&&SCN.isOpen()){WX.frame(dt,t,{surf:1});nightK+=((night?1:0)-nightK)*(1-Math.exp(-dt*2.2));SCN.frame(dt,nowMs,!!fpState||cat.classList.contains('on'));return}
  placeCamera(dt);const cy=cur.cy;
  {const vh=cur.h*.5+34;for(const c of CULL){const v=cy+vh>c.a&&cy-vh<c.b;if(c.v!==v){c.v=v;for(const o of c.t)o.visible=v}}}
  const ns=clamp(Math.round(fScroll),0,SECS.length-1);if(ns!==sec)sec=ns;
  settled=!overview&&Math.abs(fScroll-Math.round(fScroll))<.06&&Math.abs(cur.cy-FR[sec])<4;
  // qualidade adaptativa (só mede com a aba visível e a cena em uso)
- if(entered&&!document.hidden&&rawDt<.25&&!fpState){Q.frames++;Q.acc+=rawDt;if(Q.acc>2.5){const fps=Q.frames/Q.acc;Q.frames=0;Q.acc=0;Q.fps=fps;if(fps<38&&Q.level>0&&!Q.lock){Q.good=0;setQuality(Q.level-1)}else if(fps>=57&&Q.level===2&&!Q.lock&&!Q.tried3&&!TOUCH&&++Q.good>=2){Q.tried3=true;setQuality(3)}else if(fps<57)Q.good=0}}
+ if(entered&&!document.hidden&&rawDt<.25&&!fpState&&nowMs-lastAct<=10000){Q.frames++;Q.acc+=rawDt;if(Q.acc>2.5){const fps=Q.frames/Q.acc;Q.frames=0;Q.acc=0;Q.fps=fps;if(fps<52&&DRS.k>.75&&!Q.lock){DRS.k=Math.round((DRS.k-.1)*10)/10;setQuality(Q.level)}else if(fps>=58&&DRS.k<1&&!Q.lock){DRS.k=Math.min(1,Math.round((DRS.k+.1)*10)/10);setQuality(Q.level)}else if(fps<38&&Q.level>0&&!Q.lock){Q.good=0;DRS.k=1;setQuality(Q.level-1)}else if(fps>=57&&Q.level===2&&!Q.lock&&!Q.tried3&&!TOUCH&&++Q.good>=2){Q.tried3=true;setQuality(3)}else if(fps<57)Q.good=0}}
  // equipamentos em movimento
  const heave=wave(0,0,t)*.45;ship.position.y=heave;ship.rotation.z=(wave(40,0,t)-wave(-40,0,t))/80*.25;ship.rotation.x=(wave(0,14,t-.4)-wave(0,-14,t-.4))/28*.35;foam.position.y=heave*.6+.3;foamTex.offset.set(t*.004,t*.01);
  // clima: com o tempo acima dos limites a perfuração para (top drive desce e fica parado), o drawworks para e os guindastes vão para o descanso
@@ -946,7 +953,7 @@ if(TOUCH)$('#hintIco').className='finger';
 const goBtn=$('#goBtn');let ready=false;
 $$('#snaps .estatico').forEach(e=>e.inert=true);cChips.addEventListener('scroll',chipsMore,{passive:true});
 applyLang();window.__ready=true;mark('montado');
-if(/[?&]debug/.test(location.search))window.__dbg={renderer,scene,camera,Q,setQuality,go,ssao,detLevel,setZoom,fxaa,smaa,composer,bloom,DET2,DET3,jelly,sb};
+if(/[?&]debug/.test(location.search))window.__dbg={renderer,scene,camera,Q,DRS,frameCount:()=>frameN,setQuality,go,ssao,detLevel,setZoom,fxaa,smaa,composer,bloom,DET2,DET3,jelly,sb};
 (async()=>{
  await Promise.race([Promise.all([loadTextures(),loadGeology()]),new Promise(r=>setTimeout(r,15000))]);
  mark('texturas');

@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';   // modelos comprimidos (EXT_meshopt_compression)
 const PI=Math.PI,V=(x,y,z)=>new THREE.Vector3(x,y,z),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t,sm=x=>x<=0?0:x>=1?1:x*x*(3-2*x);
 const NS='http://www.w3.org/2000/svg';
 const LA=(p,s=56)=>new THREE.LatheGeometry(p.map(q=>new THREE.Vector2(q[0],q[1])),s),RG=(ro,ri,y0,y1,s=56)=>LA([[ro,y0],[ro,y1],[ri,y1],[ri,y0],[ro,y0]],s);
@@ -68,7 +69,7 @@ export function createOp({lang,anchor,sheet,photos=()=>[],real=()=>null,video=()
  // ---------- cenas
 
  // ---------- modelos do Blender (GLB) com corte e fluido em shader
- const GLB={};const loadGLB=u=>GLB[u]||(GLB[u]=new Promise((res,rej)=>new GLTFLoader().load(u,g=>res(g.scene),undefined,rej)));
+ const GLB={};const loadGLB=u=>GLB[u]||(GLB[u]=new Promise((res,rej)=>new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(u,g=>res(g.scene),undefined,rej)));
  function clipModel(src){const root=src.clone(true),ms=[];root.traverse(o=>{if(o.isMesh)ms.push(o)});ms.forEach(o=>{const m=o.material.clone();m.clippingPlanes=[S.clip];m.side=THREE.FrontSide;o.material=m;o.castShadow=false;
    const cap=new THREE.Mesh(o.geometry,new THREE.MeshBasicMaterial({color:m.color.clone().lerp(new THREE.Color(1,1,1),.22),side:THREE.BackSide,clippingPlanes:[S.clip]}));o.add(cap)});return root}
  const FL_VS='varying vec3 vN;varying vec3 vV;varying vec2 vUv;varying vec3 vW;void main(){vUv=uv;vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;vec4 mv=viewMatrix*w;vN=normalize(mat3(modelMatrix)*normal);vV=-mv.xyz;gl_Position=projectionMatrix*mv;}';
