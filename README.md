@@ -1,4 +1,4 @@
-# HMH — Águas Profundas
+﻿# HMH — Águas Profundas
 
 Site interativo em 3D que desce, em linha reta, da sonda de perfuração na superfície até o reservatório, mostrando os equipamentos da HMH em cada etapa: topside, tensionadores, riser, BOP no leito marinho, perfuração do poço e reservatório.
 
@@ -140,7 +140,7 @@ Os pacotes de detalhe ficam mesclados por material e desligados nos níveis meno
 
 ## Casco do navio-sonda (modelo Blender)
 
-O casco e o convés do navio vêm de `assets/modelos/casco.glb` (2,2 MB com meshopt, ~69 mil triângulos), gerado no Blender por script — nada é modelado à mão, então dá para refazer e ajustar com precisão:
+O casco e o convés do navio vêm de `assets/modelos/casco.glb` (2,15 MB com meshopt, ~62 mil triângulos), gerado no Blender por script — nada é modelado à mão, então dá para refazer e ajustar com precisão:
 
 | Arquivo | Para que serve |
 |---|---|
