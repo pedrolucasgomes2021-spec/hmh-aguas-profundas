@@ -427,15 +427,10 @@ def principal():
     moonpool(C, 3)
     elipsoide(C, V(55.8, -3.9, 0), (6.2, 2.9, 2.5), 0, n_lon=40, n_lat=20, alonga=1.25)
     for lado in (1, -1): bolina(C, lado, 0)
-    # propulsores: 3 a vante, 3 a ré (longe do moonpool e dos tensionadores em x=±13, z=±5)
-    for (x, z, az) in [(36, 4.5, .3), (36, -4.5, -.3), (44, 0, 0), (-60, 6.2, 2.9), (-60, -6.2, -2.9), (-68, 0, math.pi)]:
-        thruster(C, x, z, az, 0, 1)
-    # escotilhas (vigias) a vante, sob as acomodações
+    # Propulsores, vigias, escovém/âncoras e defensas já vêm de shipDetail() (assets/js/detalhes3d.js):
+    # não repetir aqui. thruster() fica disponível caso um dia eles saiam de lá.
     for lado in (1, -1):
-        for x in [34 + i * 1.7 for i in range(13)]:
-            disco_no_costado(C, x, 6.4, lado, .26, .26, (0, 2), aro=.08)
-        # escovém (saída da âncora) e olhais/fendas de amarração na borda
-        disco_no_costado(C, 58.5, 5.2, lado, .9, .75, (0, 2), aro=.22, fundo_off=-.0, aro_off=.12)
+        # olhais/fendas de amarração na borda
         for x in (63, 0, -40, -78):
             disco_no_costado(C, x, 8.85, lado, .55, .3, (0, 2), aro=.14, aro_off=.08)
     marcas_calado(C, 4)
@@ -471,4 +466,5 @@ def principal():
     print('GLB', os.path.getsize(GLB) // 1024, 'KB')
 
 
-principal()
+if __name__ == '__main__' and not os.environ.get('CASCO_SO_FUNCOES'):
+    principal()

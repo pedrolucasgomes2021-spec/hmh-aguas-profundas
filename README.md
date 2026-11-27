@@ -149,7 +149,11 @@ O casco e o convés do navio vêm de `assets/modelos/casco.glb` (2,2 MB com mesh
 | `fontes/blender/casco.blend` | Cena de origem gerada pelo script (as texturas ficam em `fontes/blender/texturas/`). |
 | `fontes/capturas/` | Capturas antes/depois (site) e renders de conferência do Blender. |
 
-O modelo tem bulbo de proa, espelho de popa inclinado, bolinas, 6 propulsores azimutais (3 a vante, 3 a ré, longe do moonpool e dos tensionadores em x=±13, z=±5), **moonpool vazado** de 12 × 12 m com paredes internas, borda com face interna e capa, vigias a vante, escovém, olhais de amarração com cabeços, tampas de escotilha no convés e marcas de calado (proa, meio-navio e popa, nos dois bordos). Medidas: proa em +X, boreste em +Z, quilha em y=−7, linha d'água em y=0, convés em y=8 e topo da borda em y=9,6.
+O modelo tem bulbo de proa, espelho de popa inclinado, bolinas, **moonpool vazado** de 12 × 12 m com paredes internas, borda com face interna e capa, olhais de amarração com cabeços, tampas de escotilha no convés e marcas de calado (proa, meio-navio e popa, nos dois bordos). Propulsores, vigias, âncoras/escovém e defensas continuam vindo de `shipDetail()` (`detalhes3d.js`) e por isso não estão no GLB.
+
+**Equipamentos do convés** (`assets/modelos/equipamentos.glb`, 1,5 MB, ~31 mil triângulos, gerado por `fontes/blender/gerar_equipamentos.py`): contêineres de 20 pés corrugados a ré e a vante, cestas de carga, rack de cilindros de gás, tambores em pallets, tubulação (incêndio, ar, hidráulica) e bandejas de cabos ao longo da borda, escadas do convés à plataforma de perfuração, respiros "pescoço de ganso", carretéis de mangueira e canhões de incêndio. Todas as peças pintadas usam **uma só** textura neutra (`pintura_*.jpg`, 1024 px); a cor vem do fator de cor de cada material. As posições evitam o que `makeShip()` já monta (torre e subestrutura ±10,5 m, guindastes, racks de tubos e risers, módulo de lama, contêineres e chaminés a ré, acomodações a partir de x=33, botes em x=30). Para mudar algo de lugar, edite `principal()` no script.
+
+**Materiais procedurais (`kit.js`):** a pintura industrial passou a ser acetinada e não metálica (verniz fraco e fosco, metalness ~0, rugosidade ~0,6) e o `G.rbox` limita o chanfro a 6 cm. Antes, o verniz brilhante, a tinta "metálica" e as quinas muito arredondadas davam aspecto de plástico/borracha. Medidas: proa em +X, boreste em +Z, quilha em y=−7, linha d'água em y=0, convés em y=8 e topo da borda em y=9,6.
 
 Para refazer (na raiz do repositório):
 
@@ -158,7 +162,7 @@ python fontes/blender/gerar_texturas.py
 "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python fontes/blender/gerar_casco.py
 ```
 
-e depois comprimir com `tools/comprimir_modelos.mjs` (`assets/modelos/casco.glb`).
+e, para os equipamentos, `blender ... --python fontes/blender/gerar_equipamentos.py`. Depois comprima com `tools/comprimir_modelos.mjs` (`assets/modelos/casco.glb assets/modelos/equipamentos.glb`).
 
 No site, `makeShip()` continua criando o casco procedural como **reserva** num grupo `casco` (que o `bake()` não funde, via `userData.semBake`). O GLB carrega quando o navegador fica ocioso, depois da abertura e com um `LoadingManager` próprio (não segura a tela inicial), e então esconde o procedural. Se falhar, fica o procedural e um aviso no console. Como a sujeira já está nas texturas, o material do GLB não entra no `PAINTED` (a camada de `detalhe.js` não é aplicada nele).
 

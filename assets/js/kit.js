@@ -41,11 +41,15 @@ export const foamTex=ctex(512,512,(g,w,h)=>{g.clearRect(0,0,w,h);for(let i=0;i<2
 export const pbr=(color,metal,rough,o={})=>new (o.clearcoat?THREE.MeshPhysicalMaterial:THREE.MeshStandardMaterial)({color,metalness:metal,roughness:rough,roughnessMap:grime,...o});
 const TL=new THREE.TextureLoader();
 export const signTex=TL.load('assets/img/hmh-logo-placa.png');signTex.colorSpace=THREE.SRGBColorSpace;
+// Pintura industrial é acetinada e não metálica: verniz (clearcoat) fraco e fosco, metalness ~0 e rugosidade
+// mais alta. Antes (verniz .3–.35 brilhante e metalness .2) as peças pareciam plástico/borracha.
+// O clearcoat pequeno continua só para a camada de detalhe reconhecer o material como "pintura".
+const SATIN={clearcoat:.08,clearcoatRoughness:.7};
 export const M={
- red:pbr(0xb51f2a,.2,.55,{clearcoat:.35,clearcoatRoughness:.35}),yellow:pbr(0xe7aa12,.2,.55,{clearcoat:.3,clearcoatRoughness:.4}),blue:pbr(0x1d4f8c,.25,.55,{clearcoat:.3,clearcoatRoughness:.35}),
- white:pbr(0xe9ecee,.1,.6,{clearcoat:.2}),grey:pbr(0x9aa2a8,.55,.55),lattice:pbr(0xc9cdd0,.55,.55),steel:pbr(0xc9cfd4,.78,.34),
+ red:pbr(0xa8212a,.04,.62,SATIN),yellow:pbr(0xdc9f16,.04,.6,SATIN),blue:pbr(0x1f4c84,.05,.6,SATIN),
+ white:pbr(0xdfe3e4,.03,.66,SATIN),grey:pbr(0x8f979c,.5,.6),lattice:pbr(0xbdc2c5,.5,.6),steel:pbr(0xc2c8cc,.8,.38),
  chrome:new THREE.MeshStandardMaterial({color:0xf2f5f7,metalness:1,roughness:.07}),dark:pbr(0x353b41,.6,.6),black:pbr(0x15171a,.2,.75),rubber:pbr(0x2a2c2f,0,.9),hoseGrey:pbr(0x9aa0a5,0,.8),
- glass:new THREE.MeshPhysicalMaterial({color:0x1a2a38,metalness:.4,roughness:.06,clearcoat:1,emissive:0xffcf8a,emissiveIntensity:0}),orange:pbr(0xff6a13,.1,.55,{clearcoat:.4}),
+ glass:new THREE.MeshPhysicalMaterial({color:0x1a2a38,metalness:.4,roughness:.06,clearcoat:1,emissive:0xffcf8a,emissiveIntensity:0}),orange:pbr(0xf06418,.03,.58,SATIN),
  deck:new THREE.MeshStandardMaterial({color:0x6b706d,roughness:.9,metalness:.3,roughnessMap:grime}),
  wall:new THREE.MeshStandardMaterial({color:0xe8ebec,roughness:.7,metalness:.3}),
  hull:new THREE.MeshPhysicalMaterial({vertexColors:true,metalness:.25,roughness:.55,roughnessMap:grime,clearcoat:.35,clearcoatRoughness:.3}),
@@ -65,7 +69,7 @@ M.hull.userData.detParam={escala:1/34,desgaste:.3,sujeira:.55,incrustacao:.6,alt
 export const PAINTED=[M.red,M.yellow,M.blue,M.white,M.grey,M.lattice,M.hull,M.dark,M.ramBody,M.ramBon];
 
 /* ---------- utilitários de geometria ---------- */
-export const G={box:(w,h,d)=>new THREE.BoxGeometry(w,h,d),rbox:(w,h,d,r=.15)=>new RoundedBoxGeometry(w,h,d,3,Math.min(r,Math.min(w,h,d)/2-.01)),cyl:(a,b,h,s=32)=>new THREE.CylinderGeometry(a,b,h,s),tor:(R,r,s=48)=>new THREE.TorusGeometry(R,r,12,s),sph:(r,s=32)=>new THREE.SphereGeometry(r,s,Math.max(12,s/2))};
+export const G={box:(w,h,d)=>new THREE.BoxGeometry(w,h,d),rbox:(w,h,d,r=.15)=>new RoundedBoxGeometry(w,h,d,2,Math.min(r,.06,Math.min(w,h,d)/2-.01))/* chanfro máx. 6 cm: aço tem quina viva; raio grande dava cara de borracha */,cyl:(a,b,h,s=32)=>new THREE.CylinderGeometry(a,b,h,s),tor:(R,r,s=48)=>new THREE.TorusGeometry(R,r,12,s),sph:(r,s=32)=>new THREE.SphereGeometry(r,s,Math.max(12,s/2))};
 export function add(p,geo,mat,pos=[0,0,0],rot=[0,0,0],scl){const m=new THREE.Mesh(geo,mat);m.position.set(...pos);m.rotation.set(...rot);if(scl)m.scale.set(...scl);p.add(m);return m}
 export function beamG(a,b,r,s=8){const v=new THREE.Vector3().subVectors(b,a);const L=v.length();const g=new THREE.CylinderGeometry(r,r,L,s,1);g.applyMatrix4(new THREE.Matrix4().compose(a.clone().lerp(b,.5),new THREE.Quaternion().setFromUnitVectors(UP,v.normalize()),ONE));return g}
 export function tubeG(pts,r,rs=12){const c=new THREE.CatmullRomCurve3(pts.map(p=>V(...p)),false,'centripetal');return new THREE.TubeGeometry(c,Math.max(24,pts.length*16),r,rs,false)}

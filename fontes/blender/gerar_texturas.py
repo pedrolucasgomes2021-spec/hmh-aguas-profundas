@@ -233,6 +233,42 @@ def conves():
     salvar('conves_orm.jpg', orm, False, 85)
 
 
+def pintura():
+    """Pintura industrial neutra (quase branca) para os equipamentos do convés: a cor de cada peça vem do
+    fator de cor do material (glTF multiplica textura x fator), então um só conjunto serve a todas.
+    Quadro de 2 m x 2 m em 1024 px: sujeira, escorridos, lascas com ferrugem, riscos e casca de laranja."""
+    n, LADO = 1024, 2.0
+    px = LADO / n
+    lin = (np.arange(n) + .5) * px
+    y = lin[:, None] * np.ones((1, n))
+    x = lin[None, :] * np.ones((n, 1))
+    cor = np.ones((n, n, 3)) * srgb_lin((246, 246, 244))
+    suj = np.clip(.5 + .5 * ruido(140, n) * .7 + .3 * ruido(30, n), 0, 1.4)
+    cor *= (1 - .16 * suj)[..., None]
+    esc = np.clip(ruido(3, n, anis=(1, 25)) * .6 + ruido(60, n) * .5 - .3, 0, 1)  # escorridos verticais
+    cor *= (1 - .2 * esc)[..., None]
+    lasca = np.clip((ruido(2.2, n) + .5 * ruido(25, n)) - 2.2, 0, 1) * 3
+    lasca = np.clip(lasca, 0, 1)
+    cor = mistura(cor, srgb_lin((70, 52, 40)), .85 * lasca)
+    ferr = np.clip(lasca * 1.4 + np.clip(ruido(8, n) - 1.8, 0, 1), 0, 1)
+    cor = mistura(cor, srgb_lin((120, 66, 34)), .35 * np.clip(esc * ferr * 3 + ferr * .4, 0, 1))
+    risco = np.zeros((n, n))
+    for _ in range(40):
+        cx, cy, ang, L = rng.uniform(0, LADO), rng.uniform(0, LADO), rng.uniform(0, np.pi), rng.uniform(.02, .1)
+        dx = np.minimum(np.abs(x - cx), LADO - np.abs(x - cx)); dy = np.minimum(np.abs(y - cy), LADO - np.abs(y - cy))
+        u = dx * np.cos(ang) + dy * np.sin(ang); v = -dx * np.sin(ang) + dy * np.cos(ang)
+        risco = np.maximum(risco, np.exp(-(v / .0012) ** 2) * (np.abs(u) < L) * (np.abs(v) < .01))
+    cor = mistura(cor, srgb_lin((150, 150, 148)), .3 * risco)
+    h = .00015 * ruido(1.6, n) - .0004 * lasca - .0002 * risco + .0002 * ruido(40, n)
+    rug = .58 + .12 * suj + .2 * esc + .3 * lasca + .05 * ruido(6, n) - .1 * risco
+    orm = np.dstack([np.ones((n, n)), np.clip(rug, .3, 1), np.clip(.02 + .5 * lasca * (1 - ferr), 0, 1)])
+    salvar('pintura_cor.jpg', np.clip(cor, 0, 1), True, 88)
+    salvar('pintura_normal.jpg', normal_de_altura(h, px), False, 88)
+    salvar('pintura_orm.jpg', orm, False, 85)
+
+
 if __name__ == '__main__':
-    casco()
-    conves()
+    import sys
+    alvo = sys.argv[1:] or ['casco', 'conves', 'pintura']
+    for f in alvo:
+        globals()[f]()
