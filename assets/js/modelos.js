@@ -171,7 +171,21 @@ function hullGeometry(){
  const dpos=[],duv=[],didx=[];const yd=8,[xs,xb]=xr(yd);for(let i=0;i<=NX;i++){const x=lerp(xs,xb,i/NX),w=hb(x,yd)*.97;dpos.push(x,yd,-w,x,yd,w);duv.push(x/6,-w/6,x/6,w/6)}
  for(let i=0;i<NX;i++){const a=i*2;didx.push(a,a+1,a+3,a,a+3,a+2)}const deck=new THREE.BufferGeometry();deck.setAttribute('position',new THREE.Float32BufferAttribute(dpos,3));deck.setAttribute('uv',new THREE.Float32BufferAttribute(duv,2));deck.setIndex(didx);deck.computeVertexNormals();
  return{hull,deck,hb,xr}}
-export function makeShip(){const s=new THREE.Group();const H=hullGeometry();const hull=new THREE.Mesh(H.hull,M.hull);hull.receiveShadow=hull.castShadow=true;s.add(hull);const deck=new THREE.Mesh(H.deck,M.deck);deck.receiveShadow=true;s.add(deck);
+// Modelos do navio feitos no Blender (fontes/blender/, meshopt), no mesmo sistema de coordenadas do navio:
+//  - casco.glb: casco + convés. O procedural fica como reserva e é escondido quando o GLB chega.
+//  - equipamentos.glb: miúdos do convés (contêineres, escadas, tubulação, cestas, cilindros...). Só soma.
+// Carregam quando o navegador fica ocioso, com LoadingManager próprio (não seguram a tela de abertura).
+// Se falharem, fica o que já existe.
+const GLBN={},ociosa=f=>window.requestIdleCallback?requestIdleCallback(f,{timeout:2500}):setTimeout(f,800);
+function loadNavio(url){return GLBN[url]??=(async()=>{const[{GLTFLoader},{MeshoptDecoder}]=await Promise.all([import('three/addons/loaders/GLTFLoader.js'),import('three/addons/libs/meshopt_decoder.module.js')]);
+ const g=await new GLTFLoader(new THREE.LoadingManager()).setMeshoptDecoder(MeshoptDecoder).loadAsync(url);
+ g.scene.traverse(o=>{if(!o.isMesh)return;const cv=o.material.name==='Conves';o.receiveShadow=true;o.castShadow=!cv;
+  for(const t of[o.material.map,o.material.normalMap,o.material.roughnessMap])if(t)t.anisotropy=8});return g.scene})()}
+function navioReal(g,url,trocar){ociosa(()=>loadNavio(url).then(src=>{const m=src.clone(true);if(trocar)g.children.forEach(c=>c.visible=false);g.add(m);g.userData.real=m})
+  .catch(e=>console.warn(url+' não carregou; fica o procedural',e)))}
+export function makeShip(){const s=new THREE.Group();const H=hullGeometry();const cg=new THREE.Group();cg.name='casco';cg.userData.semBake=1;s.add(cg);
+ const hull=new THREE.Mesh(H.hull,M.hull);hull.receiveShadow=hull.castShadow=true;cg.add(hull);const deck=new THREE.Mesh(H.deck,M.deck);deck.receiveShadow=true;cg.add(deck);navioReal(cg,'assets/modelos/casco.glb',true);
+ {const eq=new THREE.Group();eq.name='equipamentos';eq.userData.semBake=1;s.add(eq);navioReal(eq,'assets/modelos/equipamentos.glb',false)}
  // guarda-corpo em volta do convés: duas réguas e montantes seguindo a borda do casco
  {const[xs,xb]=H.xr(9.6),rl=[];for(const k of[1,-1]){const P=[];for(let i=0;i<=64;i++){const x=lerp(xs+2,xb-1.2,i/64);P.push(V(x,9.6,k*H.hb(x,9.6)*.975))}
    for(let i=0;i<P.length-1;i++){for(const yy of[10.2,10.85])rl.push(beamG(P[i].clone().setY(yy),P[i+1].clone().setY(yy),.045,5));if(i%3===0)rl.push(beamG(P[i],P[i].clone().setY(10.85),.05,5))}}
