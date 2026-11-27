@@ -78,7 +78,7 @@ export function bolts(p,R,n,c,mat=M.steel,axis='y',r=.12,h=.4){const g=G.cyl(r,r
 // Grupos, âncoras e partes animadas (skip) continuam intactos.
 export function bake(root,skip=[]){root.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(root.matrixWorld).invert(),by=new Map(),dead=[],m4=new THREE.Matrix4();
  root.traverse(o=>{if(!o.isMesh||Array.isArray(o.material))return;const mt=o.material;if(mt.transparent||mt.isShaderMaterial||mt.vertexColors||mt.clippingPlanes)return;
-  for(let p=o;p&&p!==root;p=p.parent)if(skip.includes(p))return;
+  for(let p=o;p&&p!==root;p=p.parent)if(skip.includes(p)||p.userData.semBake)return;// semBake: grupo trocado depois (ex.: casco GLB)
   const rel=new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld),list=by.get(mt)||by.set(mt,[]).get(mt);
   if(o.isInstancedMesh){for(let i=0;i<o.count;i++){o.getMatrixAt(i,m4);list.push(clean(o.geometry.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(rel,m4))))}}else list.push(clean(o.geometry.clone().applyMatrix4(rel)));dead.push(o)});
  dead.forEach(o=>o.parent.remove(o));

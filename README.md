@@ -138,6 +138,30 @@ Os pacotes de detalhe ficam mesclados por material e desligados nos níveis meno
 - **Resolução dinâmica:** na qualidade automática, abaixo de 52 qps a resolução interna desce 10% por vez (até 70%) antes de cair de nível; com folga, sobe de volta.
 - **Quadros sob demanda:** sem interação por 10 s (fora do tour, do kick e dos cenários internos), a cena anima a 30 qps em vez de 60. Qualquer toque, rolagem, tecla ou movimento do mouse volta a 60.
 
+## Casco do navio-sonda (modelo Blender)
+
+O casco e o convés do navio vêm de `assets/modelos/casco.glb` (2,2 MB com meshopt, ~69 mil triângulos), gerado no Blender por script — nada é modelado à mão, então dá para refazer e ajustar com precisão:
+
+| Arquivo | Para que serve |
+|---|---|
+| `fontes/blender/gerar_texturas.py` | Texturas PBR procedurais e tileáveis em 2048 px (cor, normal, ORM): faixas de pintura, chapeamento com soldas e cavernas, ferrugem escorrida, limo, sal na linha d'água, raspões; convés de aço antiderrapante com soldas, desgaste e óleo. Requer `numpy` e `Pillow`. |
+| `fontes/blender/gerar_casco.py` | Monta casco + convés no Blender e exporta o GLB. Usa a **mesma forma** de `hullGeometry()` em `modelos.js` (funções `xr`/`hb`), então torre, guindastes, heliponto, guarda-corpo e `shipDetail()` continuam encaixados. |
+| `fontes/blender/casco.blend` | Cena de origem gerada pelo script (as texturas ficam em `fontes/blender/texturas/`). |
+| `fontes/capturas/` | Capturas antes/depois (site) e renders de conferência do Blender. |
+
+O modelo tem bulbo de proa, espelho de popa inclinado, bolinas, 6 propulsores azimutais (3 a vante, 3 a ré, longe do moonpool e dos tensionadores em x=±13, z=±5), **moonpool vazado** de 12 × 12 m com paredes internas, borda com face interna e capa, vigias a vante, escovém, olhais de amarração com cabeços, tampas de escotilha no convés e marcas de calado (proa, meio-navio e popa, nos dois bordos). Medidas: proa em +X, boreste em +Z, quilha em y=−7, linha d'água em y=0, convés em y=8 e topo da borda em y=9,6.
+
+Para refazer (na raiz do repositório):
+
+```
+python fontes/blender/gerar_texturas.py
+"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python fontes/blender/gerar_casco.py
+```
+
+e depois comprimir com `tools/comprimir_modelos.mjs` (`assets/modelos/casco.glb`).
+
+No site, `makeShip()` continua criando o casco procedural como **reserva** num grupo `casco` (que o `bake()` não funde, via `userData.semBake`). O GLB carrega quando o navegador fica ocioso, depois da abertura e com um `LoadingManager` próprio (não segura a tela inicial), e então esconde o procedural. Se falhar, fica o procedural e um aviso no console. Como a sujeira já está nas texturas, o material do GLB não entra no `PAINTED` (a camada de `detalhe.js` não é aplicada nele).
+
 ## Versão dos arquivos (evita cache antigo)
 
 Depois de editar qualquer JS, o CSS ou `content/conteudo.json`, rode:

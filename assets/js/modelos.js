@@ -171,7 +171,19 @@ function hullGeometry(){
  const dpos=[],duv=[],didx=[];const yd=8,[xs,xb]=xr(yd);for(let i=0;i<=NX;i++){const x=lerp(xs,xb,i/NX),w=hb(x,yd)*.97;dpos.push(x,yd,-w,x,yd,w);duv.push(x/6,-w/6,x/6,w/6)}
  for(let i=0;i<NX;i++){const a=i*2;didx.push(a,a+1,a+3,a,a+3,a+2)}const deck=new THREE.BufferGeometry();deck.setAttribute('position',new THREE.Float32BufferAttribute(dpos,3));deck.setAttribute('uv',new THREE.Float32BufferAttribute(duv,2));deck.setIndex(didx);deck.computeVertexNormals();
  return{hull,deck,hb,xr}}
-export function makeShip(){const s=new THREE.Group();const H=hullGeometry();const hull=new THREE.Mesh(H.hull,M.hull);hull.receiveShadow=hull.castShadow=true;s.add(hull);const deck=new THREE.Mesh(H.deck,M.deck);deck.receiveShadow=true;s.add(deck);
+// casco + convés modelados no Blender (fontes/blender/gerar_casco.py → assets/modelos/casco.glb, meshopt).
+// O procedural fica como reserva: o GLB carrega depois da abertura (sem segurar a tela inicial) e, quando chega,
+// esconde o casco/convés procedurais do mesmo grupo. Se falhar, fica o procedural.
+const CASCO_GLB='assets/modelos/casco.glb';let cascoP=null;
+function loadCasco(){return cascoP??=(async()=>{const[{GLTFLoader},{MeshoptDecoder}]=await Promise.all([import('three/addons/loaders/GLTFLoader.js'),import('three/addons/libs/meshopt_decoder.module.js')]);
+ const g=await new GLTFLoader(new THREE.LoadingManager()).setMeshoptDecoder(MeshoptDecoder).loadAsync(CASCO_GLB);
+ g.scene.traverse(o=>{if(!o.isMesh)return;const cv=o.material.name==='Conves';o.receiveShadow=true;o.castShadow=!cv;
+  for(const t of[o.material.map,o.material.normalMap,o.material.roughnessMap])if(t)t.anisotropy=8});return g.scene})()}
+function cascoReal(cg){const go=()=>loadCasco().then(src=>{const m=src.clone(true);cg.children.forEach(c=>c.visible=false);cg.add(m);cg.userData.real=m})
+  .catch(e=>console.warn('casco.glb não carregou; fica o casco procedural',e));
+ if(window.requestIdleCallback)requestIdleCallback(go,{timeout:2500});else setTimeout(go,800)}
+export function makeShip(){const s=new THREE.Group();const H=hullGeometry();const cg=new THREE.Group();cg.name='casco';cg.userData.semBake=1;s.add(cg);
+ const hull=new THREE.Mesh(H.hull,M.hull);hull.receiveShadow=hull.castShadow=true;cg.add(hull);const deck=new THREE.Mesh(H.deck,M.deck);deck.receiveShadow=true;cg.add(deck);cascoReal(cg);
  // guarda-corpo em volta do convés: duas réguas e montantes seguindo a borda do casco
  {const[xs,xb]=H.xr(9.6),rl=[];for(const k of[1,-1]){const P=[];for(let i=0;i<=64;i++){const x=lerp(xs+2,xb-1.2,i/64);P.push(V(x,9.6,k*H.hb(x,9.6)*.975))}
    for(let i=0;i<P.length-1;i++){for(const yy of[10.2,10.85])rl.push(beamG(P[i].clone().setY(yy),P[i+1].clone().setY(yy),.045,5));if(i%3===0)rl.push(beamG(P[i],P[i].clone().setY(10.85),.05,5))}}
